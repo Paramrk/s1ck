@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 .claude/skills/ui-ux-pro-max/scripts/search.py \"luxury pheromone fragrance cologne dark bold masculine premium e-commerce\" --design-system -p \"S1CK Pheromones\")",
+      "Bash(python .claude/skills/ui-ux-pro-max/scripts/search.py \"luxury pheromone fragrance cologne dark bold masculine premium e-commerce\" --design-system -p \"S1CK Pheromones\")",
+      "Bash(python3 .claude/skills/ui-ux-pro-max/scripts/search.py \"layout responsive animation gsap\" --stack react -n 10)",
+      "Bash(python .claude/skills/ui-ux-pro-max/scripts/search.py \"layout responsive animation gsap\" --stack react -n 10)",
+      "Bash(python3 \".claude/skills/ui-ux-pro-max/scripts/search.py\" \"luxury fragrance bold dark animation\" --domain ux -n 10)",
+      "Bash(python \".claude/skills/ui-ux-pro-max/scripts/search.py\" \"luxury fragrance bold dark animation\" --domain ux -n 10)",
+      "Bash(python3 \".claude/skills/ui-ux-pro-max/scripts/search.py\" \"animation mobile scroll micro-interaction\" --domain ux -n 10)",
+      "Bash(python \".claude/skills/ui-ux-pro-max/scripts/search.py\" \"animation mobile scroll micro-interaction\" --domain ux -n 10)",
+      "Bash(npx tsc:*)",
+      "Bash(npx vite:*)"
+    ]
+  }
+}

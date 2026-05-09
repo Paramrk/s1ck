@@ -1,0 +1,111 @@
+import { useGSAP } from "@gsap/react"
+import { nutrientLists } from "../constants/details"
+import gsap from "gsap"
+import { SplitText } from "gsap/all"
+import { useMediaQuery } from "react-responsive"
+import { getImage } from '../utils/media';
+
+const NutritionSection = () => {
+
+    const isMobile = useMediaQuery({
+        query: "(max-width: 768px)",
+    });
+
+    useGSAP(() => {
+        document.fonts.ready.then(() => {
+            const headingSplit = SplitText.create(".h1-animate", { type: "chars" });
+            const paraSplit = SplitText.create(".para-animate", { type: "words" });
+
+            const nutTl = gsap.timeline({
+                scrollTrigger: {
+                    trigger: ".nutrition-section",
+                    start: isMobile ? "top 50%" : "top 30%",
+                    end: isMobile ? "top 20%" : "top 10%",
+                    scrub: true,
+                }
+            });
+
+            nutTl.from(headingSplit.chars, {
+                stagger: isMobile ? 0.1 : 0.2,
+                yPercent: isMobile ? 150 : 600,
+                rotate: isMobile ? 2 : 4,
+                ease: "power1.inOut"
+            }).from(paraSplit.words, {
+                opacity: 0,
+                stagger: isMobile ? 0.1 : 0.2,
+                yPercent: isMobile ? 15 : 30,
+                rotate: isMobile ? 1 : 4,
+                ease: "power1.inOut"
+            }, "-=0.5").to(".nutrition-text-scroll", {
+                duration: isMobile ? 1.2 : 2,
+                clipPath: "polygon(0% 0%,100% 0%,100% 100%, 0% 100%)",
+            }, "-=0.2");
+
+            // Mobile: smooth scroll-tied entrance for nutrient list items
+            if (isMobile) {
+                gsap.from(".list-wrapper > div", {
+                    opacity: 0,
+                    y: 40,
+                    stagger: 0.08,
+                    ease: "power3.out",
+                    scrollTrigger: {
+                        trigger: ".nutrition-box",
+                        start: "top 95%",
+                        end: "top 50%",
+                        scrub: 1.5,
+                    }
+                });
+            }
+        });
+    });
+
+    return (
+        <section className="nutrition-section">
+            <img src={getImage("mockup-img.jpeg")} alt="" className="big-img" />
+            <div className="flex flex-col justify-center">
+                <div className="flex md:flex-row flex-col justify-between md:px-10 px-5 mt-14 md:mt-0">
+                    <div className="relative inline-block md:translate-y-20 z-100">
+                        <div className="general-title relative flex flex-col justify-center items-center gap-24">
+                            <div className="overflow-hidden place-self-start h1-animate lg:p-0 p-1">
+                                <h1>Science hits</h1>
+                            </div>
+                            <div className="nutrition-text-scroll place-self-start">
+                                <div className="bg-slate pb-5 md:pt-0 pt-3 md:px-5 px-3 inline-block">
+                                    <h2 className="text-cream rolling">Different</h2>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="flex md:justify-end items-start md:translate-y-20 translate-y-10">
+                        <div className="md:max-w-xs w-[70%]">
+                            <p className="text-sm md:text-right text-balance font-paragraph para-animate">S1CK pheromones are synthesized from clinically studied compounds — androstenol, androstenone, and estratetraenol — blended for maximum biological impact.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="nutrition-box">
+                    <div className="list-wrapper">
+                        {
+                            (isMobile ? nutrientLists.slice(0, 3) : nutrientLists).map((nutrients, index, arr) => (
+                                <div key={index} className="relative flex-1 col-center">
+                                    <div className="">
+                                        <p className="md:text-sm font-paragraph">{nutrients.label}</p>
+                                        <p className="font-paragraph md:text-[10px] text-[11px] mt-[6px]">up to</p>
+                                        <p className="text-2xl md:text-2xl tracking-tighter font-bold">{nutrients.amount}</p>
+                                    </div>
+                                    {
+                                        index !== arr.length - 1 && (
+                                            <div className="spacer-border" />
+                                        )
+                                    }
+                                </div>
+                            ))
+                        }
+                    </div>
+                </div>
+            </div>
+        </section>
+    )
+}
+
+export default NutritionSection
