@@ -17,6 +17,7 @@ const benefits = [
         statLabel: "Reported attraction increase",
         accent: "#DC2626",
         accentGlow: "rgba(220,38,38,0.15)",
+        image: "ma-mockup.png", // Replace with individual image filename
     },
     {
         number: "02",
@@ -28,6 +29,7 @@ const benefits = [
         statLabel: "More memorable interactions",
         accent: "#5a7a94",
         accentGlow: "rgba(90,122,148,0.15)",
+        image: "dp-mockup.png", // Replace with individual image filename
     },
     {
         number: "03",
@@ -39,6 +41,7 @@ const benefits = [
         statLabel: "Users report stronger bonds",
         accent: "#a08060",
         accentGlow: "rgba(160,128,96,0.15)",
+        image: "ec-mockup.png", // Replace with individual image filename
     },
     {
         number: "04",
@@ -50,6 +53,7 @@ const benefits = [
         statLabel: "Average effect duration",
         accent: "#8a6e5a",
         accentGlow: "rgba(138,110,90,0.15)",
+        image: "lc-mockup.png", // Replace with individual image filename
     },
 ];
 
@@ -277,7 +281,7 @@ const PheromoneBenefits = ({ showMockup = false }: { showMockup?: boolean }) => 
                         </div>
 
                         {/* Right Side Mockup Image Option */}
-                        {showMockup && (
+                        {showMockup && b.image && (
                             <div
                                 className="absolute right-0 top-0 bottom-0 w-[100%] md:w-[70%] lg:w-[60%] pointer-events-none z-0"
                                 style={{
@@ -286,7 +290,7 @@ const PheromoneBenefits = ({ showMockup = false }: { showMockup?: boolean }) => 
                                 }}
                             >
                                 <img
-                                    src={getImage("mockup-img.jpeg")}
+                                    src={getImage(b.image)}
                                     alt="Mockup"
                                     loading="lazy"
                                     decoding="async"
