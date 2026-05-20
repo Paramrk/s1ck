@@ -21,6 +21,15 @@ const tints: string[] = [
     "rgba(26,26,36,0.22)",     // Arcane - smoke
 ];
 
+// Parallax depth layers for immersive 3D effect
+const depthLayers = [
+    { translateZ: -80, scale: 0.85 },
+    { translateZ: -40, scale: 0.92 },
+    { translateZ: 0, scale: 1 },
+    { translateZ: 40, scale: 1.08 },
+    { translateZ: 80, scale: 1.15 },
+];
+
 
 const visibleFlavors = flavorlists.filter((flavor) => {
     const hasName = flavor.name.trim().length > 0;

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import NavMenu from "./NavMenu";
@@ -12,6 +12,8 @@ interface NavbarProps {
 const Navbar: React.FC<NavbarProps> = ({ variant = "dark" }) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const isLight = variant === "light";
+    const location = useLocation();
+    const isShopPage = location.pathname.startsWith("/shop");
 
     useGSAP(() => {
         const els = Array.from(document.querySelectorAll<HTMLElement>(".nav-logo, .menu-hover"));
@@ -65,25 +67,27 @@ const Navbar: React.FC<NavbarProps> = ({ variant = "dark" }) => {
                     />
                 </Link>
 
-                <Link
-                    to="/shop"
-                    className={`group sm:px-6 px-4 py-2 border transition-all duration-500 text-center cursor-pointer ${
-                        isLight
-                            ? "border-cream/30 bg-transparent hover:bg-cream"
-                            : "border-charcoal bg-white hover:bg-charcoal"
-                    }`}
-                >
-                    <span
-                        className={`text-xs font-medium p-0 m-0 transition-colors duration-500 ${
+                {!isShopPage && (
+                    <Link
+                        to="/shop"
+                        className={`group sm:px-6 px-4 py-2 border transition-all duration-500 text-center cursor-pointer ${
                             isLight
-                                ? "text-cream group-hover:text-charcoal"
-                                : "text-charcoal group-hover:text-cream"
+                                ? "border-cream/30 bg-transparent hover:bg-cream"
+                                : "border-charcoal bg-white hover:bg-charcoal"
                         }`}
-                        style={{ fontFamily: 'Syne, sans-serif', letterSpacing: '0.18em' }}
                     >
-                        SHOP NOW
-                    </span>
-                </Link>
+                        <span
+                            className={`text-xs font-medium p-0 m-0 transition-colors duration-500 ${
+                                isLight
+                                    ? "text-cream group-hover:text-charcoal"
+                                    : "text-charcoal group-hover:text-cream"
+                            }`}
+                            style={{ fontFamily: 'Syne, sans-serif', letterSpacing: '0.18em' }}
+                        >
+                            SHOP NOW
+                        </span>
+                    </Link>
+                )}
             </nav>
 
             {/* Menu toggle */}

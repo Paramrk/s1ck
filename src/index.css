@@ -90,10 +90,10 @@ body::-webkit-scrollbar { display: none; }
         @apply relative bg-cream w-full h-dvh overflow-hidden;
 
         .hero-content {
-            @apply relative z-10 w-full h-full flex flex-col 2xl:justify-center items-center translate-y-10 2xl:pt-0 md:pt-32 pt-24;
+            @apply relative z-10 w-full h-full flex flex-col 2xl:justify-center items-center translate-y-4 pt-16 md:translate-y-10 md:pt-32 2xl:pt-0;
 
             .hero-title {
-                @apply text-charcoal 2xl:text-[5.5rem] md:text-[3.8rem] text-[2rem] uppercase leading-[1.08] tracking-[-0.02em] 2xl:mb-0 mb-1;
+                @apply 2xl:text-[5.5rem] md:text-[3.8rem] text-[2rem] uppercase leading-[1.08] tracking-[-0.02em] 2xl:mb-0 mb-1;
                 font-family: "Syne", sans-serif;
                 font-weight: 700;
             }
@@ -103,7 +103,7 @@ body::-webkit-scrollbar { display: none; }
             }
 
             .hero-text-scroll {
-                @apply mb-6 border-[3px] border-cream;
+                @apply mb-4 md:mb-6;
 
                 .hero-subtitle { @apply bg-slate; }
 
