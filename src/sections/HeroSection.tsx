@@ -3,7 +3,8 @@ import gsap from "gsap";
 import { SplitText } from "gsap/all";
 import { useMediaQuery } from "react-responsive";
 import { getImage } from '../utils/media';
-import heroBgVid from "../assets/videos/hero-bg-3.mp4"
+
+const heroBgVid = "https://res.cloudinary.com/djlztb4dt/video/upload/v17792994";
 
 const HeroSection = () => {
 
@@ -95,7 +96,7 @@ const HeroSection = () => {
                         <img src={getImage("herobg.jpeg")} alt="" loading="eager" decoding="async" className="absolute bottom-0 left-1/2 -translate-x-1/2 object-auto" />
                     </>
                     :
-                    <video src={heroBgVid} autoPlay playsInline muted className="absolute inset-0 w-full h-full object-cover" />
+                    <video src={heroBgVid} autoPlay loop playsInline muted className="absolute inset-0 w-full h-full object-cover" />
                 )}
                 <div className="hero-content opacity-0">
                     {/* Decorative emblem row — two lines flanking the S1CK logo */}
