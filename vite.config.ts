@@ -8,6 +8,7 @@ export default defineConfig({
   base: '/', // ✅ root path for Vercel
   plugins: [react(), tailwindcss(), mkcert()],
   server: {
+    // @ts-ignore - TS2769 mismatch in Vite 7
     https: true, // optional: allows https for local dev with mkcert
     hmr: {
       overlay: false, // disables browser error overlay
