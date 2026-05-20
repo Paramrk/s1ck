@@ -89,3 +89,6 @@ Thumbs.db
 
 # Wrangler
 .wrangler/
+
+# Large Video (hosted on CDN)
+src/assets/videos/pin-video.mp4
