@@ -23,20 +23,27 @@ const HomePage = () => {
 
     useGSAP(() => {
         if (loaded && !ScrollSmoother.get()) {
+            const isMobile = window.innerWidth <= 768;
+
             // Stabilise iOS Safari scroll: ignore the address-bar
             // show/hide resize so pinned sections don't recalc mid-scroll.
             ScrollTrigger.config({ ignoreMobileResize: true });
-            // Smooth out variable touch-frame rate on mobile.
-            ScrollTrigger.normalizeScroll(true);
+
+            // normalizeScroll hijacks touch events and replaces them with
+            // JS-controlled scroll — causes stutter on low-end phones.
+            // Only enable on desktop where it smooths wheel jitter.
+            if (!isMobile) {
+                ScrollTrigger.normalizeScroll(true);
+            }
 
             ScrollSmoother.create({
                 wrapper: "#smooth-wrapper",
                 content: "#smooth-content",
-                smooth: 1.5,
-                effects: true,
-                // smoothTouch: a small non-zero value damps touch scroll
-                // without making it feel laggy. 0 = native scroll.
-                smoothTouch: 0.1,
+                // Less interpolation on mobile = less work per frame
+                smooth: isMobile ? 1 : 1.5,
+                effects: !isMobile,
+                // 0 = native touch scroll (always smoother than JS lerp)
+                smoothTouch: 0,
             });
             ScrollTrigger.refresh();
         }

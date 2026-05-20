@@ -1,7 +1,6 @@
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { SplitText } from "gsap/all";
-import s1ckLogo from "../assets/s1cklogo-trnsp.png";
 
 const FlavorTitle = () => {
 
@@ -17,17 +16,7 @@ const FlavorTitle = () => {
                     type: "chars",
                 });
 
-                gsap.from(".flavor-logo emblem", {
-                    opacity: 0,
-                    scale: 0.7,
-                    rotate: -10,
-                    duration: 0.8,
-                    ease: "power3.out",
-                    scrollTrigger: {
-                        trigger: ".flavor-section",
-                        start: isMobile ? "top 75%" : "top 85%",
-                    },
-                });
+
 
                 gsap.from(firstTextSplit.chars, {
                     yPercent: 180,
@@ -93,20 +82,7 @@ const FlavorTitle = () => {
 
     return (
         <div className="general-title flex flex-col items-center lg:items-start text-center lg:text-left lg:gap-7 gap-2 max-w-md w-full">
-            {/* S1CK Logo Emblem — desktop only */}
-            <div className="flavor-logo mb-2 lg:mb-4 hidden lg:block">
-                <div 
-                    className="emblem w-20 h-20 rounded-full bg-sick-red/10 border-2 border-sick-red/20 flex items-center justify-center shadow-lg shadow-sick-red/10"
-                    style={{ transformStyle: "preserve-3d" }}
-                >
-                    <img 
-                        src={s1ckLogo} 
-                        alt="S1CK Logo" 
-                        className="w-12 h-12 object-contain filter brightness-0 saturate-100 invert sepia(1) hue-rotate(330deg)"
-                        style={{ transform: "translateZ(10px)" }}
-                    />
-                </div>
-            </div>
+
 
             {/* Stars + customer count */}
             <div

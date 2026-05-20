@@ -47,7 +47,8 @@ body {
     font-family: "Syne", sans-serif;
     font-weight: 400;
     overflow-x: hidden;
-    scroll-behavior: smooth;
+    /* scroll-behavior: smooth removed — conflicts with ScrollSmoother
+       causing double-interpolation and touch lag */
     scrollbar-width: none;
     -ms-overflow-style: none;
     letter-spacing: 0.01em;
@@ -225,13 +226,13 @@ body::-webkit-scrollbar { display: none; }
 
     /* ── TESTIMONIALS ── */
     .testimonials-section {
-        @apply bg-warm-white relative w-full lg:h-[130vh] h-[110vh];
+        @apply bg-warm-white relative w-full lg:h-[130vh];
 
         .pin-box {
-            @apply flex items-center justify-center md:gap-12 w-full md:ps-52 ps-4 absolute 2xl:bottom-32 md:top-0 top-20 bottom-[5vh];
+            @apply flex items-center justify-center gap-12 w-full ps-52 absolute 2xl:bottom-32 top-0;
 
             .vd-card {
-                @apply md:w-70 w-[55vw] flex-none md:rounded-[2vw] rounded-3xl md:-ms-44 -ms-[15vw] overflow-hidden md:relative absolute border border-ivory;
+                @apply w-70 flex-none rounded-[2vw] -ms-44 overflow-hidden relative border border-ivory;
             }
         }
 
@@ -239,6 +240,13 @@ body::-webkit-scrollbar { display: none; }
             @apply uppercase md:text-[13vw] text-[11vw] leading-[1.05] ml-[2vw] font-bold tracking-[-0.02em];
             font-family: "Syne", sans-serif;
         }
+    }
+
+    /* Mobile carousel styling */
+    .mob-card-track::-webkit-scrollbar { display: none; }
+    .mob-card-track > div {
+        position: relative;
+    }
     }
 
     /* ── SHOP PAGE ── */
@@ -418,30 +426,25 @@ body::-webkit-scrollbar { display: none; }
 }
 
 /* ── GPU compositor hints for scroll-animated layers ───────────────────── */
-/* Pre-promote elements that GSAP transforms during scroll so the mobile   */
-/* browser doesn't have to allocate a layer mid-frame (a common cause of   */
-/* parallax jitter on iOS Safari + low-end Android).                       */
+/* Only promote the most critical layers. Over-promoting causes VRAM       */
+/* thrash on mobile which is worse than no promotion at all.               */
 .hero-container,
 .flavor-section [class*="fp-"],
-.flavor-section .product-bottle,
-.nutrition-section .nut-bottle,
-.nutrition-section .nut-splash,
-.nutrition-section .nut-headline-line,
-.pin-box,
 .pin-box .vd-card,
 .pheromone-panel,
-.video-box,
-.msg-text-scroll,
-.flavor-text-scroll,
-.first-text-split,
-.second-text-split,
-.testimonials-section .ft-anim,
-.testimonials-section .st-anim,
-.testimonials-section .tt-anim {
+.video-box {
     will-change: transform;
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
     transform: translateZ(0);
+}
+
+/* Compositor isolation for pinned sections — helps mobile browsers */
+.flavor-section,
+.pheromone-benefits-section,
+.testimonials-section,
+.benefit-section .vd-pin {
+    contain: layout style paint;
 }
 
 /* ── 3D Carousel Flavor Section ──────────────────────────────────────────── */
@@ -455,9 +458,15 @@ body::-webkit-scrollbar { display: none; }
     -webkit-backface-visibility: hidden;
 }
 
-/* Ambient glow pulse */
+/* Ambient glow pulse — desktop only, too expensive on mobile GPU */
 .carousel-glow {
     animation: glowPulse 4s ease-in-out infinite alternate;
+}
+
+@media (max-width: 768px) {
+    .carousel-glow {
+        animation: none !important;
+    }
 }
 
 @keyframes glowPulse {
@@ -521,20 +530,22 @@ body::-webkit-scrollbar { display: none; }
     transition: width 0.8s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
 }
 
-/* GPU compositor hints for carousel layers */
-.flavor-carousel-stage .product-bottle,
-.flavor-carousel-stage .product-caption,
-.flavor-carousel-stage .carousel-glow,
-.flavor-carousel-stage .floor-shadow {
+/* GPU compositor hints for carousel layers — keep minimal */
+.flavor-carousel-stage .product-bottle {
     will-change: transform;
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
 }
 
-/* Hardware acceleration for mobile performance */
+/* Mobile performance overrides */
 @media (max-width: 768px) {
     .flavor-carousel-stage {
-        perspective: 1400px !important;
+        perspective: none !important;
+        transform-style: flat !important;
+    }
+
+    .flavor-carousel-stage [class*="fp-"] {
+        transform-style: flat !important;
     }
 
     .floating-detail {
@@ -546,12 +557,23 @@ body::-webkit-scrollbar { display: none; }
     }
     
     .carousel-glow {
-        filter: blur(40px) !important;
+        filter: blur(30px) !important;
     }
     
     .product-bottle {
         -webkit-transform: translateZ(0);
         transform: translateZ(0);
+    }
+
+    /* Kill floating-detail drift keyframes on mobile (elements are hidden
+       but the animations still compute) */
+    .flavor-section [class*="float-tone-"],
+    .flavor-section [class*="float-tagline-"],
+    .flavor-section [class*="float-top-notes-"],
+    .flavor-section [class*="float-heart-notes-"],
+    .flavor-section [class*="float-base-notes-"],
+    .flavor-section [class*="float-profile-"] {
+        animation: none !important;
     }
 }
 

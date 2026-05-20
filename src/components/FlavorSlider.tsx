@@ -38,8 +38,6 @@ const FlavorSlider = () => {
                         className={`fp-${i} absolute inset-0 flex items-center justify-center`}
                         style={{
                             opacity: isFirst ? 1 : 0,
-                            transformStyle: "preserve-3d",
-                            willChange: "transform, opacity, filter",
                         }}
                     >
                         {/* ─── Ambient glow behind bottle ─── */}

@@ -122,20 +122,22 @@ const NutritionSection = ({ showMockup = false }: { showMockup?: boolean }) => {
                     },
                 });
 
-                // Subtle parallax on the headline CLIP wrappers (different elements
-                // from the entrance targets — no transform conflict)
-                gsap.utils.toArray<HTMLElement>(".nut-headline-clip").forEach((clip, idx) => {
-                    gsap.to(clip, {
-                        yPercent: -(4 + idx * 3),
-                        ease: "none",
-                        scrollTrigger: {
-                            trigger: ".nutrition-section",
-                            start: "top top",
-                            end: "bottom top",
-                            scrub: true,
-                        },
+                // Subtle parallax on the headline CLIP wrappers — desktop only
+                // (scrub-based parallax on mobile adds per-frame overhead)
+                if (!mobile) {
+                    gsap.utils.toArray<HTMLElement>(".nut-headline-clip").forEach((clip, idx) => {
+                        gsap.to(clip, {
+                            yPercent: -(4 + idx * 3),
+                            ease: "none",
+                            scrollTrigger: {
+                                trigger: ".nutrition-section",
+                                start: "top top",
+                                end: "bottom top",
+                                scrub: true,
+                            },
+                        });
                     });
-                });
+                }
 
                 // Description words
                 const paraSplit = SplitText.create(".nut-para", { type: "words" });
@@ -218,71 +220,74 @@ const NutritionSection = ({ showMockup = false }: { showMockup?: boolean }) => {
                     },
                 });
 
-                // ── 4c. Continuous float on mockup image ─────────────────────
-                gsap.to(".nut-mockup-img", {
-                    y: "-=8",
-                    rotate: 0.4,
-                    duration: 4.5,
-                    ease: "sine.inOut",
-                    yoyo: true,
-                    repeat: -1,
-                });
-
-                // ── 5. Bottle parallax — applied to the FRAME wrapper, not the
-                //      bottle itself, so the entrance yPercent never conflicts.
-                gsap.utils.toArray<HTMLElement>(".nut-bottle-frame").forEach((frame, i) => {
-                    const depth = (i % 3) - 1; // -1, 0, 1, ...
-                    gsap.to(frame, {
-                        yPercent: depth * (mobile ? 5 : 10),
-                        ease: "none",
-                        scrollTrigger: {
-                            trigger: ".nutrition-section",
-                            start: "top bottom",
-                            end: "bottom top",
-                            scrub: 1,
-                        },
-                    });
-                });
-
-                // ── 6. Continuous float on bottle FRAMES (px-based, doesn't
-                //      collide with the bottle's yPercent entrance)
-                gsap.utils.toArray<HTMLElement>(".nut-bottle-frame").forEach((frame, i) => {
-                    gsap.to(frame, {
-                        y: "-=10",
-                        rotate: i % 2 === 0 ? 1.2 : -1.2,
-                        duration: 3 + (i % 3) * 0.6,
-                        ease: "sine.inOut",
-                        yoyo: true,
-                        repeat: -1,
-                        delay: i * 0.25,
-                    });
-                });
-
-                // ── 7. Splash breathing ──────────────────────────────────────
-                gsap.utils.toArray<HTMLElement>(".nut-splash").forEach((splash, i) => {
-                    gsap.to(splash, {
-                        scale: 1.04,
-                        duration: 4 + (i % 3) * 0.7,
-                        ease: "sine.inOut",
-                        yoyo: true,
-                        repeat: -1,
-                        delay: 0.6 + i * 0.4,
-                    });
-                });
-
-                // ── 8. Drifting particles ────────────────────────────────────
-                gsap.utils.toArray<HTMLElement>(".nut-particle").forEach((p, i) => {
-                    const drift = 30 + (i % 4) * 18;
-                    gsap.to(p, {
-                        y: `-=${drift}`,
-                        x: `+=${(i % 2 === 0 ? -1 : 1) * (12 + (i % 3) * 6)}`,
-                        opacity: 0.2 + ((i * 7) % 5) * 0.12,
-                        duration: 6 + (i % 5),
+                // ── Desktop-only continuous animations ───────────────────────
+                // These run infinitely (repeat: -1) and eat GPU even when
+                // off-screen. Skip entirely on mobile.
+                if (!mobile) {
+                    // 4c. Continuous float on mockup image
+                    gsap.to(".nut-mockup-img", {
+                        y: "-=8",
+                        rotate: 0.4,
+                        duration: 4.5,
                         ease: "sine.inOut",
                         yoyo: true,
                         repeat: -1,
                     });
-                });
+
+                    // 5. Bottle parallax — applied to the FRAME wrapper
+                    gsap.utils.toArray<HTMLElement>(".nut-bottle-frame").forEach((frame, i) => {
+                        const depth = (i % 3) - 1;
+                        gsap.to(frame, {
+                            yPercent: depth * 10,
+                            ease: "none",
+                            scrollTrigger: {
+                                trigger: ".nutrition-section",
+                                start: "top bottom",
+                                end: "bottom top",
+                                scrub: 1,
+                            },
+                        });
+                    });
+
+                    // 6. Continuous float on bottle FRAMES
+                    gsap.utils.toArray<HTMLElement>(".nut-bottle-frame").forEach((frame, i) => {
+                        gsap.to(frame, {
+                            y: "-=10",
+                            rotate: i % 2 === 0 ? 1.2 : -1.2,
+                            duration: 3 + (i % 3) * 0.6,
+                            ease: "sine.inOut",
+                            yoyo: true,
+                            repeat: -1,
+                            delay: i * 0.25,
+                        });
+                    });
+
+                    // 7. Splash breathing
+                    gsap.utils.toArray<HTMLElement>(".nut-splash").forEach((splash, i) => {
+                        gsap.to(splash, {
+                            scale: 1.04,
+                            duration: 4 + (i % 3) * 0.7,
+                            ease: "sine.inOut",
+                            yoyo: true,
+                            repeat: -1,
+                            delay: 0.6 + i * 0.4,
+                        });
+                    });
+
+                    // 8. Drifting particles
+                    gsap.utils.toArray<HTMLElement>(".nut-particle").forEach((p, i) => {
+                        const drift = 30 + (i % 4) * 18;
+                        gsap.to(p, {
+                            y: `-=${drift}`,
+                            x: `+=${(i % 2 === 0 ? -1 : 1) * (12 + (i % 3) * 6)}`,
+                            opacity: 0.2 + ((i * 7) % 5) * 0.12,
+                            duration: 6 + (i % 5),
+                            ease: "sine.inOut",
+                            yoyo: true,
+                            repeat: -1,
+                        });
+                    });
+                }
 
                 // ── 9. Compound bar slide-up ─────────────────────────────────
                 gsap.to(".nut-compound", {
@@ -314,12 +319,12 @@ const NutritionSection = ({ showMockup = false }: { showMockup?: boolean }) => {
             <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_70%_30%,rgba(220,38,38,0.05),transparent_50%)]" />
             <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_20%_85%,rgba(17,17,17,0.04),transparent_55%)]" />
 
-            {/* Ambient mist (slow-drifting blurred orbs) */}
-            <div className="absolute -top-24 -left-24 w-[36rem] h-[36rem] rounded-full pointer-events-none opacity-60 nut-particle" style={{ background: "radial-gradient(circle, rgba(255,235,210,0.6), transparent 65%)", filter: "blur(60px)" }} />
-            <div className="absolute top-1/3 -right-24 w-[28rem] h-[28rem] rounded-full pointer-events-none opacity-50 nut-particle" style={{ background: "radial-gradient(circle, rgba(220,200,180,0.45), transparent 65%)", filter: "blur(80px)" }} />
+            {/* Ambient mist (slow-drifting blurred orbs) — desktop only, filter:blur is expensive */}
+            <div className="absolute -top-24 -left-24 w-[36rem] h-[36rem] rounded-full pointer-events-none opacity-60 nut-particle hidden md:block" style={{ background: "radial-gradient(circle, rgba(255,235,210,0.6), transparent 65%)", filter: "blur(60px)" }} />
+            <div className="absolute top-1/3 -right-24 w-[28rem] h-[28rem] rounded-full pointer-events-none opacity-50 nut-particle hidden md:block" style={{ background: "radial-gradient(circle, rgba(220,200,180,0.45), transparent 65%)", filter: "blur(80px)" }} />
 
-            {/* Floating particles */}
-            {Array.from({ length: 18 }).map((_, i) => {
+            {/* Floating particles — fewer on mobile to reduce composited layers */}
+            {Array.from({ length: typeof window !== 'undefined' && window.innerWidth <= 768 ? 6 : 18 }).map((_, i) => {
                 const left = (i * 53) % 100;
                 const top = 8 + ((i * 37) % 80);
                 const size = 2 + ((i * 11) % 4);

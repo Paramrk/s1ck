@@ -18,14 +18,15 @@ const FlavorSection = () => {
         if (!sectionRef.current) return;
 
         const productCount = flavorlists.length;
-        const scrollLength = isMob ? productCount * 500 : productCount * 850;
+        const scrollLength = isMob ? productCount * 400 : productCount * 850;
 
         const tl = gsap.timeline({
             scrollTrigger: {
                 trigger: ".flavor-section",
                 start: "top top",
                 end: `+=${scrollLength}`,
-                scrub: 1.2,
+                // Higher scrub on mobile = more lerp smoothing = fewer visual hitches
+                scrub: isMob ? 1.8 : 1.2,
                 pin: true,
             },
         });
@@ -75,7 +76,13 @@ const FlavorSection = () => {
             tl.addLabel(`step-${i}`)
 
                 // ═══ EXIT previous product ═══
-                .to(prev, {
+                // Mobile: no blur/rotateY/scale (GPU-killer during scrub)
+                .to(prev, isMob ? {
+                    opacity: 0,
+                    xPercent: -15,
+                    duration: 0.5,
+                    ease: "power2.inOut",
+                } : {
                     opacity: 0,
                     scale: 0.7,
                     rotateY: -40,
@@ -129,13 +136,22 @@ const FlavorSection = () => {
                 }, `step-${i}`)
 
                 // ═══ ENTER current product ═══
-                .fromTo(curr, {
+                // Mobile: simple fade+slide (no blur/rotateY/scale)
+                .fromTo(curr, isMob ? {
+                    opacity: 0,
+                    xPercent: 15,
+                } : {
                     opacity: 0,
                     scale: 1.25,
                     rotateY: 40,
                     yPercent: 10,
                     filter: "blur(16px)",
-                }, {
+                }, isMob ? {
+                    opacity: 1,
+                    xPercent: 0,
+                    duration: 0.55,
+                    ease: "power2.out",
+                } : {
                     opacity: 1,
                     scale: 1,
                     rotateY: 0,
@@ -145,12 +161,20 @@ const FlavorSection = () => {
                     ease: "power2.out",
                 }, `step-${i}`)
 
-                // Bottle 3D entrance
-                .fromTo(currBottle, {
+                // Bottle entrance — simpler on mobile
+                .fromTo(currBottle, isMob ? {
+                    yPercent: 12,
+                    scale: 1.05,
+                } : {
                     yPercent: 18,
                     rotate: -6,
                     scale: 1.12,
-                }, {
+                }, isMob ? {
+                    yPercent: 0,
+                    scale: 1,
+                    duration: 0.55,
+                    ease: "power2.out",
+                } : {
                     yPercent: 0,
                     rotate: 0,
                     scale: 1,
@@ -163,7 +187,7 @@ const FlavorSection = () => {
                     scale: 0.4, opacity: 0,
                 }, {
                     scale: 1, opacity: 1,
-                    duration: 0.85,
+                    duration: isMob ? 0.6 : 0.85,
                     ease: "power2.out",
                 }, `step-${i}`)
 
