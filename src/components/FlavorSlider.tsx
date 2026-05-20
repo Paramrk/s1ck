@@ -40,43 +40,68 @@ const visibleFlavors = flavorlists.filter((flavor) => {
 
 const FlavorSlider = () => {
     return (
-        <div className="relative h-full w-full flex items-center justify-center" style={{ perspective: "1400px" }}>
+        <div 
+            className="relative h-full w-full flex items-center justify-center parallax-container"
+            style={{ 
+                perspective: "1800px",
+                perspectiveOrigin: "50% 50%",
+            }}
+        >
             {visibleFlavors.map((flavor, i) => {
                 const drinkSrc = getImage(flavor.drinkImage);
                 const tint = tints[i % tints.length];
                 const isFirst = i === 0;
+                const depth = depthLayers[i % depthLayers.length];
 
                 return (
                     <div
                         key={flavor.name}
-                        className={`fp-${i} absolute inset-0 flex items-center justify-center`}
+                        className={`fp-${i} absolute inset-0 flex items-center justify-center parallax-layer`}
                         style={{
                             opacity: isFirst ? 1 : 0,
                             transformStyle: "preserve-3d",
                             willChange: "transform, opacity, filter",
+                            transform: `translateZ(${depth.translateZ}px) scale(${depth.scale})`,
                         }}
                     >
-                        {/* Tinted spotlight behind bottle */}
+                        {/* Background depth layer - furthest */}
                         <div
-                            className="absolute inset-0 pointer-events-none"
+                            className="absolute inset-0 pointer-events-none depth-back"
+                            style={{
+                                transform: "translateZ(-120px) scale(1.15)",
+                                opacity: 0.4,
+                            }}
+                        >
+                            <div 
+                                className="w-full h-full"
+                                style={{
+                                    background: `radial-gradient(circle at 30% 40%, ${tint.replace('0.18', '0.12').replace('0.22', '0.14')}, transparent 70%)`,
+                                }}
+                            />
+                        </div>
+
+                        {/* Tinted spotlight behind bottle - main layer */}
+                        <div
+                            className="absolute inset-0 pointer-events-none depth-mid"
                             style={{
                                 background: `radial-gradient(circle at 50% 58%, ${tint}, transparent 58%)`,
+                                transform: "translateZ(-20px)",
                             }}
                         />
 
-                        {/* Soft floor shadow under the bottle */}
+                        {/* Soft floor shadow under the bottle - closer layer */}
                         <div
-                            className="floor-shadow absolute bottom-[10%] md:bottom-[14%] left-1/2 -translate-x-1/2 pointer-events-none rounded-full"
+                            className="floor-shadow absolute bottom-[10%] md:bottom-[14%] left-1/2 -translate-x-1/2 pointer-events-none rounded-full depth-front"
                             style={{
                                 width: "38%",
                                 height: "24px",
-                                background:
-                                    "radial-gradient(ellipse, rgba(0,0,0,0.22) 0%, rgba(0,0,0,0) 70%)",
+                                background: "radial-gradient(ellipse, rgba(0,0,0,0.22) 0%, rgba(0,0,0,0) 70%)",
                                 filter: "blur(2px)",
+                                transform: "translateZ(30px)",
                             }}
                         />
 
-                        {/* Bottle */}
+                        {/* Bottle - foreground layer */}
                         {drinkSrc && (
                             <img
                                 src={drinkSrc}
@@ -86,14 +111,18 @@ const FlavorSlider = () => {
                                 draggable={false}
                                 className="product-bottle relative z-20 h-[58%] md:h-[78%] max-h-[640px] object-contain rounded-2xl md:rounded-3xl"
                                 style={{
-                                    filter:
-                                        "drop-shadow(0 22px 30px rgba(0,0,0,0.18)) drop-shadow(0 4px 8px rgba(0,0,0,0.12))",
+                                    filter: "drop-shadow(0 22px 30px rgba(0,0,0,0.18)) drop-shadow(0 4px 8px rgba(0,0,0,0.12))",
+                                    transform: "translateZ(60px)",
+                                    willChange: "transform",
                                 }}
                             />
                         )}
 
-                        {/* Caption */}
-                        <div className="product-caption absolute z-30 bottom-[3%] md:bottom-[7%] left-1/2 -translate-x-1/2 text-center w-[92%] md:w-[85%]">
+                        {/* Caption - top layer */}
+                        <div 
+                            className="product-caption absolute z-30 bottom-[3%] md:bottom-[7%] left-1/2 -translate-x-1/2 text-center w-[92%] md:w-[85%]"
+                            style={{ transform: "translateZ(80px)" }}
+                        >
                             <p
                                 className="text-[0.42rem] md:text-[0.65rem] uppercase tracking-[0.3em] md:tracking-[0.4em] text-stone mb-0.5 md:mb-1"
                                 style={{ fontFamily: "Syne, sans-serif" }}

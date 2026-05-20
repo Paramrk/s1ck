@@ -110,7 +110,7 @@ const HeroSection = () => {
                 )}
                 <div className="hero-content opacity-0">
                     {/* Decorative emblem row — two lines flanking the S1CK logo */}
-                    <div className="hero-emblem flex items-center justify-center gap-5 md:gap-8 mb-4 md:mb-8 w-full max-w-[30rem] sm:max-w-[36rem] md:max-w-[44rem] lg:max-w-[52rem] px-4">
+                    <div className="hero-emblem hidden md:flex items-center justify-center gap-5 md:gap-8 mb-4 md:mb-8 w-full max-w-[30rem] sm:max-w-[36rem] md:max-w-[44rem] lg:max-w-[52rem] px-4">
                         <span className={`h-px flex-1 ${lineTheme}`} />
                         <img
                             src={getImage("s1ck-logo-transparent.png")}

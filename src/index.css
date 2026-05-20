@@ -443,3 +443,61 @@ body::-webkit-scrollbar { display: none; }
     -webkit-backface-visibility: hidden;
     transform: translateZ(0);
 }
+
+/* ── 3D Parallax Layers for Flavor Section ───────────────────────────────── */
+.parallax-container {
+    transform-style: preserve-3d;
+    perspective: 1800px;
+    perspective-origin: 50% 50%;
+}
+
+.parallax-layer {
+    transform-style: preserve-3d;
+    backface-visibility: hidden;
+}
+
+.depth-back {
+    transform: translateZ(-120px) scale(1.15);
+}
+
+.depth-mid {
+    transform: translateZ(0);
+}
+
+.depth-front {
+    transform: translateZ(30px);
+}
+
+/* Hardware acceleration for mobile performance */
+@media (max-width: 768px) {
+    .parallax-container {
+        perspective: 1200px;
+    }
+    
+    .parallax-layer {
+        /* Reduce parallax intensity on mobile for smoother performance */
+        --depth-back: translateZ(-60px) scale(1.1);
+        --depth-front: translateZ(20px);
+    }
+    
+    .product-bottle {
+        /* Ensure GPU acceleration for bottle images */
+        -webkit-transform: translateZ(60px);
+        transform: translateZ(60px);
+    }
+}
+
+/* Reduced motion support for parallax */
+@media (prefers-reduced-motion: reduce) {
+    .parallax-container,
+    .parallax-layer {
+        perspective: none;
+        transform-style: flat;
+    }
+    
+    .depth-back,
+    .depth-mid,
+    .depth-front {
+        transform: none !important;
+    }
+}

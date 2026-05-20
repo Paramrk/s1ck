@@ -36,6 +36,25 @@ const FlavorSection = () => {
             ease: "none",
         }, 0);
 
+        // Parallax depth layers motion
+        tl.to(".depth-back", {
+            yPercent: -25,
+            scale: 1.25,
+            ease: "none",
+        }, 0);
+
+        tl.to(".depth-mid", {
+            yPercent: -12,
+            scale: 1.12,
+            ease: "none",
+        }, 0);
+
+        tl.to(".depth-front", {
+            yPercent: -6,
+            scale: 1.08,
+            ease: "none",
+        }, 0);
+
         flavorlists.forEach((_, i) => {
             if (i === 0) return;
 
@@ -43,6 +62,9 @@ const FlavorSection = () => {
             const curr = `.fp-${i}`;
             const currBottle = `.fp-${i} .product-bottle`;
             const currCaption = `.fp-${i} .product-caption`;
+            const currBack = `.fp-${i} .depth-back`;
+            const currMid = `.fp-${i} .depth-mid`;
+            const currFront = `.fp-${i} .floor-shadow`;
 
             tl.addLabel(`step-${i}`)
                 .to(prev, {
@@ -72,21 +94,54 @@ const FlavorSection = () => {
                 .fromTo(currBottle, {
                     yPercent: 12,
                     rotate: -4,
+                    translateZ: 80,
                 }, {
                     yPercent: 0,
                     rotate: 0,
+                    translateZ: 60,
                     duration: 0.7,
                     ease: "power3.out",
                 }, `step-${i}`)
                 .fromTo(currCaption, {
                     opacity: 0,
                     yPercent: 30,
+                    translateZ: 100,
                 }, {
                     opacity: 1,
                     yPercent: 0,
+                    translateZ: 80,
                     duration: 0.4,
                     ease: "power2.out",
-                }, `step-${i}+=0.2`);
+                }, `step-${i}+=0.2`)
+                .fromTo(currBack, {
+                    yPercent: -25,
+                    scale: 1.25,
+                    translateZ: -120,
+                }, {
+                    yPercent: 0,
+                    scale: 1,
+                    translateZ: -120,
+                    duration: 0.8,
+                    ease: "power2.out",
+                }, `step-${i}`)
+                .fromTo(currMid, {
+                    yPercent: -12,
+                    scale: 1.12,
+                }, {
+                    yPercent: 0,
+                    scale: 1,
+                    duration: 0.8,
+                    ease: "power2.out",
+                }, `step-${i}`)
+                .fromTo(currFront, {
+                    yPercent: -6,
+                    scale: 1.08,
+                }, {
+                    yPercent: 0,
+                    scale: 1,
+                    duration: 0.7,
+                    ease: "power2.out",
+                }, `step-${i}`);
         });
 
         const refreshHandle = setTimeout(() => ScrollTrigger.refresh(), 250);
