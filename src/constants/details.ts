@@ -11,12 +11,19 @@ interface Flavor {
     name: string;
     color: string;
     rotation: string;
-    // Optional: manually specify image filenames (in assets/images/)
-    // Falls back to `${color}-bg.svg`, `${color}-drink.webp`, `${color}-elements.webp`
     bgImage?: string;
     drinkImage?: string;
     elementsImage?: string;
     textColor?: string;
+    // Perfume profile
+    tagline: string;
+    description: string;
+    topNotes: string[];
+    midNotes: string[];
+    baseNotes: string[];
+    tone: string;
+    accentColor: string;
+    accentGlow: string;
 }
 
 interface Nutrient {
@@ -29,7 +36,7 @@ interface Card {
     rotation: string;
     name: string;
     img: string;
-    translation?: string; // optional since some cards don’t have it
+    translation?: string;
 }
 
 // Flavor list (S1CK Scent Collection)
@@ -41,6 +48,14 @@ const flavorlists: Flavor[] = [
         bgImage: "lt-bg.jpeg",
         drinkImage: "lt.png",
         elementsImage: "lt-elements.png",
+        tagline: "Dangerously Addictive",
+        description: "A dark amber elixir that commands the room. Warm, seductive, and absolutely irresistible.",
+        topNotes: ["Bergamot", "Pink Pepper", "Cardamom"],
+        midNotes: ["Oud Wood", "Rose Absolute", "Saffron"],
+        baseNotes: ["Amber", "Musk", "Vanilla"],
+        tone: "Warm & Seductive",
+        accentColor: "#E89A3C",
+        accentGlow: "rgba(232,154,60,0.35)",
     },
     {
         name: "Liquid Silver",
@@ -50,6 +65,14 @@ const flavorlists: Flavor[] = [
         drinkImage: "ls.png",
         elementsImage: "ls-elements.png",
         textColor: "text-black",
+        tagline: "Elegance Refined",
+        description: "Cool metallic sophistication meets clean freshness. The scent of quiet confidence.",
+        topNotes: ["Silver Birch", "Aldehydes", "Juniper"],
+        midNotes: ["Iris", "Violet Leaf", "Metallic Accord"],
+        baseNotes: ["White Musk", "Cedarwood", "Ambroxan"],
+        tone: "Cool & Sophisticated",
+        accentColor: "#B0BCC9",
+        accentGlow: "rgba(176,188,201,0.35)",
     },
     {
         name: "Alpha Q",
@@ -58,6 +81,14 @@ const flavorlists: Flavor[] = [
         bgImage: "aq-bg.jpeg",
         drinkImage: "aq.png",
         elementsImage: "aq-elements.png",
+        tagline: "Unmistakably Bold",
+        description: "An aquatic powerhouse with electric depth. For those who lead, not follow.",
+        topNotes: ["Sea Salt", "Ozone", "Grapefruit"],
+        midNotes: ["Blue Lotus", "Geranium", "Marine Accord"],
+        baseNotes: ["Driftwood", "Vetiver", "Tonka Bean"],
+        tone: "Fresh & Powerful",
+        accentColor: "#3D7BFF",
+        accentGlow: "rgba(61,123,255,0.35)",
     },
     {
         name: "Avant-Garde",
@@ -66,6 +97,14 @@ const flavorlists: Flavor[] = [
         bgImage: "ag-bg.jpeg",
         drinkImage: "avant-garde.png",
         elementsImage: "ag-elements.png",
+        tagline: "Break Every Rule",
+        description: "Fiery spice collides with smoky intrigue. Unapologetically different.",
+        topNotes: ["Blood Orange", "Cinnamon", "Ginger"],
+        midNotes: ["Tobacco Leaf", "Jasmine", "Black Pepper"],
+        baseNotes: ["Sandalwood", "Leather", "Patchouli"],
+        tone: "Spicy & Rebellious",
+        accentColor: "#E85A1F",
+        accentGlow: "rgba(232,90,31,0.35)",
     },
     {
         name: "Le-Toxique Oil",
@@ -75,6 +114,14 @@ const flavorlists: Flavor[] = [
         drinkImage: "ltoil.png",
         elementsImage: "ltoil-elements.png",
         textColor: "text-black",
+        tagline: "Pure Concentration",
+        description: "The purest form of Le Toxiquè. Oil-based for skin-hugging longevity that evolves all day.",
+        topNotes: ["Bergamot", "Saffron", "Elemi"],
+        midNotes: ["Oud", "Rose de Mai", "Amber"],
+        baseNotes: ["Musk", "Benzoin", "Castoreum"],
+        tone: "Rich & Intimate",
+        accentColor: "#D9C896",
+        accentGlow: "rgba(217,200,150,0.35)",
     },
     {
         name: "Arcane",
@@ -83,6 +130,14 @@ const flavorlists: Flavor[] = [
         bgImage: "arc-bg.jpeg",
         drinkImage: "arc.png",
         elementsImage: "arc-elements.png",
+        tagline: "Into The Darkness",
+        description: "Mysterious. Magnetic. Midnight incarnate. A scent that speaks in whispers.",
+        topNotes: ["Black Truffle", "Incense", "Absinthe"],
+        midNotes: ["Dark Rose", "Labdanum", "Myrrh"],
+        baseNotes: ["Black Amber", "Oud Noir", "Suede"],
+        tone: "Dark & Mysterious",
+        accentColor: "#8B7AE8",
+        accentGlow: "rgba(139,122,232,0.35)",
     },
 ];
 

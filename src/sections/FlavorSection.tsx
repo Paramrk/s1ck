@@ -18,130 +18,244 @@ const FlavorSection = () => {
         if (!sectionRef.current) return;
 
         const productCount = flavorlists.length;
-        const scrollLength = isMob ? productCount * 420 : productCount * 700;
+        const scrollLength = isMob ? productCount * 500 : productCount * 850;
 
         const tl = gsap.timeline({
             scrollTrigger: {
                 trigger: ".flavor-section",
                 start: "top top",
                 end: `+=${scrollLength}`,
-                scrub: 1,
+                scrub: 1.2,
                 pin: true,
             },
         });
 
-        // Subtle background hue shift driven by scroll position
+        // Background hue shift
         tl.to(".flavor-bg-tint", {
             backgroundPosition: "100% 50%",
             ease: "none",
         }, 0);
 
-        // Parallax depth layers motion
-        tl.to(".depth-back", {
-            yPercent: -25,
-            scale: 1.25,
-            ease: "none",
-        }, 0);
+        // Floating detail selectors for each product
+        const floatSelectors = (idx: number) => [
+            `.float-tone-${idx}`,
+            `.float-tagline-${idx}`,
+            `.float-top-notes-${idx}`,
+            `.float-heart-notes-${idx}`,
+            `.float-base-notes-${idx}`,
+            `.float-profile-${idx}`,
+        ];
 
-        tl.to(".depth-mid", {
-            yPercent: -12,
-            scale: 1.12,
-            ease: "none",
-        }, 0);
+        // Connector lines inside each fp panel
+        const connectorSel = (idx: number) => `.fp-${idx} .connector-lines`;
 
-        tl.to(".depth-front", {
-            yPercent: -6,
-            scale: 1.08,
-            ease: "none",
-        }, 0);
-
-        flavorlists.forEach((_, i) => {
+        flavorlists.forEach((flavor, i) => {
             if (i === 0) return;
 
             const prev = `.fp-${i - 1}`;
             const curr = `.fp-${i}`;
             const currBottle = `.fp-${i} .product-bottle`;
             const currCaption = `.fp-${i} .product-caption`;
-            const currBack = `.fp-${i} .depth-back`;
-            const currMid = `.fp-${i} .depth-mid`;
-            const currFront = `.fp-${i} .floor-shadow`;
+            const currGlow = `.fp-${i} .carousel-glow`;
+
+            // Mobile
+            const prevDetailMobile = `.detail-mobile-${i - 1}`;
+            const currDetailMobile = `.detail-mobile-${i}`;
+
+            // Dots
+            const prevDot = `.carousel-dot-${i - 1}`;
+            const currDot = `.carousel-dot-${i}`;
+
+            // Previous floating details
+            const prevFloats = floatSelectors(i - 1);
+            const currFloats = floatSelectors(i);
+            const prevConnectors = connectorSel(i - 1);
+            const currConnectors = connectorSel(i);
 
             tl.addLabel(`step-${i}`)
+
+                // ═══ EXIT previous product ═══
                 .to(prev, {
                     opacity: 0,
-                    scale: 0.78,
-                    rotateY: -30,
-                    yPercent: -8,
-                    filter: "blur(8px)",
-                    duration: 0.55,
+                    scale: 0.7,
+                    rotateY: -40,
+                    yPercent: -12,
+                    filter: "blur(14px)",
+                    duration: 0.6,
                     ease: "power2.inOut",
                 }, `step-${i}`)
+
+                // Float OUT — each detail drifts away from center with fade
+                .to(prevFloats[0], { // tone: top-left → drifts up-left
+                    opacity: 0, x: -50, y: -30,
+                    duration: 0.35, ease: "power2.in",
+                }, `step-${i}`)
+                .to(prevFloats[1], { // tagline: top-right → drifts up-right
+                    opacity: 0, x: 50, y: -30,
+                    duration: 0.35, ease: "power2.in",
+                }, `step-${i}`)
+                .to(prevFloats[2], { // top notes: mid-left → drifts left
+                    opacity: 0, x: -60,
+                    duration: 0.3, ease: "power2.in",
+                }, `step-${i}+=0.02`)
+                .to(prevFloats[3], { // heart notes: mid-right → drifts right
+                    opacity: 0, x: 60,
+                    duration: 0.3, ease: "power2.in",
+                }, `step-${i}+=0.02`)
+                .to(prevFloats[4], { // base notes: bottom-left → drifts down-left
+                    opacity: 0, x: -50, y: 30,
+                    duration: 0.35, ease: "power2.in",
+                }, `step-${i}+=0.03`)
+                .to(prevFloats[5], { // profile: bottom-right → drifts down-right
+                    opacity: 0, x: 50, y: 30,
+                    duration: 0.35, ease: "power2.in",
+                }, `step-${i}+=0.03`)
+
+                // Connector lines fade out
+                .to(prevConnectors, {
+                    opacity: 0, duration: 0.25, ease: "power2.in",
+                }, `step-${i}`)
+
+                // Mobile detail out
+                .to(prevDetailMobile, {
+                    opacity: 0, y: 25, duration: 0.25, ease: "power2.in",
+                }, `step-${i}`)
+
+                // Dot shrink
+                .to(prevDot, {
+                    height: 6,
+                    backgroundColor: "rgba(17,17,17,0.15)",
+                    duration: 0.3,
+                }, `step-${i}`)
+
+                // ═══ ENTER current product ═══
                 .fromTo(curr, {
                     opacity: 0,
-                    scale: 1.18,
-                    rotateY: 32,
-                    yPercent: 6,
-                    filter: "blur(10px)",
+                    scale: 1.25,
+                    rotateY: 40,
+                    yPercent: 10,
+                    filter: "blur(16px)",
                 }, {
                     opacity: 1,
                     scale: 1,
                     rotateY: 0,
                     yPercent: 0,
                     filter: "blur(0px)",
-                    duration: 0.6,
+                    duration: 0.65,
                     ease: "power2.out",
                 }, `step-${i}`)
+
+                // Bottle 3D entrance
                 .fromTo(currBottle, {
-                    yPercent: 12,
-                    rotate: -4,
-                    translateZ: 80,
-                }, {
-                    yPercent: 0,
-                    rotate: 0,
-                    translateZ: 60,
-                    duration: 0.7,
-                    ease: "power3.out",
-                }, `step-${i}`)
-                .fromTo(currCaption, {
-                    opacity: 0,
-                    yPercent: 30,
-                    translateZ: 100,
-                }, {
-                    opacity: 1,
-                    yPercent: 0,
-                    translateZ: 80,
-                    duration: 0.4,
-                    ease: "power2.out",
-                }, `step-${i}+=0.2`)
-                .fromTo(currBack, {
-                    yPercent: -25,
-                    scale: 1.25,
-                    translateZ: -120,
-                }, {
-                    yPercent: 0,
-                    scale: 1,
-                    translateZ: -120,
-                    duration: 0.8,
-                    ease: "power2.out",
-                }, `step-${i}`)
-                .fromTo(currMid, {
-                    yPercent: -12,
+                    yPercent: 18,
+                    rotate: -6,
                     scale: 1.12,
                 }, {
                     yPercent: 0,
+                    rotate: 0,
                     scale: 1,
-                    duration: 0.8,
+                    duration: 0.75,
+                    ease: "power3.out",
+                }, `step-${i}`)
+
+                // Glow bloom
+                .fromTo(currGlow, {
+                    scale: 0.4, opacity: 0,
+                }, {
+                    scale: 1, opacity: 1,
+                    duration: 0.85,
                     ease: "power2.out",
                 }, `step-${i}`)
-                .fromTo(currFront, {
-                    yPercent: -6,
-                    scale: 1.08,
+
+                // Caption rise
+                .fromTo(currCaption, {
+                    opacity: 0, yPercent: 45,
                 }, {
-                    yPercent: 0,
-                    scale: 1,
-                    duration: 0.7,
+                    opacity: 1, yPercent: 0,
+                    duration: 0.45,
                     ease: "power2.out",
-                }, `step-${i}`);
+                }, `step-${i}+=0.2`)
+
+                // ═══ Float IN — details drift toward their positions from center ═══
+                .fromTo(currFloats[0], { // tone: from center → top-left
+                    opacity: 0, x: 50, y: 40,
+                }, {
+                    opacity: 1, x: 0, y: 0,
+                    duration: 0.45, ease: "power3.out",
+                }, `step-${i}+=0.15`)
+                .fromTo(currFloats[1], { // tagline: from center → top-right
+                    opacity: 0, x: -50, y: 40,
+                }, {
+                    opacity: 1, x: 0, y: 0,
+                    duration: 0.45, ease: "power3.out",
+                }, `step-${i}+=0.18`)
+                .fromTo(currFloats[2], { // top notes: from center → mid-left
+                    opacity: 0, x: 60, y: 15,
+                }, {
+                    opacity: 1, x: 0, y: 0,
+                    duration: 0.4, ease: "power3.out",
+                }, `step-${i}+=0.22`)
+                .fromTo(currFloats[3], { // heart notes: from center → mid-right
+                    opacity: 0, x: -60, y: 15,
+                }, {
+                    opacity: 1, x: 0, y: 0,
+                    duration: 0.4, ease: "power3.out",
+                }, `step-${i}+=0.22`)
+                .fromTo(currFloats[4], { // base notes: from center → bottom-left
+                    opacity: 0, x: 50, y: -35,
+                }, {
+                    opacity: 1, x: 0, y: 0,
+                    duration: 0.45, ease: "power3.out",
+                }, `step-${i}+=0.26`)
+                .fromTo(currFloats[5], { // profile: from center → bottom-right
+                    opacity: 0, x: -50, y: -35,
+                }, {
+                    opacity: 1, x: 0, y: 0,
+                    duration: 0.45, ease: "power3.out",
+                }, `step-${i}+=0.28`)
+
+                // Connector lines fade in
+                .fromTo(currConnectors, {
+                    opacity: 0,
+                }, {
+                    opacity: 1,
+                    duration: 0.6,
+                    ease: "power2.out",
+                }, `step-${i}+=0.3`)
+
+                // Mobile detail entrance
+                .fromTo(currDetailMobile, {
+                    opacity: 0, y: 30,
+                }, {
+                    opacity: 1, y: 0,
+                    duration: 0.4,
+                    ease: "power2.out",
+                }, `step-${i}+=0.25`)
+
+                // Profile bars fill
+                .to(`.profile-bar-${i}`, {
+                    width: "auto",
+                    duration: 0.01,
+                    onComplete: () => {
+                        document.querySelectorAll(`.profile-bar-${i}`).forEach((el) => {
+                            const parent = el.closest('[class*="float-profile"]');
+                            if (parent) {
+                                const bars = parent.querySelectorAll(`[class*="profile-bar"]`);
+                                const widths = [85, 92, 78];
+                                bars.forEach((bar, bi) => {
+                                    (bar as HTMLElement).style.width = `${widths[bi]}%`;
+                                });
+                            }
+                        });
+                    },
+                }, `step-${i}+=0.35`)
+
+                // Dot expand
+                .to(currDot, {
+                    height: 24,
+                    backgroundColor: flavor.accentColor,
+                    duration: 0.3,
+                }, `step-${i}+=0.1`);
         });
 
         const refreshHandle = setTimeout(() => ScrollTrigger.refresh(), 250);
@@ -192,18 +306,18 @@ const FlavorSection = () => {
                 Unlock 10% Off
             </div>
 
-            {/* Main editorial layout — left: title, right: cinematic product */}
-            <div className="relative z-10 h-screen w-full flex flex-col lg:flex-row pt-14 md:pt-16 lg:pt-20 pb-20 md:pb-24">
-                <div className="lg:w-1/2 w-full lg:h-full flex items-center justify-start px-6 md:px-12 lg:pl-14 xl:pl-20 2xl:pl-28">
+            {/* Main editorial layout — mobile: title on top + carousel below | desktop: side by side */}
+            <div className="relative z-10 h-screen w-full flex flex-col lg:flex-row pt-10 md:pt-16 lg:pt-20 pb-14 md:pb-24">
+                <div className="lg:w-[35%] w-full flex items-center justify-center lg:justify-start px-4 md:px-12 lg:pl-14 xl:pl-20 2xl:pl-28 py-2 lg:py-0 lg:h-full shrink-0">
                     <FlavorTitle />
                 </div>
-                <div className="lg:w-1/2 w-full flex-1 lg:h-full relative">
+                <div className="lg:w-[65%] w-full flex-1 lg:h-full relative min-h-0">
                     <FlavorSlider />
                 </div>
             </div>
 
             {/* CTA */}
-            <div className="absolute md:bottom-[6%] bottom-[4%] left-1/2 -translate-x-1/2 z-40 flex justify-center">
+            <div className="absolute md:bottom-[6%] bottom-[2%] left-1/2 -translate-x-1/2 z-40 flex justify-center">
                 <button
                     type="button"
                     className="text-[0.7rem] md:text-sm rounded-full bg-charcoal text-cream px-8 md:px-10 md:py-4 py-3 cursor-pointer shadow-[0_12px_32px_rgba(0,0,0,0.18)] hover:bg-sick-red transition-all tracking-[0.25em] uppercase"

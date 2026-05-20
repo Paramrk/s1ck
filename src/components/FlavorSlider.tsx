@@ -11,26 +11,6 @@ const getImage = (fileName?: string): string | undefined => {
     return images[key]?.default;
 };
 
-// Subtle radial tint behind each bottle so the section feels alive as products rotate
-const tints: string[] = [
-    "rgba(232,154,60,0.18)",   // Le Toxiquè - amber
-    "rgba(176,188,201,0.22)",  // Liquid Silver - pearl
-    "rgba(61,123,255,0.18)",   // Alpha Q - blue
-    "rgba(232,90,31,0.20)",    // Avant-Garde - orange
-    "rgba(217,200,150,0.22)",  // Le-Toxique Oil - champagne
-    "rgba(26,26,36,0.22)",     // Arcane - smoke
-];
-
-// Parallax depth layers for immersive 3D effect
-const depthLayers = [
-    { translateZ: -80, scale: 0.85 },
-    { translateZ: -40, scale: 0.92 },
-    { translateZ: 0, scale: 1 },
-    { translateZ: 40, scale: 1.08 },
-    { translateZ: 80, scale: 1.15 },
-];
-
-
 const visibleFlavors = flavorlists.filter((flavor) => {
     const hasName = flavor.name.trim().length > 0;
     const hasAsset = [flavor.bgImage, flavor.elementsImage, flavor.drinkImage]
@@ -40,68 +20,254 @@ const visibleFlavors = flavorlists.filter((flavor) => {
 
 const FlavorSlider = () => {
     return (
-        <div 
-            className="relative h-full w-full flex items-center justify-center parallax-container"
-            style={{ 
-                perspective: "1800px",
-                perspectiveOrigin: "50% 50%",
+        <div
+            className="flavor-carousel-stage relative h-full w-full flex items-center justify-center"
+            style={{
+                perspective: "2200px",
+                perspectiveOrigin: "50% 48%",
             }}
         >
             {visibleFlavors.map((flavor, i) => {
                 const drinkSrc = getImage(flavor.drinkImage);
-                const tint = tints[i % tints.length];
                 const isFirst = i === 0;
-                const depth = depthLayers[i % depthLayers.length];
+                const vis = isFirst ? 1 : 0;
 
                 return (
                     <div
                         key={flavor.name}
-                        className={`fp-${i} absolute inset-0 flex items-center justify-center parallax-layer`}
+                        className={`fp-${i} absolute inset-0 flex items-center justify-center`}
                         style={{
                             opacity: isFirst ? 1 : 0,
                             transformStyle: "preserve-3d",
                             willChange: "transform, opacity, filter",
-                            transform: `translateZ(${depth.translateZ}px) scale(${depth.scale})`,
                         }}
                     >
-                        {/* Background depth layer - furthest */}
+                        {/* ─── Ambient glow behind bottle ─── */}
                         <div
-                            className="absolute inset-0 pointer-events-none depth-back"
+                            className="carousel-glow absolute pointer-events-none"
                             style={{
-                                transform: "translateZ(-120px) scale(1.15)",
-                                opacity: 0.4,
+                                width: "70%",
+                                height: "70%",
+                                borderRadius: "50%",
+                                background: `radial-gradient(circle, ${flavor.accentGlow} 0%, transparent 70%)`,
+                                filter: "blur(80px)",
+                                zIndex: 0,
+                            }}
+                        />
+
+                        {/* ═══════════════════════════════════════════════════
+                            FLOATING DETAIL ELEMENTS — positioned around bottle
+                            ═══════════════════════════════════════════════════ */}
+
+                        {/* ── FLOAT: Top-Left → Tone badge ── */}
+                        <div
+                            className={`float-tone-${i} floating-detail absolute z-20 hidden lg:block`}
+                            style={{
+                                top: "12%",
+                                left: "4%",
+                                opacity: vis,
+                                fontFamily: "Syne, sans-serif",
                             }}
                         >
-                            <div 
-                                className="w-full h-full"
-                                style={{
-                                    background: `radial-gradient(circle at 30% 40%, ${tint.replace('0.18', '0.12').replace('0.22', '0.14')}, transparent 70%)`,
-                                }}
-                            />
+                            <div className="flex items-center gap-2.5 mb-2">
+                                <span
+                                    className="inline-block w-2.5 h-2.5 rounded-full"
+                                    style={{ backgroundColor: flavor.accentColor }}
+                                />
+                                <span
+                                    className="text-xs uppercase tracking-[0.3em] text-stone font-semibold"
+                                >
+                                    {flavor.tone}
+                                </span>
+                            </div>
+                            <p className="text-[0.7rem] text-charcoal/50 tracking-wider leading-relaxed max-w-[200px]">
+                                {flavor.description}
+                            </p>
                         </div>
 
-                        {/* Tinted spotlight behind bottle - main layer */}
+                        {/* ── FLOAT: Top-Right → Tagline ── */}
                         <div
-                            className="absolute inset-0 pointer-events-none depth-mid"
+                            className={`float-tagline-${i} floating-detail absolute z-20 hidden lg:block text-right`}
                             style={{
-                                background: `radial-gradient(circle at 50% 58%, ${tint}, transparent 58%)`,
-                                transform: "translateZ(-20px)",
+                                top: "10%",
+                                right: "4%",
+                                opacity: vis,
+                                fontFamily: "Syne, sans-serif",
                             }}
-                        />
+                        >
+                            <p
+                                className="text-[0.65rem] uppercase tracking-[0.3em] mb-1.5"
+                                style={{ color: flavor.accentColor, fontWeight: 600 }}
+                            >
+                                Signature
+                            </p>
+                            <p className="text-lg text-charcoal font-bold italic leading-snug tracking-wide">
+                                "{flavor.tagline}"
+                            </p>
+                        </div>
 
-                        {/* Soft floor shadow under the bottle - closer layer */}
+                        {/* ── FLOAT: Mid-Left → Top Notes ── */}
                         <div
-                            className="floor-shadow absolute bottom-[10%] md:bottom-[14%] left-1/2 -translate-x-1/2 pointer-events-none rounded-full depth-front"
+                            className={`float-top-notes-${i} floating-detail absolute z-20 hidden lg:block text-right`}
                             style={{
-                                width: "38%",
-                                height: "24px",
-                                background: "radial-gradient(ellipse, rgba(0,0,0,0.22) 0%, rgba(0,0,0,0) 70%)",
-                                filter: "blur(2px)",
-                                transform: "translateZ(30px)",
+                                top: "38%",
+                                left: "2%",
+                                opacity: vis,
+                                fontFamily: "Syne, sans-serif",
                             }}
-                        />
+                        >
+                            <p
+                                className="text-[0.6rem] uppercase tracking-[0.3em] mb-1.5"
+                                style={{ color: flavor.accentColor, fontWeight: 600 }}
+                            >
+                                Top Notes
+                            </p>
+                            {flavor.topNotes.map((n) => (
+                                <p key={n} className="text-sm text-charcoal/65 leading-[1.9] tracking-wide font-medium">
+                                    {n}
+                                </p>
+                            ))}
+                        </div>
 
-                        {/* Bottle - foreground layer */}
+                        {/* ── FLOAT: Mid-Right → Heart Notes ── */}
+                        <div
+                            className={`float-heart-notes-${i} floating-detail absolute z-20 hidden lg:block`}
+                            style={{
+                                top: "36%",
+                                right: "3%",
+                                opacity: vis,
+                                fontFamily: "Syne, sans-serif",
+                            }}
+                        >
+                            <p
+                                className="text-[0.6rem] uppercase tracking-[0.3em] mb-1.5"
+                                style={{ color: flavor.accentColor, fontWeight: 600 }}
+                            >
+                                Heart Notes
+                            </p>
+                            {flavor.midNotes.map((n) => (
+                                <p key={n} className="text-sm text-charcoal/65 leading-[1.9] tracking-wide font-medium">
+                                    {n}
+                                </p>
+                            ))}
+                        </div>
+
+                        {/* ── FLOAT: Bottom-Left → Base Notes ── */}
+                        <div
+                            className={`float-base-notes-${i} floating-detail absolute z-20 hidden lg:block text-right`}
+                            style={{
+                                bottom: "22%",
+                                left: "5%",
+                                opacity: vis,
+                                fontFamily: "Syne, sans-serif",
+                            }}
+                        >
+                            <p
+                                className="text-[0.6rem] uppercase tracking-[0.3em] mb-1.5"
+                                style={{ color: flavor.accentColor, fontWeight: 600 }}
+                            >
+                                Base Notes
+                            </p>
+                            {flavor.baseNotes.map((n) => (
+                                <p key={n} className="text-sm text-charcoal/65 leading-[1.9] tracking-wide font-medium">
+                                    {n}
+                                </p>
+                            ))}
+                        </div>
+
+                        {/* ── FLOAT: Bottom-Right → Scent Profile Bars ── */}
+                        <div
+                            className={`float-profile-${i} floating-detail absolute z-20 hidden lg:block`}
+                            style={{
+                                bottom: "18%",
+                                right: "3%",
+                                width: "180px",
+                                opacity: vis,
+                                fontFamily: "Syne, sans-serif",
+                            }}
+                        >
+                            <p
+                                className="text-[0.6rem] uppercase tracking-[0.3em] mb-3"
+                                style={{ color: flavor.accentColor, fontWeight: 600 }}
+                            >
+                                Scent Profile
+                            </p>
+                            <div className="flex flex-col gap-2.5">
+                                {[
+                                    { label: "Intensity", value: 85 },
+                                    { label: "Longevity", value: 92 },
+                                    { label: "Sillage", value: 78 },
+                                ].map((stat) => (
+                                    <div key={stat.label}>
+                                        <div className="flex justify-between text-[0.6rem] text-charcoal/50 uppercase tracking-widest mb-1">
+                                            <span>{stat.label}</span>
+                                            <span>{stat.value}%</span>
+                                        </div>
+                                        <div className="w-full h-[3px] bg-charcoal/8 rounded-full overflow-hidden">
+                                            <div
+                                                className={`profile-bar-${i} h-full rounded-full`}
+                                                style={{
+                                                    width: isFirst ? `${stat.value}%` : "0%",
+                                                    backgroundColor: flavor.accentColor,
+                                                    transition: "width 1s ease-out",
+                                                }}
+                                            />
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* ── Decorative connector lines — thin radial lines from bottle to text ── */}
+                        <svg className="floating-detail connector-lines absolute inset-0 w-full h-full pointer-events-none z-10 hidden lg:block" style={{ opacity: vis }}>
+                            {/* Top-left connector */}
+                            <line x1="38%" y1="30%" x2="22%" y2="20%" stroke={flavor.accentColor} strokeWidth="0.5" opacity="0.2" />
+                            {/* Top-right connector */}
+                            <line x1="62%" y1="28%" x2="78%" y2="18%" stroke={flavor.accentColor} strokeWidth="0.5" opacity="0.2" />
+                            {/* Mid-left connector */}
+                            <line x1="36%" y1="48%" x2="18%" y2="46%" stroke={flavor.accentColor} strokeWidth="0.5" opacity="0.15" />
+                            {/* Mid-right connector */}
+                            <line x1="64%" y1="46%" x2="82%" y2="44%" stroke={flavor.accentColor} strokeWidth="0.5" opacity="0.15" />
+                            {/* Bottom-left connector */}
+                            <line x1="40%" y1="68%" x2="22%" y2="74%" stroke={flavor.accentColor} strokeWidth="0.5" opacity="0.2" />
+                            {/* Bottom-right connector */}
+                            <line x1="60%" y1="70%" x2="80%" y2="76%" stroke={flavor.accentColor} strokeWidth="0.5" opacity="0.2" />
+                        </svg>
+
+                        {/* ─── MOBILE DETAIL: Above caption ─── */}
+                        <div
+                            className={`detail-mobile-${i} absolute z-30 lg:hidden left-0 right-0 flex flex-col items-center gap-1 px-5`}
+                            style={{
+                                fontFamily: "Syne, sans-serif",
+                                opacity: vis,
+                                bottom: "20%",
+                            }}
+                        >
+                            <div className="flex items-center gap-1.5 mb-0.5">
+                                <span
+                                    className="inline-block w-1.5 h-1.5 rounded-full"
+                                    style={{ backgroundColor: flavor.accentColor }}
+                                />
+                                <span className="text-[0.5rem] uppercase tracking-[0.18em] text-stone font-semibold">
+                                    {flavor.tone}
+                                </span>
+                            </div>
+                            <p className="text-[0.55rem] text-charcoal/50 text-center tracking-wide max-w-[260px] leading-relaxed">
+                                {flavor.description}
+                            </p>
+                            <div className="flex gap-2.5 mt-0.5 flex-wrap justify-center">
+                                {[...flavor.topNotes.slice(0, 2)].map((n) => (
+                                    <span key={n} className="text-[0.45rem] uppercase tracking-[0.15em] text-stone/50 font-medium">
+                                        {n}
+                                    </span>
+                                ))}
+                                <span className="text-[0.45rem] uppercase tracking-[0.15em]" style={{ color: flavor.accentColor }}>
+                                    +{flavor.topNotes.length + flavor.midNotes.length + flavor.baseNotes.length - 2} more
+                                </span>
+                            </div>
+                        </div>
+
+                        {/* ─── BOTTLE ─── */}
                         {drinkSrc && (
                             <img
                                 src={drinkSrc}
@@ -109,42 +275,71 @@ const FlavorSlider = () => {
                                 loading={isFirst ? "eager" : "lazy"}
                                 decoding="async"
                                 draggable={false}
-                                className="product-bottle relative z-20 h-[58%] md:h-[78%] max-h-[640px] object-contain rounded-2xl md:rounded-3xl"
+                                className="product-bottle relative z-10 h-[38%] md:h-[65%] max-h-[540px] object-contain"
                                 style={{
-                                    filter: "drop-shadow(0 22px 30px rgba(0,0,0,0.18)) drop-shadow(0 4px 8px rgba(0,0,0,0.12))",
-                                    transform: "translateZ(60px)",
+                                    filter: "drop-shadow(0 30px 60px rgba(0,0,0,0.28)) drop-shadow(0 10px 20px rgba(0,0,0,0.14))",
                                     willChange: "transform",
                                 }}
                             />
                         )}
 
-                        {/* Caption - top layer */}
-                        <div 
-                            className="product-caption absolute z-30 bottom-[3%] md:bottom-[7%] left-1/2 -translate-x-1/2 text-center w-[92%] md:w-[85%]"
-                            style={{ transform: "translateZ(80px)" }}
+                        {/* ─── BOTTOM CAPTION: Name & Counter ─── */}
+                        <div
+                            className="product-caption absolute z-30 bottom-[7%] md:bottom-[5%] left-1/2 -translate-x-1/2 text-center w-[92%] md:w-[85%]"
                         >
                             <p
-                                className="text-[0.42rem] md:text-[0.65rem] uppercase tracking-[0.3em] md:tracking-[0.4em] text-stone mb-0.5 md:mb-1"
+                                className="text-[0.45rem] md:text-[0.65rem] uppercase tracking-[0.35em] text-stone mb-0.5"
                                 style={{ fontFamily: "Syne, sans-serif" }}
                             >
                                 S1CK Signature
                             </p>
                             <h3
-                                className="text-charcoal text-[0.85rem] md:text-xl tracking-[0.03em] md:tracking-[0.05em] leading-tight"
+                                className="text-charcoal text-lg md:text-3xl tracking-[0.03em] leading-tight"
                                 style={{ fontFamily: "Syne, sans-serif", fontWeight: 700 }}
                             >
                                 {flavor.name}
                             </h3>
                             <p
-                                className="text-[0.4rem] md:text-[0.55rem] mt-1 md:mt-2 text-taupe tracking-[0.25em] md:tracking-[0.3em] uppercase"
-                                style={{ fontFamily: "Syne, sans-serif" }}
+                                className="text-[0.45rem] md:text-[0.6rem] mt-1 md:mt-2 tracking-[0.3em] uppercase"
+                                style={{
+                                    fontFamily: "Syne, sans-serif",
+                                    color: flavor.accentColor,
+                                }}
                             >
                                 {String(i + 1).padStart(2, "0")} / {String(visibleFlavors.length).padStart(2, "0")}
                             </p>
                         </div>
+
+                        {/* ─── Floor shadow ─── */}
+                        <div
+                            className="floor-shadow absolute bottom-[8%] md:bottom-[12%] left-1/2 -translate-x-1/2 pointer-events-none rounded-full"
+                            style={{
+                                width: "40%",
+                                height: "20px",
+                                background: "radial-gradient(ellipse, rgba(0,0,0,0.18) 0%, rgba(0,0,0,0) 70%)",
+                                filter: "blur(4px)",
+                            }}
+                        />
                     </div>
                 );
             })}
+
+            {/* ─── Scroll progress dots ─── */}
+            <div className="carousel-dots absolute right-2 md:right-8 top-1/2 -translate-y-1/2 z-40 flex flex-col gap-1.5 md:gap-2">
+                {visibleFlavors.map((flavor, i) => (
+                    <div
+                        key={flavor.name}
+                        className={`carousel-dot-${i}`}
+                        style={{
+                            width: "6px",
+                            height: i === 0 ? "24px" : "6px",
+                            borderRadius: "3px",
+                            backgroundColor: i === 0 ? flavor.accentColor : "rgba(17,17,17,0.15)",
+                            transition: "all 0.5s ease",
+                        }}
+                    />
+                ))}
+            </div>
         </div>
     );
 };

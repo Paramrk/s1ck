@@ -4,7 +4,7 @@ import { SplitText } from "gsap/all";
 import { useMediaQuery } from "react-responsive";
 import { getImage } from '../utils/media';
 
-const heroBgVid = "https://res.cloudinary.com/djlztb4dt/video/upload/v17792994";
+const heroBgVid = "assets/videos/hero-bg-3.mp4";
 
 const HeroSection = () => {
 
@@ -21,7 +21,7 @@ const HeroSection = () => {
 
         const buildIntro = (isMobile: boolean) => {
             document.fonts.ready.then(() => {
-                const titleSplit = SplitText.create(".hero-title", { type: "chars" });
+                const titleSplit = SplitText.create(".hero-title", { type: "words,chars" });
 
                 const tl = gsap.timeline({ delay: 1 });
 

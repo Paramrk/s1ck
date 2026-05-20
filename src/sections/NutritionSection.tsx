@@ -506,18 +506,18 @@ const compoundItems: { icon: string; label: string }[] = [
 const CompoundBar = () => (
     <div className="nut-compound-bar relative mt-2 md:mt-6">
         <div
-            className="bg-warm-white border border-ivory rounded-2xl md:rounded-full px-3 md:px-6 py-4 md:py-5 flex flex-wrap md:flex-nowrap items-center justify-between gap-y-3"
+            className="bg-warm-white border border-ivory rounded-2xl md:rounded-full px-3 md:px-6 py-4 md:py-5 flex flex-wrap md:flex-nowrap items-center justify-center md:justify-between gap-x-4 gap-y-3"
             style={{ boxShadow: "0 8px 30px rgba(28,26,24,0.06)" }}
         >
             {compoundItems.map((c, i) => (
-                <div key={c.label} className="flex items-center md:flex-1">
-                    <div className="nut-compound flex items-center gap-2 md:gap-2.5 md:flex-1 min-w-[42%] md:min-w-0 justify-center md:px-2">
+                <div key={c.label} className="flex items-center justify-center w-[45%] md:w-auto md:flex-1">
+                    <div className="nut-compound flex items-center gap-2 md:gap-2.5 justify-center md:px-2">
                         <i
                             className={`${c.icon} text-sick-red text-base md:text-lg shrink-0`}
                             aria-hidden="true"
                         />
                         <p
-                            className="text-charcoal text-[0.55rem] md:text-[0.62rem] uppercase tracking-[0.18em] whitespace-nowrap"
+                            className="text-charcoal text-[0.55rem] md:text-[0.62rem] uppercase tracking-[0.18em] text-center"
                             style={{ fontFamily: "Syne, sans-serif", fontWeight: 700 }}
                         >
                             {c.label}

@@ -90,7 +90,7 @@ body::-webkit-scrollbar { display: none; }
         @apply relative bg-cream w-full h-dvh overflow-hidden;
 
         .hero-content {
-            @apply relative z-10 w-full h-full flex flex-col 2xl:justify-center items-center translate-y-4 pt-16 md:translate-y-10 md:pt-32 2xl:pt-0;
+            @apply relative z-10 w-full h-full flex flex-col 2xl:justify-center items-center translate-y-2 pt-28 md:translate-y-10 md:pt-32 2xl:pt-0;
 
             .hero-title {
                 @apply 2xl:text-[5.5rem] md:text-[3.8rem] text-[2rem] uppercase leading-[1.08] tracking-[-0.02em] 2xl:mb-0 mb-1;
@@ -444,60 +444,133 @@ body::-webkit-scrollbar { display: none; }
     transform: translateZ(0);
 }
 
-/* ── 3D Parallax Layers for Flavor Section ───────────────────────────────── */
-.parallax-container {
+/* ── 3D Carousel Flavor Section ──────────────────────────────────────────── */
+.flavor-carousel-stage {
     transform-style: preserve-3d;
-    perspective: 1800px;
-    perspective-origin: 50% 50%;
 }
 
-.parallax-layer {
+.flavor-carousel-stage [class*="fp-"] {
     transform-style: preserve-3d;
     backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
 }
 
-.depth-back {
-    transform: translateZ(-120px) scale(1.15);
+/* Ambient glow pulse */
+.carousel-glow {
+    animation: glowPulse 4s ease-in-out infinite alternate;
 }
 
-.depth-mid {
-    transform: translateZ(0);
+@keyframes glowPulse {
+    0% { opacity: 0.6; transform: scale(0.95); }
+    100% { opacity: 1; transform: scale(1.05); }
 }
 
-.depth-front {
-    transform: translateZ(30px);
+/* Dot navigation */
+.carousel-dots > div {
+    transition: height 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+                background-color 0.5s ease;
+}
+
+/* ── Floating detail elements ──────────────────────────────────────────── */
+.floating-detail {
+    will-change: transform, opacity;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+}
+
+/* Subtle idle float — each element gently bobs at different rates */
+@keyframes floatDrift1 {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-6px); }
+}
+@keyframes floatDrift2 {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(5px); }
+}
+@keyframes floatDrift3 {
+    0%, 100% { transform: translateX(0px); }
+    50% { transform: translateX(-4px); }
+}
+
+.flavor-section [class*="float-tone-"] {
+    animation: floatDrift1 5s ease-in-out infinite;
+}
+.flavor-section [class*="float-tagline-"] {
+    animation: floatDrift2 6s ease-in-out infinite;
+}
+.flavor-section [class*="float-top-notes-"] {
+    animation: floatDrift3 5.5s ease-in-out infinite;
+}
+.flavor-section [class*="float-heart-notes-"] {
+    animation: floatDrift1 6.5s ease-in-out infinite;
+}
+.flavor-section [class*="float-base-notes-"] {
+    animation: floatDrift2 5s ease-in-out infinite;
+}
+.flavor-section [class*="float-profile-"] {
+    animation: floatDrift3 7s ease-in-out infinite;
+}
+
+/* Connector lines */
+.connector-lines line {
+    transition: opacity 0.5s ease;
+}
+
+/* Profile bar transitions */
+[class*="profile-bar-"] {
+    transition: width 0.8s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+}
+
+/* GPU compositor hints for carousel layers */
+.flavor-carousel-stage .product-bottle,
+.flavor-carousel-stage .product-caption,
+.flavor-carousel-stage .carousel-glow,
+.flavor-carousel-stage .floor-shadow {
+    will-change: transform;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
 }
 
 /* Hardware acceleration for mobile performance */
 @media (max-width: 768px) {
-    .parallax-container {
-        perspective: 1200px;
+    .flavor-carousel-stage {
+        perspective: 1400px !important;
+    }
+
+    .floating-detail {
+        display: none !important;
+    }
+
+    .connector-lines {
+        display: none !important;
     }
     
-    .parallax-layer {
-        /* Reduce parallax intensity on mobile for smoother performance */
-        --depth-back: translateZ(-60px) scale(1.1);
-        --depth-front: translateZ(20px);
+    .carousel-glow {
+        filter: blur(40px) !important;
     }
     
     .product-bottle {
-        /* Ensure GPU acceleration for bottle images */
-        -webkit-transform: translateZ(60px);
-        transform: translateZ(60px);
+        -webkit-transform: translateZ(0);
+        transform: translateZ(0);
     }
 }
 
-/* Reduced motion support for parallax */
+/* Reduced motion support for carousel */
 @media (prefers-reduced-motion: reduce) {
-    .parallax-container,
-    .parallax-layer {
-        perspective: none;
-        transform-style: flat;
+    .flavor-carousel-stage {
+        perspective: none !important;
+        transform-style: flat !important;
     }
     
-    .depth-back,
-    .depth-mid,
-    .depth-front {
-        transform: none !important;
+    .carousel-glow {
+        animation: none !important;
+    }
+
+    .floating-detail {
+        animation: none !important;
+    }
+
+    [class*="profile-bar-"] {
+        transition: none !important;
     }
 }

@@ -152,7 +152,7 @@ const PheromoneBenefits = ({ showMockup = false }: { showMockup?: boolean }) => 
                     <p
                         className="text-[0.55rem] uppercase tracking-[0.35em] transition-colors duration-500"
                         style={{
-                            color: "rgba(247,245,242,0.35)",
+                            color: "rgba(247,245,242,0.65)",
                             fontFamily: '"Syne", sans-serif',
                             fontWeight: 600,
                         }}
@@ -163,7 +163,7 @@ const PheromoneBenefits = ({ showMockup = false }: { showMockup?: boolean }) => 
                 <p
                     className="text-[0.55rem] uppercase tracking-[0.25em] hidden md:block"
                     style={{
-                        color: "rgba(247,245,242,0.2)",
+                        color: "rgba(247,245,242,0.55)",
                         fontFamily: '"Inter", sans-serif',
                         fontWeight: 300,
                     }}
@@ -320,7 +320,7 @@ const PheromoneBenefits = ({ showMockup = false }: { showMockup?: boolean }) => 
                                     className="text-[0.55rem] tracking-[0.25em] uppercase"
                                     style={{
                                         fontFamily: '"Syne", sans-serif',
-                                        color: "rgba(247,245,242,0.3)",
+                                        color: "rgba(247,245,242,0.6)",
                                         fontWeight: 400,
                                     }}
                                 >
@@ -357,7 +357,7 @@ const PheromoneBenefits = ({ showMockup = false }: { showMockup?: boolean }) => 
                                 style={{
                                     fontFamily: '"Inter", sans-serif',
                                     fontSize: "clamp(0.8rem, 1.1vw, 0.95rem)",
-                                    color: "rgba(247,245,242,0.45)",
+                                    color: "rgba(247,245,242,0.78)",
                                     lineHeight: 2,
                                     maxWidth: "440px",
                                     fontWeight: 300,
@@ -391,7 +391,7 @@ const PheromoneBenefits = ({ showMockup = false }: { showMockup?: boolean }) => 
                                         style={{
                                             fontFamily: '"Syne", sans-serif',
                                             fontSize: "0.55rem",
-                                            color: "rgba(247,245,242,0.3)",
+                                            color: "rgba(247,245,242,0.6)",
                                             letterSpacing: "0.18em",
                                             textTransform: "uppercase",
                                             fontWeight: 400,
