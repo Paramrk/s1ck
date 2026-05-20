@@ -6,6 +6,7 @@ import Navbar from "../components/Navbar";
 import FooterSection from "../sections/FooterSection";
 import storyImg from "../assets/menu-img/story-menu.jpeg";
 import mockupImg from "../assets/images/mockup-img.jpeg";
+import { useScrollTriggerRefresh } from "../hooks/useScrollTriggerRefresh";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -37,6 +38,7 @@ const stats = [
 const OurStoryPage = () => {
     const pageRef = useRef<HTMLDivElement>(null);
     const heroImgRef = useRef<HTMLImageElement>(null);
+    useScrollTriggerRefresh();
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -183,6 +185,8 @@ const OurStoryPage = () => {
                         ref={heroImgRef}
                         src={storyImg}
                         alt="Our Story"
+                        loading="eager"
+                        decoding="async"
                         className="w-full h-[120%] object-cover absolute top-0 left-0"
                     />
                 </div>
@@ -247,6 +251,8 @@ const OurStoryPage = () => {
                     <img
                         src={mockupImg}
                         alt="S1CK Products"
+                        loading="lazy"
+                        decoding="async"
                         className="mockup-img w-full h-[50vh] md:h-[65vh] object-cover"
                     />
                 </div>
@@ -345,7 +351,7 @@ const OurStoryPage = () => {
             <section className="px-6 md:px-14 py-28">
                 <div className="max-w-5xl mx-auto">
                     <div className="grid md:grid-cols-4 grid-cols-2 gap-10">
-                        {stats.map((item, i) => (
+                        {stats.map((item) => (
                             <div key={item.label} className="text-center">
                                 <div className="overflow-hidden">
                                     <p

@@ -2,75 +2,80 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { SplitText } from "gsap/all";
 import { getImage } from '../utils/media';
-import { useMediaQuery } from "react-responsive";
 
 const BottomBanner = () => {
 
-    const isMobBanner = useMediaQuery({ query: "(max-width:768px)" });
-
     useGSAP(() => {
-        document.fonts.ready.then(() => {
-            const bTitleSplit = SplitText.create(".b-title", { type: "chars" });
+        const mm = gsap.matchMedia();
 
-            const revealTl = gsap.timeline({
-                delay: isMobBanner ? 0.3 : 1,
-                scrollTrigger: {
-                    trigger: ".bottom-banner",
-                    start: isMobBanner ? "top 65%" : "top 50%",
-                    end: isMobBanner ? "top 20%" : "top 10%",
-                    scrub: 1.5,
+        const buildBanner = (mobile: boolean) => {
+            document.fonts.ready.then(() => {
+                const bTitleSplit = SplitText.create(".b-title", { type: "chars" });
+
+                const revealTl = gsap.timeline({
+                    delay: mobile ? 0.3 : 1,
+                    scrollTrigger: {
+                        trigger: ".bottom-banner",
+                        start: mobile ? "top 65%" : "top 50%",
+                        end: mobile ? "top 20%" : "top 10%",
+                        scrub: 1.5,
+                    }
+                });
+
+                revealTl.from(bTitleSplit.chars, {
+                    stagger: mobile ? 0.1 : 0.2,
+                    opacity: 0,
+                    rotate: mobile ? 1 : 3,
+                    yPercent: mobile ? 15 : 30,
+                    ease: "power1.inOut"
+                }).to(".bottom-banner .rolling-animation", {
+                    opacity: 1,
+                    clipPath: "polygon(0% 0%,100% 0%, 100% 100%, 0% 100%)",
+                    ease: "circ.out"
+                });
+
+                if (mobile) {
+                    gsap.from(".bottom-banner .font-paragraph > div:first-child", {
+                        opacity: 0,
+                        x: -40,
+                        ease: "power3.out",
+                        scrollTrigger: {
+                            trigger: ".bottom-banner .font-paragraph",
+                            start: "top 95%",
+                            end: "top 55%",
+                            scrub: 1.5,
+                        }
+                    });
+
+                    gsap.from(".bottom-banner .font-paragraph .sick-btn", {
+                        opacity: 0,
+                        y: 30,
+                        scale: 0.95,
+                        ease: "power3.out",
+                        scrollTrigger: {
+                            trigger: ".bottom-banner .font-paragraph .sick-btn",
+                            start: "top 95%",
+                            end: "top 60%",
+                            scrub: 1.5,
+                        }
+                    });
                 }
             });
+        };
 
-            revealTl.from(bTitleSplit.chars, {
-                stagger: isMobBanner ? 0.1 : 0.2,
-                opacity: 0,
-                rotate: isMobBanner ? 1 : 3,
-                yPercent: isMobBanner ? 15 : 30,
-                ease: "power1.inOut"
-            }).to(".bottom-banner .rolling-animation", {
-                opacity: 1,
-                clipPath: "polygon(0% 0%,100% 0%, 100% 100%, 0% 100%)",
-                ease: "circ.out"
-            });
+        mm.add("(max-width: 768px)", () => buildBanner(true));
+        mm.add("(min-width: 769px)", () => buildBanner(false));
 
-            // Mobile: smooth scroll-tied slide-in for description text and CTA
-            if (isMobBanner) {
-                gsap.from(".bottom-banner .font-paragraph > div:first-child", {
-                    opacity: 0,
-                    x: -40,
-                    ease: "power3.out",
-                    scrollTrigger: {
-                        trigger: ".bottom-banner .font-paragraph",
-                        start: "top 95%",
-                        end: "top 55%",
-                        scrub: 1.5,
-                    }
-                });
-
-                gsap.from(".bottom-banner .font-paragraph .sick-btn", {
-                    opacity: 0,
-                    y: 30,
-                    scale: 0.95,
-                    ease: "power3.out",
-                    scrollTrigger: {
-                        trigger: ".bottom-banner .font-paragraph .sick-btn",
-                        start: "top 95%",
-                        end: "top 60%",
-                        scrub: 1.5,
-                    }
-                });
-            }
-        });
-    });
+        return () => mm.revert();
+    }, []);
 
 
     return (
         <section className="bottom-banner 2xl:min-h-dvh w-full h-full overflow-hidden relative bg-parchment flex flex-col justify-center items-start">
-            <img src={getImage("footer-dip.png")} alt="footer-img" className="w-full object-cover -translate-y-1" />
-            <img src={getImage("bottom-banner.svg")} alt="" className="h-fit mt-10" />
+            <img src={getImage("footer-dip.png")} alt="footer-img" loading="lazy" decoding="async" className="w-full object-cover -translate-y-1" />
+            <img src={getImage("bottom-banner.svg")} alt="" loading="lazy" decoding="async" className="h-fit mt-10" />
 
-            <div className="absolute lg:w-[35rem] w-[90%] lg:h-[24rem] h-auto z-100 lg:top-[30%] top-[40%] lg:left-20 left-5">
+            <div className="absolute lg:w-[35rem] sm:w-[88%] w-[92%] lg:h-[24rem] h-auto z-100 lg:top-[30%] top-[40%] lg:left-20 sm:left-8 left-4 lg:mx-0 mx-auto">
                 <div className="relative inline-block md:translate-y-20 z-100">
                     <div className="general-title relative flex flex-col justify-center items-center gap-24">
                         <div className="overflow-hidden place-self-start">

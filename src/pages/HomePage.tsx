@@ -13,19 +13,30 @@ import FooterSection from "../sections/FooterSection";
 import TestimonialSection from "../sections/TestimonialSection";
 import PreLoader from "../components/PreLoader";
 import { useEffect, useState } from "react";
+import { useScrollTriggerRefresh } from "../hooks/useScrollTriggerRefresh";
 
 gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
 
 const HomePage = () => {
     const [loaded, setLoaded] = useState(false);
+    useScrollTriggerRefresh();
 
     useGSAP(() => {
         if (loaded && !ScrollSmoother.get()) {
+            // Stabilise iOS Safari scroll: ignore the address-bar
+            // show/hide resize so pinned sections don't recalc mid-scroll.
+            ScrollTrigger.config({ ignoreMobileResize: true });
+            // Smooth out variable touch-frame rate on mobile.
+            ScrollTrigger.normalizeScroll(true);
+
             ScrollSmoother.create({
                 wrapper: "#smooth-wrapper",
                 content: "#smooth-content",
                 smooth: 1.5,
                 effects: true,
+                // smoothTouch: a small non-zero value damps touch scroll
+                // without making it feel laggy. 0 = native scroll.
+                smoothTouch: 0.1,
             });
             ScrollTrigger.refresh();
         }
@@ -51,12 +62,12 @@ const HomePage = () => {
                             <HeroSection />
                             <MessageSection />
                             <FlavorSection />
-                            <NutritionSection />
+                            <NutritionSection showMockup={true} />
                             <div>
                                 <BenifitSection />
                                 <TestimonialSection />
                             </div>
-                            <PheromoneBenefits />
+                            <PheromoneBenefits showMockup={true} />
                             <FooterSection />
                         </div>
                     </div>

@@ -2,34 +2,37 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { SplitText } from "gsap/all";
 import { getImage } from '../utils/media';
-import { useMediaQuery } from "react-responsive";
 
 const FooterSection = () => {
 
-    const isMobF = useMediaQuery({
-        query: "(max-width: 768px)",
-    });
-
     useGSAP(() => {
-        document.fonts.ready.then(() => {
-            const footTextSplit = SplitText.create(".footer-title-animation", { type: "chars" });
+        const mm = gsap.matchMedia();
 
-            gsap.from(footTextSplit.chars, {
-                yPercent: isMobF ? 120 : 200,
-                stagger: isMobF ? 0.015 : 0.02,
-                ease: "power1.inOut",
-                zIndex: 0,
-                scrollTrigger: {
-                    trigger: ".footer-section",
-                    start: `${isMobF ? "top 60%" : "top 50%"}`,
-                    end: `${isMobF ? "top 20%" : "top 10%"}`,
-                    scrub: 1.5,
-                }
+        const buildTitle = (mobile: boolean) => {
+            document.fonts.ready.then(() => {
+                const footTextSplit = SplitText.create(".footer-title-animation", { type: "chars" });
+
+                gsap.from(footTextSplit.chars, {
+                    yPercent: mobile ? 120 : 200,
+                    stagger: mobile ? 0.015 : 0.02,
+                    ease: "power1.inOut",
+                    zIndex: 0,
+                    scrollTrigger: {
+                        trigger: ".footer-section",
+                        start: mobile ? "top 60%" : "top 50%",
+                        end: mobile ? "top 20%" : "top 10%",
+                        scrub: 1.5,
+                    }
+                });
             });
+        };
 
-            // Mobile: smooth scroll-tied animations for all footer elements
-            if (isMobF) {
-                // VIP badge and title
+        mm.add("(min-width: 769px)", () => buildTitle(false));
+
+        mm.add("(max-width: 768px)", () => {
+            buildTitle(true);
+
+            document.fonts.ready.then(() => {
                 gsap.from(".footer-section .flex.items-center.gap-3.mb-6", {
                     opacity: 0,
                     y: 30,
@@ -42,7 +45,6 @@ const FooterSection = () => {
                     }
                 });
 
-                // VIP heading texts - staggered
                 gsap.from(".footer-section h2, .footer-section h1:not(.footer-title-animation)", {
                     opacity: 0,
                     y: 40,
@@ -56,7 +58,6 @@ const FooterSection = () => {
                     }
                 });
 
-                // VIP CTA button
                 gsap.from(".footer-section button", {
                     opacity: 0,
                     y: 30,
@@ -70,7 +71,6 @@ const FooterSection = () => {
                     }
                 });
 
-                // Social buttons - scroll-tied scale-in
                 gsap.from(".social-btn", {
                     opacity: 0,
                     scale: 0.7,
@@ -84,7 +84,6 @@ const FooterSection = () => {
                     }
                 });
 
-                // Footer links - slide in from left
                 gsap.from(".footer-section .flex.items-start.md\\:gap-10 > div", {
                     opacity: 0,
                     x: -30,
@@ -98,7 +97,6 @@ const FooterSection = () => {
                     }
                 });
 
-                // Email input area - fade in
                 gsap.from(".footer-section .md\\:max-w-sm", {
                     opacity: 0,
                     y: 30,
@@ -110,9 +108,11 @@ const FooterSection = () => {
                         scrub: 1.5,
                     }
                 });
-            }
+            });
         });
-    });
+
+        return () => mm.revert();
+    }, []);
 
     return (
         <section className="footer-section lg:pt-20">

@@ -17,9 +17,20 @@ const Navbar: React.FC<NavbarProps> = ({ variant = "dark" }) => {
         const els = Array.from(document.querySelectorAll<HTMLElement>(".nav-logo, .menu-hover"));
         if (!els.length) return;
 
+        // Cursor-follow is meaningless on touch devices — skip the listeners entirely
+        // so :hover-stuck transforms never linger after a tap.
+        const hasFineHover =
+            typeof window !== "undefined" &&
+            window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+
         const disposers: Array<() => void> = [];
 
         els.forEach((el) => {
+            const isCentered = el.classList.contains("menu-hover");
+            if (isCentered) gsap.set(el, { xPercent: -50 });
+
+            if (!hasFineHover) return;
+
             const onMove = (e: MouseEvent) => {
                 const b = el.getBoundingClientRect();
                 const x = e.clientX - b.left;
@@ -45,7 +56,7 @@ const Navbar: React.FC<NavbarProps> = ({ variant = "dark" }) => {
 
     return (
         <>
-            <nav className="fixed top-0 left-0 z-50 flex items-center justify-between md:p-6 p-3 w-full bg-transparent">
+            <nav className="fixed top-0 left-0 z-50 flex items-center justify-between md:p-6 sm:p-4 p-3 w-full bg-transparent">
                 <Link to="/" className="block">
                     <img
                         src={s1ckLogo}
@@ -56,7 +67,7 @@ const Navbar: React.FC<NavbarProps> = ({ variant = "dark" }) => {
 
                 <Link
                     to="/shop"
-                    className={`group px-6 py-2 border transition-all duration-500 text-center cursor-pointer ${
+                    className={`group sm:px-6 px-4 py-2 border transition-all duration-500 text-center cursor-pointer ${
                         isLight
                             ? "border-cream/30 bg-transparent hover:bg-cream"
                             : "border-charcoal bg-white hover:bg-charcoal"
@@ -77,7 +88,7 @@ const Navbar: React.FC<NavbarProps> = ({ variant = "dark" }) => {
 
             {/* Menu toggle */}
             <div
-                className={`menu-hover lg:flex hidden items-center gap-2 px-5 py-2.5 backdrop-blur-xl border rounded-full cursor-pointer fixed top-6 left-1/2 transform -translate-x-1/2 z-[1000] group transition-all duration-500 ${
+                className={`menu-hover flex items-center gap-2 px-5 py-2.5 backdrop-blur-xl border rounded-full cursor-pointer fixed lg:top-6 top-3 left-1/2 z-[1000] group transition-all duration-500 ${
                     isLight
                         ? "bg-white/10 border-cream/20 hover:bg-cream"
                         : "bg-white/60 border-ivory/60 hover:bg-charcoal"

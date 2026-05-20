@@ -1,139 +1,112 @@
-import { useGSAP } from "@gsap/react";
 import { flavorlists } from "../constants/details";
-import gsap from "gsap";
-import { useMediaQuery } from "react-responsive";
 
-// At the top of component file
-// Glob import all images and videos
 const images: Record<string, { default: string }> = import.meta.glob(
     "../assets/images/*.{webp,svg,png,jpg,jpeg}",
     { eager: true }
 );
 
-// Access image by file name dynamically
 const getImage = (fileName?: string): string | undefined => {
     if (!fileName?.trim()) return undefined;
-
     const key = `../assets/images/${fileName}`;
     return images[key]?.default;
 };
 
+// Subtle radial tint behind each bottle so the section feels alive as products rotate
+const tints: string[] = [
+    "rgba(232,154,60,0.18)",   // Le Toxiquè - amber
+    "rgba(176,188,201,0.22)",  // Liquid Silver - pearl
+    "rgba(61,123,255,0.18)",   // Alpha Q - blue
+    "rgba(232,90,31,0.20)",    // Avant-Garde - orange
+    "rgba(217,200,150,0.22)",  // Le-Toxique Oil - champagne
+    "rgba(26,26,36,0.22)",     // Arcane - smoke
+];
+
+
 const visibleFlavors = flavorlists.filter((flavor) => {
     const hasName = flavor.name.trim().length > 0;
-    const hasAssetKey = [
-        flavor.bgImage,
-        flavor.elementsImage,
-        flavor.drinkImage,
-        flavor.color,
-    ].some((value) => value?.trim().length);
-
-    return hasName && hasAssetKey;
+    const hasAsset = [flavor.bgImage, flavor.elementsImage, flavor.drinkImage]
+        .some((v) => v?.trim().length);
+    return hasName && hasAsset;
 });
 
 const FlavorSlider = () => {
-
-    const isMobSlider = useMediaQuery({ query: "(max-width:768px)" });
-
-    useGSAP(() => {
-        const cards = document.querySelectorAll<HTMLDivElement>(".flavors > div");
-
-        cards.forEach((card) => {
-            const handleMove = (clientX: number, clientY: number) => {
-                const bounds = card.getBoundingClientRect();
-                const x = clientX - bounds.left;
-                const y = clientY - bounds.top;
-
-                const offsetX = (x / bounds.width - 0.5) * 30;
-                const offsetY = (y / bounds.height - 0.5) * 30;
-
-                const elements = card.querySelector<HTMLImageElement>(".elements");
-                const drinks = card.querySelector<HTMLImageElement>(".drinks");
-
-                if (elements)
-                    gsap.to(elements, { x: offsetX, y: offsetY, duration: 0.3, ease: "power2.out" });
-                if (drinks)
-                    gsap.to(drinks, { x: -offsetX, duration: 0.3, ease: "power2.out" });
-            };
-
-            const handleReset = () => {
-                const elements = card.querySelector<HTMLImageElement>(".elements");
-                const drinks = card.querySelector<HTMLImageElement>(".drinks");
-
-                if (elements) gsap.to(elements, { x: 0, y: 0, duration: 0.5, ease: "power3.out" });
-                if (drinks) gsap.to(drinks, { x: 0, y: 0, duration: 0.5, ease: "power3.out" });
-            };
-
-            // Mouse events (desktop)
-            card.addEventListener("mousemove", (e: MouseEvent) => handleMove(e.clientX, e.clientY));
-            card.addEventListener("mouseleave", handleReset);
-
-            // Touch events (mobile)
-            card.addEventListener("touchmove", (e: TouchEvent) => {
-                const touch = e.touches[0];
-                if (touch) handleMove(touch.clientX, touch.clientY);
-            }, { passive: true });
-            card.addEventListener("touchend", handleReset);
-        });
-
-        // Mobile: staggered fade-in for each flavor card on scroll
-        if (isMobSlider) {
-            cards.forEach((card) => {
-                gsap.from(card, {
-                    opacity: 0,
-                    y: 80,
-                    scale: 0.95,
-                    duration: 1.2,
-                    ease: "power3.out",
-                    scrollTrigger: {
-                        trigger: card,
-                        start: "top 95%",
-                        end: "top 55%",
-                        scrub: 1.5,
-                    }
-                });
-            });
-        }
-    });
-
     return (
-        <div className="slider-wrapper lg:w-[480vw] lg:h-full mt-0 xl:mt-0 bg-milk h-[100%]">
-            <div className="flavors lg:pb-50 flex md:flex-row flex-col items-center lg:items-start lg:pt-10 2xl:gap-72 lg:gap-52 md:gap-24 gap-7 flex-nowrap">
-                {visibleFlavors.map((flavor) => {
-                    const bgSrc = getImage(flavor.bgImage ?? `${flavor.color}-bg.svg`);
-                    const elementsSrc = getImage(flavor.elementsImage ?? `${flavor.color}-elements.webp`);
-                    const drinkSrc = getImage(flavor.drinkImage ?? `${flavor.color}-drink.webp`);
+        <div className="relative h-full w-full flex items-center justify-center" style={{ perspective: "1400px" }}>
+            {visibleFlavors.map((flavor, i) => {
+                const drinkSrc = getImage(flavor.drinkImage);
+                const tint = tints[i % tints.length];
+                const isFirst = i === 0;
 
-                    return (
+                return (
+                    <div
+                        key={flavor.name}
+                        className={`fp-${i} absolute inset-0 flex items-center justify-center`}
+                        style={{
+                            opacity: isFirst ? 1 : 0,
+                            transformStyle: "preserve-3d",
+                            willChange: "transform, opacity, filter",
+                        }}
+                    >
+                        {/* Tinted spotlight behind bottle */}
                         <div
-                            key={flavor.name}
-                            className={`relative z-30 lg:w-[50vw] w-88 lg:h-[70vh] md:w-[90vw] md:h-[50vh] h-80 flex-none ${flavor.rotation}`}
-                        >
-                            {bgSrc && (
-                                <img
-                                    src={bgSrc}
-                                    alt={flavor.name}
-                                    className={`absolute bottom-0 ${flavor.bgImage ? 'rounded-[40px] w-full h-full object-cover' : ''}`}
-                                />
-                            )}
-                            {elementsSrc && (
-                                <img
-                                    src={elementsSrc}
-                                    alt={flavor.name}
-                                    className="elements"
-                                />
-                            )}
-                            {drinkSrc && (
-                                <img
-                                    src={drinkSrc}
-                                    alt={flavor.name}
-                                    className="drinks"
-                                />
-                            )}
-                            <h1 className={flavor.textColor ? flavor.textColor : ""}>{flavor.name}</h1>
+                            className="absolute inset-0 pointer-events-none"
+                            style={{
+                                background: `radial-gradient(circle at 50% 58%, ${tint}, transparent 58%)`,
+                            }}
+                        />
+
+                        {/* Soft floor shadow under the bottle */}
+                        <div
+                            className="floor-shadow absolute bottom-[10%] md:bottom-[14%] left-1/2 -translate-x-1/2 pointer-events-none rounded-full"
+                            style={{
+                                width: "38%",
+                                height: "24px",
+                                background:
+                                    "radial-gradient(ellipse, rgba(0,0,0,0.22) 0%, rgba(0,0,0,0) 70%)",
+                                filter: "blur(2px)",
+                            }}
+                        />
+
+                        {/* Bottle */}
+                        {drinkSrc && (
+                            <img
+                                src={drinkSrc}
+                                alt={flavor.name}
+                                loading={isFirst ? "eager" : "lazy"}
+                                decoding="async"
+                                draggable={false}
+                                className="product-bottle relative z-20 h-[58%] md:h-[78%] max-h-[640px] object-contain rounded-2xl md:rounded-3xl"
+                                style={{
+                                    filter:
+                                        "drop-shadow(0 22px 30px rgba(0,0,0,0.18)) drop-shadow(0 4px 8px rgba(0,0,0,0.12))",
+                                }}
+                            />
+                        )}
+
+                        {/* Caption */}
+                        <div className="product-caption absolute z-30 bottom-[3%] md:bottom-[7%] left-1/2 -translate-x-1/2 text-center w-[92%] md:w-[85%]">
+                            <p
+                                className="text-[0.42rem] md:text-[0.65rem] uppercase tracking-[0.3em] md:tracking-[0.4em] text-stone mb-0.5 md:mb-1"
+                                style={{ fontFamily: "Syne, sans-serif" }}
+                            >
+                                S1CK Signature
+                            </p>
+                            <h3
+                                className="text-charcoal text-[0.85rem] md:text-xl tracking-[0.03em] md:tracking-[0.05em] leading-tight"
+                                style={{ fontFamily: "Syne, sans-serif", fontWeight: 700 }}
+                            >
+                                {flavor.name}
+                            </h3>
+                            <p
+                                className="text-[0.4rem] md:text-[0.55rem] mt-1 md:mt-2 text-taupe tracking-[0.25em] md:tracking-[0.3em] uppercase"
+                                style={{ fontFamily: "Syne, sans-serif" }}
+                            >
+                                {String(i + 1).padStart(2, "0")} / {String(visibleFlavors.length).padStart(2, "0")}
+                            </p>
                         </div>
-                    );
-                })}
-            </div>
+                    </div>
+                );
+            })}
         </div>
     );
 };

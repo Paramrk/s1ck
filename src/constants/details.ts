@@ -2,7 +2,6 @@
 import f1 from "../assets/videos/f1.mp4"
 import f2 from "../assets/videos/f2.mp4"
 import f3 from "../assets/videos/f3.mp4"
-import f4 from "../assets/videos/f4.mp4"
 import f5 from "../assets/videos/f5.mp4"
 import f6 from "../assets/videos/f6.mp4"
 import f7 from "../assets/videos/f7.mp4"
@@ -117,13 +116,6 @@ const cards: Card[] = [
         name: "Andrew",
         img: "../assets/images/p3.png",
         translation: "translate-y-[-5%]",
-    },
-    {
-        src: f4,
-        rotation: "rotate-z-[4deg]",
-        name: "Bryan",
-        img: "../assets/images/p4.png",
-        translation: "translate-y-[5%]",
     },
     {
         src: f5,

@@ -11,6 +11,11 @@ const ShopPage = () => {
     const menImgRef = useRef<HTMLImageElement>(null);
     const womenImgRef = useRef<HTMLImageElement>(null);
 
+    // Hover/parallax effects only make sense with a fine pointer.
+    const hasFineHover =
+        typeof window !== "undefined" &&
+        window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+
     useEffect(() => {
         window.scrollTo(0, 0);
     }, []);
@@ -159,9 +164,9 @@ const ShopPage = () => {
                     to="/shop/men"
                     className="shop-panel shop-panel-men relative overflow-hidden cursor-pointer block"
                     style={{ flex: 1, textDecoration: "none" }}
-                    onMouseEnter={() => handleMouseEnter("men")}
-                    onMouseMove={(e) => handleMouseMove(e, "men")}
-                    onMouseLeave={() => handlePanelLeave("men")}
+                    onMouseEnter={hasFineHover ? () => handleMouseEnter("men") : undefined}
+                    onMouseMove={hasFineHover ? (e) => handleMouseMove(e, "men") : undefined}
+                    onMouseLeave={hasFineHover ? () => handlePanelLeave("men") : undefined}
                 >
                     {/* Image — slightly oversized for parallax room */}
                     <div className="absolute inset-0 overflow-hidden">
@@ -225,9 +230,9 @@ const ShopPage = () => {
                     to="/shop/women"
                     className="shop-panel shop-panel-women relative overflow-hidden cursor-pointer block"
                     style={{ flex: 1, textDecoration: "none" }}
-                    onMouseEnter={() => handleMouseEnter("women")}
-                    onMouseMove={(e) => handleMouseMove(e, "women")}
-                    onMouseLeave={() => handlePanelLeave("women")}
+                    onMouseEnter={hasFineHover ? () => handleMouseEnter("women") : undefined}
+                    onMouseMove={hasFineHover ? (e) => handleMouseMove(e, "women") : undefined}
+                    onMouseLeave={hasFineHover ? () => handlePanelLeave("women") : undefined}
                 >
                     {/* Image */}
                     <div className="absolute inset-0 overflow-hidden">

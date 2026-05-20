@@ -13,48 +13,54 @@ const TestimonialSection = () => {
     const vdRf = useRef<HTMLVideoElement[]>([]);
 
     useGSAP(() => {
-        gsap.set(".testimonials-section", {
-            marginTop: "-100vh"
-        });
+        const mm = gsap.matchMedia();
 
-        const tesTl = gsap.timeline({
-            scrollTrigger: {
-                trigger: ".testimonials-section",
-                start: "top bottom",
-                end: `${isMobile ? "80% top" : "500% top"}`,
-                scrub: true,
-                // markers: true
-                pinSpacing: false
-            }
-        });
+        const buildTestimonials = (mobile: boolean) => {
+            gsap.set(".testimonials-section", {
+                marginTop: mobile ? "-50vh" : "-100vh",
+            });
 
-        const pinTl = gsap.timeline({
-            scrollTrigger: {
-                trigger: ".testimonials-section",
-                start: `${isMobile ? "1% top" : "10% top"}`,
-                end: `${isMobile ? "100% top" : "200% top"}`,
-                scrub: 1.5,
-                pin: true,
-                // markers: true,
-            }
-        });
+            const tesTl = gsap.timeline({
+                scrollTrigger: {
+                    trigger: ".testimonials-section",
+                    start: "top bottom",
+                    end: mobile ? "150% top" : "500% top",
+                    scrub: mobile ? 1 : true,
+                    pinSpacing: false,
+                }
+            });
 
-        pinTl.from(".vd-card", {
-            // opacity: 0,
-            yPercent: 300,
-            stagger: 0.3,
-            ease: "power1.inOut"
-        }, "<");
+            const pinTl = gsap.timeline({
+                scrollTrigger: {
+                    trigger: ".testimonials-section",
+                    start: mobile ? "1% top" : "10% top",
+                    end: mobile ? "150% top" : "200% top",
+                    scrub: 1.5,
+                    pin: true,
+                }
+            });
 
-        tesTl.to(".testimonials-section .ft-anim", {
-            xPercent: 70 + 30,
-            yPercent: -100
-        }).to(".testimonials-section .st-anim", {
-            xPercent: 25 + 30, yPercent: -100
-        }, "<").to(".testimonials-section .tt-anim", {
-            xPercent: -80, yPercent: -100
-        }, "<");
-    });
+            pinTl.from(".vd-card", {
+                yPercent: mobile ? 150 : 300,
+                stagger: 0.3,
+                ease: "power1.inOut"
+            }, "<");
+
+            tesTl.to(".testimonials-section .ft-anim", {
+                xPercent: 70 + 30,
+                yPercent: -100
+            }).to(".testimonials-section .st-anim", {
+                xPercent: 25 + 30, yPercent: -100
+            }, "<").to(".testimonials-section .tt-anim", {
+                xPercent: -80, yPercent: -100
+            }, "<");
+        };
+
+        mm.add("(max-width: 768px)", () => buildTestimonials(true));
+        mm.add("(min-width: 769px)", () => buildTestimonials(false));
+
+        return () => mm.revert();
+    }, []);
 
     const setVideoRef = (el: HTMLVideoElement | null, index: number): void => {
         if (el) vdRf.current[index] = el;
@@ -93,6 +99,7 @@ const TestimonialSection = () => {
                                     key={index}
                                     ref={(el) => setVideoRef(el, index)}
                                     src={card.src} playsInline muted loop
+                                    preload={isMobile ? "metadata" : "auto"}
                                     className="size-full object-cover"
                                 />
                             </div>

@@ -10,7 +10,22 @@
       "Bash(python3 \".claude/skills/ui-ux-pro-max/scripts/search.py\" \"animation mobile scroll micro-interaction\" --domain ux -n 10)",
       "Bash(python \".claude/skills/ui-ux-pro-max/scripts/search.py\" \"animation mobile scroll micro-interaction\" --domain ux -n 10)",
       "Bash(npx tsc:*)",
-      "Bash(npx vite:*)"
+      "Bash(npx vite:*)",
+      "Bash(Get-ChildItem -Path \"d:\\\\Work Project\\\\S1CK Homepage\\\\S1ck pheromones\\\\client\" -Recurse -Directory)",
+      "Bash(Select-Object -ExpandProperty FullName)",
+      "Bash(Sort-Object)",
+      "Bash(Get-ChildItem -Path \"d:\\\\Work Project\\\\S1CK Homepage\\\\S1ck pheromones\\\\client\" -Force)",
+      "Bash(xargs grep -E \"lenis|smooth-scroll\")",
+      "Bash(pnpm build *)",
+      "Bash(python .claude/skills/ui-ux-pro-max/scripts/search.py \"animation performance mobile scroll\" --domain ux -n 8)",
+      "mcp__playwright__browser_evaluate",
+      "mcp__playwright__browser_console_messages",
+      "mcp__playwright__browser_take_screenshot",
+      "Bash(echo \"EXIT=$?\")",
+      "mcp__playwright__browser_navigate",
+      "mcp__playwright__browser_close",
+      "Bash(pnpm dev *)",
+      "mcp__playwright__browser_resize"
     ]
   }
 }

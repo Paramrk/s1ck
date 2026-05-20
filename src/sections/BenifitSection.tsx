@@ -1,96 +1,198 @@
 import { useGSAP } from "@gsap/react"
-import ClipPathTitle from "../components/ClipPathTitle"
 import gsap from "gsap";
 import { SplitText } from "gsap/all";
 import VideoPin from "../components/VideoPin";
-import { useMediaQuery } from "react-responsive";
 
 const BenifitSection = () => {
 
-    const isMobBenefit = useMediaQuery({ query: "(max-width:768px)" });
-
     useGSAP(() => {
-        document.fonts.ready.then(() => {
-            const hParaSplit = SplitText.create(".para-animation", { type: "words" });
+        const mm = gsap.matchMedia();
 
-            const revealTl = gsap.timeline({
-                delay: isMobBenefit ? 0.3 : 1,
-                scrollTrigger: {
-                    trigger: ".benefit-section",
-                    start: isMobBenefit ? "top 75%" : "top 65%",
-                    end: isMobBenefit ? "top -5%" : "top -10%",
-                    scrub: 1.5,
-                }
-            });
-
-            revealTl.from(hParaSplit.words, {
-                duration: isMobBenefit ? 0.6 : 1,
-                stagger: isMobBenefit ? 0.1 : 0.2,
-                opacity: 0,
-                rotate: isMobBenefit ? 3 : 8,
-                yPercent: isMobBenefit ? 15 : 30,
-                ease: "power1.inOut"
-            }).to(".benefit-section .first-title", {
-                duration: isMobBenefit ? 0.6 : 1,
-                opacity: 1,
-                clipPath: "polygon(0% 0%,100% 0%, 100% 100%, 0% 100%)",
-                ease: "circ.out"
-            }).to(".benefit-section .second-title", {
-                duration: isMobBenefit ? 0.6 : 1,
-                opacity: 1,
-                clipPath: "polygon(0% 0%,100% 0%, 100% 100%, 0% 100%)",
-                ease: "circ.out"
-            }).to(".benefit-section .third-title", {
-                duration: isMobBenefit ? 0.6 : 1,
-                opacity: 1,
-                clipPath: "polygon(0% 0%,100% 0%, 100% 100%, 0% 100%)",
-                ease: "circ.out"
-            }).to(".benefit-section .fourth-title", {
-                duration: isMobBenefit ? 0.6 : 1,
-                opacity: 1,
-                clipPath: "polygon(0% 0%,100% 0%, 100% 100%, 0% 100%)",
-                ease: "circ.out"
-            });
-
-            // Mobile: smooth scroll-tied fade-in for the "100,000+" counter text
-            if (isMobBenefit) {
-                gsap.from(".benefit-section > .container > div:last-child", {
+        const buildBenefit = (mobile: boolean) => {
+            document.fonts.ready.then(() => {
+                // Tagline words
+                const tagSplit = SplitText.create(".benefit-tagline", { type: "words" });
+                gsap.from(tagSplit.words, {
                     opacity: 0,
-                    y: 30,
-                    ease: "power3.out",
+                    yPercent: 40,
+                    stagger: 0.08,
+                    ease: "power2.out",
                     scrollTrigger: {
-                        trigger: ".benefit-section > .container > div:last-child",
-                        start: "top 95%",
-                        end: "top 60%",
-                        scrub: 1.5,
+                        trigger: ".benefit-section",
+                        start: mobile ? "top 80%" : "top 70%",
+                        end: mobile ? "top 50%" : undefined,
+                        scrub: mobile ? 1.5 : false,
                     }
                 });
-            }
-        });
-    });
+
+                // Headline chars
+                const headSplit = SplitText.create(".benefit-headline", { type: "chars" });
+                gsap.from(headSplit.chars, {
+                    yPercent: mobile ? 120 : 200,
+                    stagger: 0.02,
+                    ease: "power1.inOut",
+                    scrollTrigger: {
+                        trigger: ".benefit-section",
+                        start: mobile ? "top 70%" : "top 60%",
+                        end: mobile ? "top 40%" : undefined,
+                        scrub: mobile ? 1.5 : false,
+                    }
+                });
+
+                // Red banner clip-path reveal
+                gsap.to(".benefit-banner", {
+                    clipPath: "polygon(0% 0%,100% 0%,100% 100%,0% 100%)",
+                    ease: "circ.inOut",
+                    scrollTrigger: {
+                        trigger: ".benefit-section",
+                        start: mobile ? "top 55%" : "top 50%",
+                        end: mobile ? "top 30%" : undefined,
+                        scrub: mobile ? 1.5 : false,
+                    }
+                });
+
+                // Side labels fade in
+                gsap.from(".benefit-label", {
+                    opacity: 0,
+                    x: (i: number) => i === 0 ? -30 : 30,
+                    stagger: 0.15,
+                    ease: "power2.out",
+                    scrollTrigger: {
+                        trigger: ".benefit-labels-row",
+                        start: mobile ? "top 85%" : "top 70%",
+                        end: mobile ? "top 55%" : undefined,
+                        scrub: mobile ? 1.5 : false,
+                    }
+                });
+
+                // Icon badges fade up
+                gsap.from(".benefit-badge", {
+                    opacity: 0,
+                    y: 30,
+                    stagger: 0.2,
+                    ease: "power2.out",
+                    scrollTrigger: {
+                        trigger: ".benefit-badges-row",
+                        start: mobile ? "top 90%" : "top 75%",
+                        end: mobile ? "top 60%" : undefined,
+                        scrub: mobile ? 1.5 : false,
+                    }
+                });
+
+                // Bottom text fade
+                gsap.from(".benefit-bottom", {
+                    opacity: 0,
+                    y: 20,
+                    ease: "power2.out",
+                    scrollTrigger: {
+                        trigger: ".benefit-bottom",
+                        start: mobile ? "top 95%" : "top 85%",
+                        end: mobile ? "top 70%" : undefined,
+                        scrub: mobile ? 1.5 : false,
+                    }
+                });
+            });
+        };
+
+        mm.add("(max-width: 768px)", () => buildBenefit(true));
+        mm.add("(min-width: 769px)", () => buildBenefit(false));
+
+        return () => mm.revert();
+    }, []);
 
     return (
         <section className="benefit-section">
-            <div className="container mx-auto pt-16 mb-0 py-0">
-                <div className="col-center">
-                    <p className="md:text-sm para-animation">Why S1CK hits different.
-                        <br />Rated #1 Pheromones 6 Years In A Row
-                    </p>
+            <div className="container mx-auto md:pt-24 pt-16 md:pb-20 pb-12 px-5">
+                {/* Tagline */}
+                <p className="benefit-tagline text-stone text-center text-[0.65rem] uppercase tracking-[0.2em] mb-6" style={{ fontFamily: "Syne, sans-serif", fontWeight: 500 }}>
+                    Premium Quality. Maximum Impact
+                </p>
+
+                {/* Headline */}
+                <div className="col-center overflow-hidden">
+                    <h1 className="benefit-headline general-title text-center text-charcoal">
+                        Long-Lasting Formula
+                    </h1>
                 </div>
 
-                <div className="md:mt-20 md:mb-0 mb-30 mt-30 col-center">
-                    <ClipPathTitle title={"Long-lasting formula"} color={"#f7f5f2"} bg={"#2e3d4a"} className={"first-title"} borderColor={"#ede9e3"} />
-                    <ClipPathTitle title={"Pheromone-infused"} color={"#1c1a18"} bg={"#ede9e3"} className={"second-title"} borderColor={"#ede9e3"} />
-                    <ClipPathTitle title={"Gender-fluid scents"} color={"#f7f5f2"} bg={"#c8ae82"} className={"third-title"} borderColor={"#ede9e3"} />
-                    <ClipPathTitle title={"No artificial BS"} color={"#1c1a18"} bg={"#e6e1d9"} className={"fourth-title"} borderColor={"#ede9e3"} />
+                {/* Red banner */}
+                <div className="col-center md:mt-4 mt-3">
+                    <div className="benefit-banner inline-block bg-sick-red md:px-8 px-5 md:py-3 py-2" style={{ clipPath: "polygon(50% 0%,50% 0%,50% 100%,50% 100%)" }}>
+                        <h2 className="text-white text-[clamp(1rem,3vw,2rem)] font-bold uppercase tracking-[0.04em]" style={{ fontFamily: "Syne, sans-serif" }}>
+                            48mg Pheromone-Infused Blend
+                        </h2>
+                    </div>
                 </div>
-                <div className="md:mt-0 md:pb-0 pb-20 mt-10">
-                    <p>100,000+ Happy Customers and counting ...</p>
+
+                {/* Side labels row */}
+                <div className="benefit-labels-row flex items-center justify-center md:gap-16 gap-6 md:mt-10 mt-8">
+                    <div className="benefit-label flex items-center gap-3">
+                        <span className="block md:w-10 w-6 h-px bg-charcoal" />
+                        <span className="text-[0.6rem] uppercase tracking-[0.15em] text-stone" style={{ fontFamily: "Syne, sans-serif", fontWeight: 500 }}>93% Raw Materials</span>
+                    </div>
+                    <div className="benefit-label flex items-center gap-3">
+                        <span className="text-[0.6rem] uppercase tracking-[0.15em] text-stone" style={{ fontFamily: "Syne, sans-serif", fontWeight: 500 }}>Luxury Grade Fragrance Oils</span>
+                        <span className="block md:w-10 w-6 h-px bg-charcoal" />
+                    </div>
+                </div>
+
+                {/* Scroll to discover circle */}
+                <div className="col-center md:mt-12 mt-10">
+                    <div className="md:size-28 size-22 rounded-full bg-charcoal flex flex-col items-center justify-center text-white cursor-pointer hover:scale-105 transition-transform duration-300">
+                        <span className="text-[0.5rem] uppercase tracking-[0.2em] mb-1" style={{ fontFamily: "Syne, sans-serif", fontWeight: 500 }}>Scroll to</span>
+                        <span className="text-[0.5rem] uppercase tracking-[0.2em] mb-2" style={{ fontFamily: "Syne, sans-serif", fontWeight: 500 }}>Discover</span>
+                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" className="animate-bounce">
+                            <path d="M6 1v10M6 11l4-4M6 11L2 7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                    </div>
+                </div>
+
+                {/* Icon badges */}
+                <div className="benefit-badges-row flex items-start justify-center md:gap-32 gap-10 md:mt-12 mt-10">
+                    <div className="benefit-badge flex flex-col items-center text-center max-w-[10rem]">
+                        <div className="md:size-10 size-8 rounded-full border border-sick-red flex items-center justify-center mb-3">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#DC2626" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <circle cx="12" cy="12" r="10" />
+                                <polyline points="12 6 12 12 16 14" />
+                            </svg>
+                        </div>
+                        <span className="text-[0.55rem] uppercase tracking-[0.12em] text-charcoal leading-relaxed" style={{ fontFamily: "Syne, sans-serif", fontWeight: 600 }}>
+                            Designed to Leave a Lasting Impression
+                        </span>
+                    </div>
+                    <div className="benefit-badge flex flex-col items-center text-center max-w-[10rem]">
+                        <div className="md:size-10 size-8 rounded-full border border-sick-red flex items-center justify-center mb-3">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#DC2626" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                            </svg>
+                        </div>
+                        <span className="text-[0.55rem] uppercase tracking-[0.12em] text-charcoal leading-relaxed" style={{ fontFamily: "Syne, sans-serif", fontWeight: 600 }}>
+                            Backed by Science, Made to Be Noticed
+                        </span>
+                    </div>
+                </div>
+
+                {/* Bottom text */}
+                <div className="benefit-bottom col-center md:mt-14 mt-10">
+                    <div className="flex items-center gap-1 mb-2">
+                        {[...Array(5)].map((_, i) => (
+                            <svg key={i} width="12" height="12" viewBox="0 0 24 24" fill="#DC2626">
+                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                            </svg>
+                        ))}
+                    </div>
+                    <p className="text-stone text-center text-[0.65rem] uppercase tracking-[0.12em]" style={{ fontFamily: "Syne, sans-serif", fontWeight: 500 }}>
+                        100,000+ Happy Customers and Counting
+                    </p>
+                    <p className="text-charcoal text-center text-[0.6rem] uppercase tracking-[0.15em] mt-3" style={{ fontFamily: "Syne, sans-serif", fontWeight: 600 }}>
+                        Powered by <span className="text-sick-red">Science</span>. Driven by <span className="text-sick-red">Attraction</span>.
+                    </p>
                 </div>
             </div>
 
-            <div className="vd-pin relative overlay-box md:-mt-52 mt-0">
-                <div className="video-wrapper relative w-full h-screen">
+            {/* Video pin section - leave video playing as they scroll */}
+            <div className="vd-pin relative overlay-box md:-mt-10 mt-0">
+                <div className="video-wrapper relative w-full h-dvh">
                     <VideoPin />
                 </div>
             </div>

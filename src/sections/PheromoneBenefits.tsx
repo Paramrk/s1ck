@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { useMediaQuery } from "react-responsive";
+import { getImage } from "../utils/media";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -15,8 +15,8 @@ const benefits = [
             "Signals warmth, approachability, and freshness. Shown to increase perceived attractiveness and trigger positive first impressions within seconds.",
         stat: "+68%",
         statLabel: "Reported attraction increase",
-        accent: "#c8ae82",
-        accentGlow: "rgba(200,174,130,0.15)",
+        accent: "#DC2626",
+        accentGlow: "rgba(220,38,38,0.15)",
     },
     {
         number: "02",
@@ -53,74 +53,73 @@ const benefits = [
     },
 ];
 
-const PheromoneBenefits = () => {
+const PheromoneBenefits = ({ showMockup = false }: { showMockup?: boolean }) => {
     const sectionRef = useRef<HTMLElement>(null);
     const [activeIndex, setActiveIndex] = useState(0);
-    const isMobPh = useMediaQuery({ query: "(max-width:768px)" });
 
     useGSAP(() => {
-        const panels = gsap.utils.toArray<HTMLElement>(".pheromone-panel");
-        if (panels.length === 0) return;
+        const mm = gsap.matchMedia();
 
-        // ── Scroll pacing ──
-        // Each panel has a TRANSITION zone (slide in) and a DWELL zone (hold still).
-        // transitionPart = fraction of each panel's time spent sliding in
-        // dwellPart      = fraction spent holding still so the user can read
-        const transitionPart = 0.35;
+        const buildPanels = (mobile: boolean) => {
+            const panels = gsap.utils.toArray<HTMLElement>(".pheromone-panel");
+            if (panels.length === 0) return;
 
-        ScrollTrigger.create({
-            trigger: sectionRef.current,
-            start: "top top",
-            // Reduced scroll distance on mobile for snappier feel
-            end: () => `+=${panels.length * (isMobPh ? 150 : 250)}vh`,
-            pin: true,
-            scrub: isMobPh ? 1.5 : 2.5,
-            onUpdate: (self) => {
-                const progress = self.progress;
-                const step = 1 / panels.length;
-                const currentIdx = Math.min(Math.floor(progress / step), panels.length - 1);
-                setActiveIndex(currentIdx);
+            // ── Scroll pacing ──
+            // Each panel has a TRANSITION zone (slide in) and a DWELL zone (hold still).
+            const transitionPart = 0.35;
 
-                panels.forEach((panel, i) => {
-                    const panelStart = i * step;
-                    const rawInPanel = (progress - panelStart) / step; // 0 → 1 within this panel's zone
-                    const clamped = Math.max(0, Math.min(1, rawInPanel));
+            ScrollTrigger.create({
+                trigger: sectionRef.current,
+                start: "top top",
+                // Reduced scroll distance on mobile for snappier feel
+                end: () => `+=${panels.length * (mobile ? 150 : 250)}vh`,
+                pin: true,
+                scrub: mobile ? 1.5 : 2.5,
+                invalidateOnRefresh: true,
+                onUpdate: (self) => {
+                    const progress = self.progress;
+                    const step = 1 / panels.length;
+                    const currentIdx = Math.min(Math.floor(progress / step), panels.length - 1);
+                    setActiveIndex(currentIdx);
 
-                    // p goes 0→1 only during the transition zone, then stays at 1 during dwell
-                    const transitionProgress = Math.min(1, clamped / transitionPart);
-                    // Smoothstep for butter
-                    const p = transitionProgress * transitionProgress * (3 - 2 * transitionProgress);
+                    panels.forEach((panel, i) => {
+                        const panelStart = i * step;
+                        const rawInPanel = (progress - panelStart) / step;
+                        const clamped = Math.max(0, Math.min(1, rawInPanel));
 
-                    // Slide in from right — only moves during transition zone
-                    gsap.set(panel, {
-                        x: `${(1 - p) * 100}%`,
-                        opacity: p > 0.01 ? 1 : 0,
-                        zIndex: i + 1,
+                        const transitionProgress = Math.min(1, clamped / transitionPart);
+                        const p = transitionProgress * transitionProgress * (3 - 2 * transitionProgress);
+
+                        gsap.set(panel, {
+                            x: `${(1 - p) * 100}%`,
+                            opacity: p > 0.01 ? 1 : 0,
+                            zIndex: i + 1,
+                        });
+
+                        const numEl = panel.querySelector<HTMLElement>(".bg-number");
+                        if (numEl) gsap.set(numEl, { yPercent: (1 - p) * -12, xPercent: (1 - p) * 4 });
+
+                        const content = panel.querySelector<HTMLElement>(".panel-inner");
+                        if (content) gsap.set(content, { yPercent: (1 - p) * 8, opacity: Math.min(1, p * 2) });
+
+                        const stat = panel.querySelector<HTMLElement>(".stat-value");
+                        if (stat) gsap.set(stat, { scale: 0.8 + p * 0.2, opacity: Math.min(1, p * 1.8) });
+
+                        const line = panel.querySelector<HTMLElement>(".accent-line");
+                        if (line) gsap.set(line, { scaleX: Math.min(1, p * 1.5) });
+
+                        const glow = panel.querySelector<HTMLElement>(".accent-glow");
+                        if (glow) gsap.set(glow, { opacity: p * 0.4, scale: 0.9 + p * 0.2 });
                     });
+                },
+            });
+        };
 
-                    // Background number — gentle drift
-                    const numEl = panel.querySelector<HTMLElement>(".bg-number");
-                    if (numEl) gsap.set(numEl, { yPercent: (1 - p) * -12, xPercent: (1 - p) * 4 });
+        mm.add("(max-width: 768px)", () => buildPanels(true));
+        mm.add("(min-width: 769px)", () => buildPanels(false));
 
-                    // Content — subtle rise
-                    const content = panel.querySelector<HTMLElement>(".panel-inner");
-                    if (content) gsap.set(content, { yPercent: (1 - p) * 8, opacity: Math.min(1, p * 2) });
-
-                    // Stat — scale in softly
-                    const stat = panel.querySelector<HTMLElement>(".stat-value");
-                    if (stat) gsap.set(stat, { scale: 0.8 + p * 0.2, opacity: Math.min(1, p * 1.8) });
-
-                    // Accent line — grows during first portion
-                    const line = panel.querySelector<HTMLElement>(".accent-line");
-                    if (line) gsap.set(line, { scaleX: Math.min(1, p * 1.5) });
-
-                    // Glow — fades in gently
-                    const glow = panel.querySelector<HTMLElement>(".accent-glow");
-                    if (glow) gsap.set(glow, { opacity: p * 0.4, scale: 0.9 + p * 0.2 });
-                });
-            },
-        });
-    });
+        return () => mm.revert();
+    }, []);
 
     return (
         <section
@@ -245,14 +244,11 @@ const PheromoneBenefits = () => {
                     >
                         {/* Accent glow orb */}
                         <div
-                            className="accent-glow absolute pointer-events-none"
+                            className="accent-glow absolute pointer-events-none md:w-[40vw] md:h-[40vw] md:-left-[10%] w-[60vw] h-[60vw] -left-[25%]"
                             style={{
-                                width: "40vw",
-                                height: "40vw",
                                 borderRadius: "50%",
                                 background: `radial-gradient(circle, ${b.accentGlow}, transparent 70%)`,
                                 top: "20%",
-                                left: "-10%",
                                 opacity: 0,
                             }}
                         />
@@ -279,6 +275,25 @@ const PheromoneBenefits = () => {
                         >
                             {b.number}
                         </div>
+
+                        {/* Right Side Mockup Image Option */}
+                        {showMockup && (
+                            <div
+                                className="absolute right-0 top-0 bottom-0 w-[100%] md:w-[70%] lg:w-[60%] pointer-events-none z-0"
+                                style={{
+                                    maskImage: "linear-gradient(to right, transparent 0%, black 30%)",
+                                    WebkitMaskImage: "linear-gradient(to right, transparent 0%, black 30%)",
+                                }}
+                            >
+                                <img
+                                    src={getImage("mockup-img.jpeg")}
+                                    alt="Mockup"
+                                    loading="lazy"
+                                    decoding="async"
+                                    className="w-full h-full object-cover object-[70%_center] opacity-90"
+                                />
+                            </div>
+                        )}
 
                         {/* Content */}
                         <div
@@ -322,7 +337,7 @@ const PheromoneBenefits = () => {
                                     fontFamily: '"Syne", sans-serif',
                                     fontSize: "clamp(2.2rem, 5.5vw, 4.5rem)",
                                     fontWeight: 800,
-                                    color: "#f7f5f2",
+                                    color: "#ffffff",
                                     lineHeight: 1.05,
                                     letterSpacing: "-0.03em",
                                     textTransform: "uppercase",
@@ -349,7 +364,7 @@ const PheromoneBenefits = () => {
                             </p>
 
                             {/* Stat */}
-                            <div className="flex items-end gap-5">
+                            <div className="flex items-end gap-5 flex-wrap">
                                 <span
                                     className="stat-value"
                                     style={{

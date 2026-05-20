@@ -1,0 +1,6 @@
+- generic [active]:
+  - generic:
+    - main:
+      - generic [ref=e1]:
+        - img "pre img" [ref=e2]
+        - paragraph [ref=e3]: 100%

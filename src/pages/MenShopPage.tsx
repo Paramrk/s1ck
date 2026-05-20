@@ -8,12 +8,18 @@ import FooterSection from "../sections/FooterSection";
 import { flavorlists } from "../constants/details";
 import { getImage } from "../utils/media";
 import menImg from "../assets/menu-img/men-menu.jpeg";
+import { useScrollTriggerRefresh } from "../hooks/useScrollTriggerRefresh";
 
 gsap.registerPlugin(ScrollTrigger);
 
 const MenShopPage = () => {
     const pageRef = useRef<HTMLDivElement>(null);
     const heroImgRef = useRef<HTMLImageElement>(null);
+    useScrollTriggerRefresh();
+
+    const hasFineHover =
+        typeof window !== "undefined" &&
+        window.matchMedia("(hover: hover) and (pointer: fine)").matches;
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -139,6 +145,8 @@ const MenShopPage = () => {
                         ref={heroImgRef}
                         src={menImg}
                         alt="Men's Collection"
+                        loading="eager"
+                        decoding="async"
                         className="w-full h-[120%] object-cover absolute top-0 left-0"
                     />
                 </div>
@@ -192,8 +200,8 @@ const MenShopPage = () => {
                             <div
                                 key={product.name}
                                 className="product-card group cursor-pointer"
-                                onMouseEnter={handleCardEnter}
-                                onMouseLeave={handleCardLeave}
+                                onMouseEnter={hasFineHover ? handleCardEnter : undefined}
+                                onMouseLeave={hasFineHover ? handleCardLeave : undefined}
                             >
                                 <div className="relative aspect-[4/5] overflow-hidden bg-parchment border border-ivory">
                                     {/* Number tag */}
@@ -206,6 +214,8 @@ const MenShopPage = () => {
                                     <img
                                         src={getImage(product.drinkImage || "")}
                                         alt={product.name}
+                                        loading="lazy"
+                                        decoding="async"
                                         className="card-img w-full h-full object-contain p-10"
                                     />
                                 </div>

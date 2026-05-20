@@ -5,6 +5,7 @@ import { useGSAP } from "@gsap/react";
 import Navbar from "../components/Navbar";
 import FooterSection from "../sections/FooterSection";
 import heroImg from "../assets/menu-img/story-menu.jpeg";
+import { useScrollTriggerRefresh } from "../hooks/useScrollTriggerRefresh";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -82,6 +83,11 @@ const tiers = [
 const VipClubPage = () => {
     const pageRef = useRef<HTMLDivElement>(null);
     const heroImgRef = useRef<HTMLImageElement>(null);
+    useScrollTriggerRefresh();
+
+    const hasFineHover =
+        typeof window !== "undefined" &&
+        window.matchMedia("(hover: hover) and (pointer: fine)").matches;
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -192,13 +198,13 @@ const VipClubPage = () => {
     const handleBenefitEnter = (e: React.MouseEvent) => {
         const card = e.currentTarget as HTMLElement;
         const icon = card.querySelector(".benefit-icon") as HTMLElement;
-        gsap.to(card, { y: -6, borderColor: "#c8ae82", duration: 0.35, ease: "power2.out" });
+        gsap.to(card, { y: -6, borderColor: "#DC2626", duration: 0.35, ease: "power2.out" });
         if (icon) gsap.to(icon, { scale: 1.2, rotation: 5, duration: 0.35, ease: "power2.out" });
     };
     const handleBenefitLeave = (e: React.MouseEvent) => {
         const card = e.currentTarget as HTMLElement;
         const icon = card.querySelector(".benefit-icon") as HTMLElement;
-        gsap.to(card, { y: 0, borderColor: "#e6e1d9", duration: 0.35, ease: "power3.out" });
+        gsap.to(card, { y: 0, borderColor: "#e5e5e5", duration: 0.35, ease: "power3.out" });
         if (icon) gsap.to(icon, { scale: 1, rotation: 0, duration: 0.35, ease: "power3.out" });
     };
 
@@ -223,6 +229,8 @@ const VipClubPage = () => {
                         ref={heroImgRef}
                         src={heroImg}
                         alt="VIP Club"
+                        loading="eager"
+                        decoding="async"
                         className="w-full h-[120%] object-cover absolute top-0 left-0"
                     />
                 </div>
@@ -288,8 +296,8 @@ const VipClubPage = () => {
                             <div
                                 key={b.title}
                                 className="benefit-card border border-ivory bg-warm-white p-8 cursor-default"
-                                onMouseEnter={handleBenefitEnter}
-                                onMouseLeave={handleBenefitLeave}
+                                onMouseEnter={hasFineHover ? handleBenefitEnter : undefined}
+                                onMouseLeave={hasFineHover ? handleBenefitLeave : undefined}
                             >
                                 <span
                                     className="text-taupe/30 text-[0.55rem] tracking-[0.2em] block mb-4"
@@ -347,8 +355,8 @@ const VipClubPage = () => {
                                         ? "bg-charcoal text-cream border border-charcoal"
                                         : "bg-warm-white text-charcoal border border-ivory"
                                 }`}
-                                onMouseEnter={handleTierEnter}
-                                onMouseLeave={handleTierLeave}
+                                onMouseEnter={hasFineHover ? handleTierEnter : undefined}
+                                onMouseLeave={hasFineHover ? handleTierLeave : undefined}
                             >
                                 {/* Popular badge */}
                                 {tier.badge && (
