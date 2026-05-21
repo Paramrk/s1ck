@@ -17,7 +17,7 @@ const benefits = [
         statLabel: "Reported attraction increase",
         accent: "#DC2626",
         accentGlow: "rgba(220,38,38,0.15)",
-        image: "ma-mockup.png",
+        image: "ma-mockup.webp",
     },
     {
         number: "02",
@@ -29,7 +29,7 @@ const benefits = [
         statLabel: "More memorable interactions",
         accent: "#5a7a94",
         accentGlow: "rgba(90,122,148,0.15)",
-        image: "dp-mockup.png",
+        image: "dp-mockup.webp",
     },
     {
         number: "03",
@@ -41,7 +41,7 @@ const benefits = [
         statLabel: "Users report stronger bonds",
         accent: "#a08060",
         accentGlow: "rgba(160,128,96,0.15)",
-        image: "ec-mockup.png",
+        image: "ec-mockup.webp",
     },
     {
         number: "04",
@@ -53,7 +53,7 @@ const benefits = [
         statLabel: "Average effect duration",
         accent: "#8a6e5a",
         accentGlow: "rgba(138,110,90,0.15)",
-        image: "lc-mockup.png",
+        image: "lc-mockup.webp",
     },
 ];
 

@@ -37,13 +37,8 @@ const ShopPage = () => {
             "-=1.2"
         );
 
-        // Divider grows from center
-        tl.fromTo(
-            ".panel-divider",
-            { scaleY: 0 },
-            { scaleY: 1, duration: 0.8, ease: "power3.out" },
-            "-=0.6"
-        );
+
+
 
         // Numbers fade up
         tl.fromTo(
@@ -156,8 +151,8 @@ const ShopPage = () => {
             <Navbar variant="light" />
 
             <div className="flex lg:flex-row flex-col w-full h-dvh relative">
-                {/* Center divider (desktop) */}
-                <div className="panel-divider absolute top-0 left-1/2 -translate-x-1/2 w-px h-full bg-cream/25 z-30 origin-center hidden lg:block pointer-events-none" />
+
+
 
                 {/* ─── Men Panel ─── */}
                 <Link

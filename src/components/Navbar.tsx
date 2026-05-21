@@ -3,7 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import NavMenu from "./NavMenu";
-import s1ckLogo from "../assets/s1cklogo-trnsp.webp";
+import s1ckLogo from "../assets/images/s1ck-logo-transparent.webp";
 
 interface NavbarProps {
     variant?: "dark" | "light";
