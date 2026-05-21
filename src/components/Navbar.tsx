@@ -70,7 +70,7 @@ const Navbar: React.FC<NavbarProps> = ({ variant = "dark" }) => {
                 {!isShopPage && (
                     <Link
                         to="/shop"
-                        className={`group sm:px-6 px-4 py-2 border transition-all duration-500 text-center cursor-pointer ${
+                        className={`hidden md:block group sm:px-6 px-4 py-2 border transition-all duration-500 text-center cursor-pointer ${
                             isLight
                                 ? "border-cream/30 bg-transparent hover:bg-cream"
                                 : "border-charcoal bg-white hover:bg-charcoal"
