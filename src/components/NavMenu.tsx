@@ -2,9 +2,9 @@ import React, { useState, useRef, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
-import menu1 from "../assets/menu-img/men-menu.jpeg";
-import menu3 from "../assets/menu-img/shop-menu.jpeg";
-import menu4 from "../assets/menu-img/story-menu.jpeg";
+import menu1 from "../assets/menu-img/men-menu.webp";
+import menu3 from "../assets/menu-img/shop-menu.webp";
+import menu4 from "../assets/menu-img/story-menu.webp";
 
 const defaultMenuImg = menu1;
 

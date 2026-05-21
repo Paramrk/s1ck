@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
-import preImg from "../assets/s1cklogo-trnsp.png"
+import preImg from "../assets/s1cklogo-trnsp.webp"
 
 const PreLoader = ({ onComplete }: { onComplete: () => void }) => {
     const [progress, setProgress] = useState(0);

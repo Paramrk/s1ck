@@ -4,7 +4,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import Navbar from "../components/Navbar";
 import FooterSection from "../sections/FooterSection";
-import heroImg from "../assets/menu-img/story-menu.jpeg";
+import heroImg from "../assets/menu-img/story-menu.webp";
 import { useScrollTriggerRefresh } from "../hooks/useScrollTriggerRefresh";
 
 gsap.registerPlugin(ScrollTrigger);

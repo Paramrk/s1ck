@@ -7,7 +7,7 @@ import Navbar from "../components/Navbar";
 import FooterSection from "../sections/FooterSection";
 import { flavorlists } from "../constants/details";
 import { getImage } from "../utils/media";
-import womenImg from "../assets/menu-img/women-menu.jpeg";
+import womenImg from "../assets/menu-img/women-menu.webp";
 import { useScrollTriggerRefresh } from "../hooks/useScrollTriggerRefresh";
 
 gsap.registerPlugin(ScrollTrigger);

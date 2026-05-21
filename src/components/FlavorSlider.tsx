@@ -1,7 +1,7 @@
 import { flavorlists } from "../constants/details";
 
 const images: Record<string, { default: string }> = import.meta.glob(
-    "../assets/images/*.{webp,svg,png,jpg,jpeg}",
+    "../assets/images/*.{webp,svg}",
     { eager: true }
 );
 

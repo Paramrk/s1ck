@@ -76,6 +76,7 @@ const PheromoneBenefits = ({ showMockup = false }: { showMockup?: boolean }) => 
                 // More scroll distance on mobile = slower, smoother transitions
                 end: () => `+=${panels.length * (mobile ? 200 : 250)}vh`,
                 pin: true,
+                anticipatePin: 1,
                 // Higher scrub = more interpolation = smoother feel
                 scrub: mobile ? 2.5 : 2.5,
                 invalidateOnRefresh: true,

@@ -28,6 +28,7 @@ const FlavorSection = () => {
                 // Higher scrub on mobile = more lerp smoothing = fewer visual hitches
                 scrub: isMob ? 1.8 : 1.2,
                 pin: true,
+                anticipatePin: 1,
             },
         });
 

@@ -2,9 +2,9 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { SplitText } from "gsap/all";
 import { useMediaQuery } from "react-responsive";
-import { getImage } from '../utils/media';
+import { getImage, getVideo } from '../utils/media';
 
-const heroBgVid = "assets/videos/hero-bg-3.mp4";
+const heroBgVid = getVideo("hero-bg-3.mp4");
 
 const HeroSection = () => {
 
@@ -100,7 +100,7 @@ const HeroSection = () => {
                 {(isTabHero ?
                     <>
                         {isMobHero && <img src={getImage("hero-bg.png")} alt="" loading="eager" decoding="async" className="absolute bottom-40 object-cover w-full h-full" />}
-                        <img src={getImage("herobg.jpeg")} alt="" loading="eager" decoding="async" className="absolute bottom-0 left-1/2 -translate-x-1/2 object-auto" />
+                        <img src={getImage("herobg.webp")} alt="" loading="eager" decoding="async" className="absolute bottom-0 left-1/2 -translate-x-1/2 object-auto" />
                     </>
                     :
                     <>
@@ -113,7 +113,7 @@ const HeroSection = () => {
                     <div className="hero-emblem hidden md:flex items-center justify-center gap-5 md:gap-8 mb-4 md:mb-8 w-full max-w-[30rem] sm:max-w-[36rem] md:max-w-[44rem] lg:max-w-[52rem] px-4">
                         <span className={`h-px flex-1 ${lineTheme}`} />
                         <img
-                            src={getImage("s1ck-logo-transparent.png")}
+                            src={getImage("s1ck-logo-transparent.webp")}
                             alt="S1CK"
                             className={`hero-logo-slot w-16 md:w-24 lg:w-28 shrink-0 select-none pointer-events-none ${logoTheme}`}
                             draggable={false}

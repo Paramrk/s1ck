@@ -29,22 +29,17 @@ const HomePage = () => {
             // show/hide resize so pinned sections don't recalc mid-scroll.
             ScrollTrigger.config({ ignoreMobileResize: true });
 
-            // normalizeScroll hijacks touch events and replaces them with
-            // JS-controlled scroll — causes stutter on low-end phones.
-            // Only enable on desktop where it smooths wheel jitter.
+            // normalizeScroll and ScrollSmoother hijack touch events and cause pinning jitter on mobile.
+            // Disable ScrollSmoother on mobile entirely to let ScrollTrigger use native "position: fixed" pinning.
             if (!isMobile) {
                 ScrollTrigger.normalizeScroll(true);
+                ScrollSmoother.create({
+                    wrapper: "#smooth-wrapper",
+                    content: "#smooth-content",
+                    smooth: 1.5,
+                    effects: true,
+                });
             }
-
-            ScrollSmoother.create({
-                wrapper: "#smooth-wrapper",
-                content: "#smooth-content",
-                // Less interpolation on mobile = less work per frame
-                smooth: isMobile ? 1 : 1.5,
-                effects: !isMobile,
-                // 0 = native touch scroll (always smoother than JS lerp)
-                smoothTouch: 0,
-            });
             ScrollTrigger.refresh();
         }
     }, [loaded]);

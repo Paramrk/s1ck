@@ -2,12 +2,12 @@
 
 // Glob import all images and videos
 const images: Record<string, { default: string }> = import.meta.glob(
-    "../assets/images/*.{webp,svg,png,jpg,jpeg}",
+    "../assets/images/*.{webp,svg}",
     { eager: true }
 );
 
 const videos: Record<string, { default: string }> = import.meta.glob(
-    "../assets/videos/*.{mp4}",
+    "../assets/videos/*.mp4",
     { eager: true }
 );
 

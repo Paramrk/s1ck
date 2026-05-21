@@ -37,12 +37,12 @@ const features: Feature[] = [
 ];
 
 const bottles: { name: string; file: string }[] = [
-    { name: "Le Toxiquè", file: "lt.png" },
-    { name: "Liquid Silver", file: "ls.png" },
-    { name: "Alpha Q", file: "aq.png" },
-    { name: "Avant-Garde", file: "avant-garde.png" },
-    { name: "Le-Toxique Oil", file: "ltoil.png" },
-    { name: "Arcane", file: "arc.png" },
+    { name: "Le Toxiquè", file: "lt.webp" },
+    { name: "Liquid Silver", file: "ls.webp" },
+    { name: "Alpha Q", file: "aq.webp" },
+    { name: "Avant-Garde", file: "avant-garde.webp" },
+    { name: "Le-Toxique Oil", file: "ltoil.webp" },
+    { name: "Arcane", file: "arc.webp" },
 ];
 
 // Tiny inline splash SVG used behind every bottle — fluid, vector, blends with white
@@ -423,7 +423,7 @@ const NutritionSection = ({ showMockup = false }: { showMockup?: boolean }) => {
                     {showMockup ? (
                         <div className="relative w-full h-full flex items-center justify-center">
                             <img
-                                src={getImage("mockup-img.jpeg")}
+                                src={getImage("mockup-img.webp")}
                                 alt="S1CK Pheromones Mockup"
                                 loading="lazy"
                                 decoding="async"
