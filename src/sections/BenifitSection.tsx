@@ -1,6 +1,6 @@
 import { useGSAP } from "@gsap/react"
 import gsap from "gsap";
-import { SplitText } from "gsap/all";
+import { SplitText, ScrollTrigger } from "gsap/all";
 import VideoPin from "../components/VideoPin";
 
 const BenifitSection = () => {
@@ -10,6 +10,12 @@ const BenifitSection = () => {
 
         const buildBenefit = (mobile: boolean) => {
             document.fonts.ready.then(() => {
+                const triggerBase = {
+                    trigger: ".benefit-section",
+                    start: mobile ? "top 80%" : "top 70%",
+                    toggleActions: "play none none none",
+                };
+
                 // Tagline words
                 const tagSplit = SplitText.create(".benefit-tagline", { type: "words" });
                 gsap.from(tagSplit.words, {
@@ -17,12 +23,7 @@ const BenifitSection = () => {
                     yPercent: 40,
                     stagger: 0.08,
                     ease: "power2.out",
-                    scrollTrigger: {
-                        trigger: ".benefit-section",
-                        start: mobile ? "top 80%" : "top 70%",
-                        end: mobile ? "top 50%" : undefined,
-                        scrub: mobile ? 1.5 : false,
-                    }
+                    scrollTrigger: { ...triggerBase },
                 });
 
                 // Headline chars
@@ -32,65 +33,56 @@ const BenifitSection = () => {
                     stagger: 0.02,
                     ease: "power1.inOut",
                     scrollTrigger: {
-                        trigger: ".benefit-section",
+                        ...triggerBase,
                         start: mobile ? "top 70%" : "top 60%",
-                        end: mobile ? "top 40%" : undefined,
-                        scrub: mobile ? 1.5 : false,
-                    }
+                    },
                 });
 
                 // Red banner clip-path reveal
                 gsap.to(".benefit-banner", {
                     clipPath: "polygon(0% 0%,100% 0%,100% 100%,0% 100%)",
                     ease: "circ.inOut",
+                    duration: 0.8,
                     scrollTrigger: {
-                        trigger: ".benefit-section",
-                        start: mobile ? "top 55%" : "top 50%",
-                        end: mobile ? "top 30%" : undefined,
-                        scrub: mobile ? 1.5 : false,
-                    }
+                        ...triggerBase,
+                        start: mobile ? "top 60%" : "top 50%",
+                    },
                 });
 
-                // Side labels fade in
+                // Side labels slide in (no opacity animation - always visible)
                 gsap.from(".benefit-label", {
-                    opacity: 0,
                     x: (i: number) => i === 0 ? -30 : 30,
                     stagger: 0.15,
                     ease: "power2.out",
                     scrollTrigger: {
-                        trigger: ".benefit-labels-row",
-                        start: mobile ? "top 85%" : "top 70%",
-                        end: mobile ? "top 55%" : undefined,
-                        scrub: mobile ? 1.5 : false,
-                    }
+                        ...triggerBase,
+                        start: mobile ? "top 55%" : "top 45%",
+                    },
                 });
 
-                // Icon badges fade up
+                // Icon badges slide up (no opacity animation - always visible)
                 gsap.from(".benefit-badge", {
-                    opacity: 0,
                     y: 30,
                     stagger: 0.2,
                     ease: "power2.out",
                     scrollTrigger: {
-                        trigger: ".benefit-badges-row",
-                        start: mobile ? "top 90%" : "top 75%",
-                        end: mobile ? "top 60%" : undefined,
-                        scrub: mobile ? 1.5 : false,
-                    }
+                        ...triggerBase,
+                        start: mobile ? "top 50%" : "top 40%",
+                    },
                 });
 
-                // Bottom text fade
+                // Bottom text slide up (no opacity animation - always visible)
                 gsap.from(".benefit-bottom", {
-                    opacity: 0,
                     y: 20,
                     ease: "power2.out",
                     scrollTrigger: {
-                        trigger: ".benefit-bottom",
-                        start: mobile ? "top 95%" : "top 85%",
-                        end: mobile ? "top 70%" : undefined,
-                        scrub: mobile ? 1.5 : false,
-                    }
+                        ...triggerBase,
+                        start: mobile ? "top 45%" : "top 35%",
+                    },
                 });
+
+                // Refresh ScrollTrigger to recalculate layout positions
+                ScrollTrigger.refresh();
             });
         };
 
@@ -102,7 +94,7 @@ const BenifitSection = () => {
 
     return (
         <section className="benefit-section">
-            <div className="container mx-auto md:pt-24 pt-16 md:pb-20 pb-12 px-5">
+            <div className="container mx-auto md:pt-24 pt-16 md:pb-20 pb-12 px-5 relative z-10">
                 {/* Tagline */}
                 <p className="benefit-tagline text-stone text-center text-[0.65rem] uppercase tracking-[0.2em] mb-6" style={{ fontFamily: "Syne, sans-serif", fontWeight: 500 }}>
                     Premium Quality. Maximum Impact

@@ -377,19 +377,19 @@ const NutritionSection = ({ showMockup = false }: { showMockup?: boolean }) => {
                     </div>
 
                     <div className="lg:max-w-xs flex flex-col gap-5 lg:items-end lg:text-right">
-                        <p
-                            className="nut-para text-stone text-sm md:text-[0.95rem] leading-relaxed tracking-[0.02em]"
-                            style={{ fontFamily: "Syne, sans-serif" }}
-                        >
-                            S1CK blends luxury fragrance with advanced pheromone compounds designed to enhance presence, confidence, and attraction.
-                        </p>
-                        <button
-                            type="button"
-                            className="nut-shop self-start lg:self-end inline-flex items-center gap-2 border border-charcoal/20 text-charcoal bg-transparent uppercase tracking-[0.25em] text-[0.7rem] md:text-xs font-semibold px-7 md:px-8 py-3 md:py-3.5 rounded-full hover:bg-charcoal hover:text-white transition-colors duration-300"
-                            style={{ fontFamily: "Syne, sans-serif" }}
-                        >
-                            Shop Now
-                        </button>
+                         <p
+                             className="nut-para text-stone text-sm md:text-[0.95rem] leading-relaxed tracking-[0.02em]"
+                             style={{ fontFamily: "Syne, sans-serif" }}
+                         >
+                             S1CK blends luxury fragrance with advanced pheromone compounds designed to enhance presence, confidence, and attraction.
+                         </p>
+                         <button
+                             type="button"
+                             className="nut-shop self-start lg:self-end hidden md:inline-flex items-center gap-2 border border-charcoal/20 text-charcoal bg-transparent uppercase tracking-[0.25em] text-[0.7rem] md:text-xs font-semibold px-7 md:px-8 py-3 md:py-3.5 rounded-full hover:bg-charcoal hover:text-white transition-colors duration-300"
+                             style={{ fontFamily: "Syne, sans-serif" }}
+                         >
+                             Shop Now
+                         </button>
                     </div>
                 </div>
 

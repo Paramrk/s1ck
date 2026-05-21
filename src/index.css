@@ -211,6 +211,20 @@ body::-webkit-scrollbar { display: none; }
     .benefit-section {
         @apply min-h-dvh bg-white overflow-hidden relative;
 
+        .container {
+            position: relative;
+            z-index: 30 !important;
+        }
+
+        .vd-pin,
+        .pin-spacer,
+        .video-wrapper,
+        .video-box {
+            z-index: 10 !important;
+            background-color: transparent !important;
+            background: transparent !important;
+        }
+
         .vd-pin {
             .play-btn {
                 @apply absolute top-[50%] left-[50%] -translate-x-[50%] -translate-y-[50%] size-[9vw] flex justify-center items-center bg-[#ffffff60] backdrop-blur-xl rounded-full;
@@ -227,6 +241,7 @@ body::-webkit-scrollbar { display: none; }
     /* ── TESTIMONIALS ── */
     .testimonials-section {
         @apply bg-warm-white relative w-full lg:h-[130vh];
+        z-index: 20;
 
         .pin-box {
             @apply flex items-center justify-center gap-12 w-full ps-52 absolute 2xl:bottom-32 top-0;
@@ -441,8 +456,7 @@ body::-webkit-scrollbar { display: none; }
 /* Compositor isolation for pinned sections — helps mobile browsers */
 .flavor-section,
 .pheromone-benefits-section,
-.testimonials-section,
-.benefit-section .vd-pin {
+.testimonials-section {
     contain: layout style paint;
 }
 
