@@ -9,16 +9,20 @@ const FlavorTitle = () => {
 
         const buildIntro = (isMobile: boolean) => {
             document.fonts.ready.then(() => {
-                const firstTextSplit = SplitText.create(".first-text-split h1", {
-                    type: "chars",
-                });
-                const secTextSplit = SplitText.create(".second-text-split h1", {
-                    type: "chars",
-                });
+                const splitHeadlineLines = (selector: string) => {
+                    const lines = gsap.utils.toArray<HTMLElement>(
+                        `${selector} .flavor-headline-line`,
+                    );
+                    const splits = lines.map((line) =>
+                        SplitText.create(line, { type: "chars" }),
+                    );
+                    return splits.flatMap((split) => split.chars);
+                };
 
+                const firstChars = splitHeadlineLines(".first-text-split");
+                const secondChars = splitHeadlineLines(".second-text-split");
 
-
-                gsap.from(firstTextSplit.chars, {
+                gsap.from(firstChars, {
                     yPercent: 180,
                     stagger: 0.02,
                     ease: "power2.out",
@@ -39,7 +43,7 @@ const FlavorTitle = () => {
                     },
                 });
 
-                gsap.from(secTextSplit.chars, {
+                gsap.from(secondChars, {
                     yPercent: 180,
                     stagger: 0.02,
                     ease: "power2.out",
@@ -81,12 +85,12 @@ const FlavorTitle = () => {
     }, []);
 
     return (
-        <div className="general-title flex flex-col items-center lg:items-start text-center lg:text-left lg:gap-7 gap-2 max-w-md w-full">
+        <div className="general-title flex flex-col items-start text-left w-full max-w-md gap-2 max-md:gap-2.5 lg:gap-7">
 
 
             {/* Stars + customer count */}
             <div
-                className="flavor-stars flex items-center gap-2 lg:gap-3 text-[0.45rem] md:text-[0.72rem] text-stone uppercase tracking-[0.12em] md:tracking-[0.2em]"
+                className="flavor-stars flex items-center gap-2 lg:gap-3 text-[0.62rem] md:text-[0.72rem] text-stone uppercase tracking-[0.14em] md:tracking-[0.2em]"
                 style={{ fontFamily: "Syne, sans-serif", fontWeight: 500 }}
             >
                 <span className="flex items-center gap-[1px] lg:gap-[2px]">
@@ -94,7 +98,7 @@ const FlavorTitle = () => {
                         <svg
                             key={s}
                             viewBox="0 0 20 20"
-                            className="w-2 h-2 md:w-3 md:h-3 lg:w-[14px] lg:h-[14px] text-sick-red fill-current"
+                            className="w-2.5 h-2.5 md:w-3 md:h-3 lg:w-[14px] lg:h-[14px] text-sick-red fill-current"
                             aria-hidden="true"
                         >
                             <path d="M10 1.5l2.6 5.3 5.9.86-4.27 4.16 1.01 5.88L10 14.9l-5.24 2.8 1-5.88L1.5 7.66l5.9-.86z" />
@@ -105,20 +109,26 @@ const FlavorTitle = () => {
             </div>
 
             {/* BEST SELLERS */}
-            <div className="overflow-hidden first-text-split w-full">
-                <h1 className="!text-left lg:!text-left !text-center text-charcoal leading-[0.92] text-2xl md:text-4xl lg:text-6xl 2xl:text-[5.5rem]">Best Sellers</h1>
+            <div className="first-text-split w-full self-start text-left overflow-x-visible overflow-y-clip pb-1 md:pb-2 pr-1 md:pr-2">
+                <h1 className="bestseller-title flavor-headline-stack text-left text-charcoal leading-[0.92] text-[2.35rem] md:text-5xl lg:text-6xl 2xl:text-[5.5rem] font-bold uppercase w-full max-w-full">
+                    <span className="flavor-headline-line">Best</span>
+                    <span className="flavor-headline-line">Seller</span>
+                </h1>
             </div>
 
             {/* TRUSTED BY THOUSANDS — red highlight strip */}
-            <div className="flavor-text-scroll self-center lg:self-start">
-                <div className="bg-sick-red md:py-4 py-1.5 md:px-6 px-3">
-                    <h2 className="text-white text-[0.6rem] md:text-base tracking-[-0.01em]">Trusted By Thousands</h2>
+            <div className="flavor-text-scroll self-start">
+                <div className="bg-sick-red md:py-4 py-2 md:px-6 px-4">
+                    <h2 className="text-white text-xs md:text-base tracking-[-0.01em] text-nowrap uppercase font-bold">Trusted By Thousands</h2>
                 </div>
             </div>
 
             {/* WORLDWIDE */}
-            <div className="overflow-hidden second-text-split w-full">
-                <h1 className="!text-left lg:!text-left !text-center text-charcoal leading-[0.92] text-2xl md:text-4xl lg:text-6xl 2xl:text-[5.5rem]">Worldwide</h1>
+            <div className="second-text-split w-full self-start text-left overflow-x-visible overflow-y-clip pb-1 md:pb-2 pr-1 md:pr-2">
+                <h1 className="worldwide-title flavor-headline-stack text-left text-charcoal leading-[0.92] text-[2.35rem] md:text-5xl lg:text-6xl 2xl:text-[5.5rem] font-bold uppercase w-full max-w-full">
+                    <span className="flavor-headline-line">World</span>
+                    <span className="flavor-headline-line">wide</span>
+                </h1>
             </div>
 
             <p

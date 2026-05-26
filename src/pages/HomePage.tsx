@@ -12,6 +12,7 @@ import PheromoneBenefits from "../sections/PheromoneBenefits";
 import FooterSection from "../sections/FooterSection";
 import TestimonialSection from "../sections/TestimonialSection";
 import PreLoader from "../components/PreLoader";
+import DeferredSection from "../components/DeferredSection";
 import { useEffect, useState } from "react";
 import { useScrollTriggerRefresh } from "../hooks/useScrollTriggerRefresh";
 
@@ -22,29 +23,23 @@ const HomePage = () => {
     useScrollTriggerRefresh();
 
     useGSAP(() => {
-        if (loaded && !ScrollSmoother.get()) {
-            const isMobile = window.innerWidth <= 768;
+        if (!loaded || ScrollSmoother.get()) return;
 
-            // Stabilise iOS Safari scroll: ignore the address-bar
-            // show/hide resize so pinned sections don't recalc mid-scroll.
-            ScrollTrigger.config({ ignoreMobileResize: true });
+        const isMobile = window.innerWidth <= 768;
+        ScrollTrigger.config({ ignoreMobileResize: true });
 
-            // normalizeScroll and ScrollSmoother hijack touch events and cause pinning jitter on mobile.
-            // Disable ScrollSmoother on mobile entirely to let ScrollTrigger use native "position: fixed" pinning.
-            if (!isMobile) {
-                ScrollTrigger.normalizeScroll(true);
-                ScrollSmoother.create({
-                    wrapper: "#smooth-wrapper",
-                    content: "#smooth-content",
-                    smooth: 1.5,
-                    effects: true,
-                });
-            }
-            ScrollTrigger.refresh();
+        if (!isMobile) {
+            ScrollSmoother.create({
+                wrapper: "#smooth-wrapper",
+                content: "#smooth-content",
+                smooth: 1.15,
+                effects: false,
+            });
         }
+
+        ScrollTrigger.refresh();
     }, [loaded]);
 
-    // Cleanup ScrollSmoother and ScrollTriggers on unmount
     useEffect(() => {
         return () => {
             ScrollSmoother.get()?.kill();
@@ -54,27 +49,40 @@ const HomePage = () => {
 
     return (
         <main>
-            {!loaded && <PreLoader onComplete={() => setLoaded(true)} />}
+            <Navbar />
+            <div id="smooth-wrapper">
+                <div id="smooth-content">
+                    <HeroSection />
 
-            {loaded && (
-                <>
-                    <Navbar />
-                    <div id="smooth-wrapper">
-                        <div id="smooth-content">
-                            <HeroSection />
-                            <MessageSection />
-                            <FlavorSection />
-                            <NutritionSection showMockup={true} />
-                            <div>
-                                <BenifitSection />
-                                <TestimonialSection />
-                            </div>
-                            <PheromoneBenefits showMockup={true} />
-                            <FooterSection />
-                        </div>
-                    </div>
-                </>
-            )}
+                    {loaded && (
+                        <>
+                            <DeferredSection minHeight="100dvh">
+                                <MessageSection />
+                            </DeferredSection>
+                            <DeferredSection minHeight="100dvh">
+                                <FlavorSection />
+                            </DeferredSection>
+                            <DeferredSection minHeight="100dvh">
+                                <NutritionSection showMockup={true} />
+                            </DeferredSection>
+                            <DeferredSection minHeight="100dvh">
+                                <div>
+                                    <BenifitSection />
+                                    <TestimonialSection />
+                                </div>
+                            </DeferredSection>
+                            <DeferredSection minHeight="100dvh">
+                                <PheromoneBenefits showMockup={true} />
+                            </DeferredSection>
+                            <DeferredSection minHeight="50vh" rootMargin="520px 0px">
+                                <FooterSection />
+                            </DeferredSection>
+                        </>
+                    )}
+                </div>
+            </div>
+
+            {!loaded && <PreLoader onComplete={() => setLoaded(true)} />}
         </main>
     );
 };

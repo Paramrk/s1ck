@@ -5,6 +5,9 @@ import { ScrollTrigger, SplitText } from "gsap/all";
 import { getImage } from "../utils/media";
 import { useRef } from "react";
 
+const poweredByPheromoneMobile = getImage("powered by pheromone image - Mobile.png");
+const poweredByPheromonePc = getImage("powered by pheromone image - PC.png");
+
 gsap.registerPlugin(ScrollTrigger, SplitText);
 
 type Feature = {
@@ -350,14 +353,16 @@ const NutritionSection = ({ showMockup = false }: { showMockup?: boolean }) => {
                 <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-8 lg:gap-12">
                     <div className="lg:max-w-3xl">
                         <h1
-                            className="text-5xl md:text-6xl lg:text-[4.8rem] uppercase text-charcoal !text-left leading-[0.95] tracking-tight"
+                            className="text-5xl max-md:text-[2.35rem] md:text-6xl lg:text-[4.8rem] uppercase text-charcoal !text-left leading-[0.95] max-md:leading-[1] tracking-tight max-md:tracking-[-0.03em]"
                             style={{ fontFamily: "Syne, sans-serif", fontWeight: 800 }}
                         >
-                            <span className="nut-headline-clip block overflow-hidden pb-1 md:pb-2">
+                            <span className="nut-headline-clip block overflow-hidden max-md:overflow-x-visible pb-1 md:pb-2">
                                 <span className="nut-headline-line block">Powered By</span>
                             </span>
-                            <span className="nut-headline-clip block overflow-hidden">
-                                <span className="nut-headline-line block">Real Pheromone Science</span>
+                            <span className="nut-headline-clip block overflow-hidden max-md:overflow-x-visible pb-1 md:pb-2">
+                                <span className="nut-headline-line hidden md:block">Real Pheromone Science</span>
+                                <span className="nut-headline-line block md:hidden">Real Pheromone</span>
+                                <span className="nut-headline-line block md:hidden">Science</span>
                             </span>
                         </h1>
 
@@ -418,8 +423,28 @@ const NutritionSection = ({ showMockup = false }: { showMockup?: boolean }) => {
                     ))}
                 </div>
 
+                {/* ── Powered by pheromone showcase ─────────────────────── */}
+                <div className="nut-powered-visual relative mt-10 md:mt-16 mb-10 md:mb-14 w-full">
+                    <img
+                        src={poweredByPheromoneMobile}
+                        alt="Powered by real pheromone science"
+                        loading="lazy"
+                        decoding="async"
+                        draggable={false}
+                        className="nut-powered-visual-mobile block w-full h-auto md:hidden"
+                    />
+                    <img
+                        src={poweredByPheromonePc}
+                        alt="Powered by real pheromone science"
+                        loading="lazy"
+                        decoding="async"
+                        draggable={false}
+                        className="nut-powered-visual-desktop hidden w-full h-auto md:block"
+                    />
+                </div>
+
                 {/* ── Bottle or Mockup showcase ─────────────────────────── */}
-                <div className={`nut-stage relative mt-10 md:mt-16 mb-10 md:mb-14 ${showMockup ? 'h-[320px] sm:h-[400px] md:h-[520px] lg:h-[640px]' : 'h-[280px] sm:h-[340px] md:h-[420px] lg:h-[460px]'} flex items-center justify-center`}>
+                <div className={`nut-stage relative mt-10 md:mt-16 mb-10 md:mb-14 ${showMockup ? 'h-[320px] sm:h-[400px] md:h-[520px] lg:h-[640px]' : 'h-[280px] sm:h-[340px] md:h-[420px] lg:h-[460px]'} flex items-center justify-center ${showMockup ? 'hidden' : ''}`}>
                     {showMockup ? (
                         <div className="relative w-full h-full flex items-center justify-center">
                             <img

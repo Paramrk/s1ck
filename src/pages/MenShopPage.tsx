@@ -203,10 +203,10 @@ const MenShopPage = () => {
                                 onMouseEnter={hasFineHover ? handleCardEnter : undefined}
                                 onMouseLeave={hasFineHover ? handleCardLeave : undefined}
                             >
-                                <div className="relative aspect-[4/5] overflow-hidden bg-parchment border border-ivory">
+                                <div className="relative aspect-[4/5] overflow-hidden bg-parchment">
                                     {/* Number tag */}
                                     <span
-                                        className="absolute top-4 left-4 z-10 text-taupe/40 text-[0.6rem] uppercase tracking-[0.2em]"
+                                        className="absolute top-4 left-4 z-10 text-black text-[0.6rem] uppercase tracking-[0.2em]"
                                         style={{ fontFamily: "Inter, sans-serif", fontWeight: 300 }}
                                     >
                                         {String(i + 1).padStart(2, "0")}
@@ -216,7 +216,7 @@ const MenShopPage = () => {
                                         alt={product.name}
                                         loading="lazy"
                                         decoding="async"
-                                        className="card-img w-full h-full object-contain p-10"
+                                        className="card-img absolute inset-0 w-full h-full object-cover object-center"
                                     />
                                 </div>
                                 <div className="pt-5 flex items-start justify-between">

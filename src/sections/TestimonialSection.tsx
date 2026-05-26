@@ -112,6 +112,14 @@ const TestimonialSection = () => {
         });
     }, [activeCard, isMobile]);
 
+    // Auto-play all cards on desktop on mount
+    useEffect(() => {
+        if (isMobile) return;
+        vdRf.current.forEach((video) => {
+            if (video) video.play().catch(() => {});
+        });
+    }, [isMobile]);
+
     const scrollToCard = (idx: number) => {
         const container = scrollRef.current;
         if (!container) return;
@@ -151,13 +159,11 @@ const TestimonialSection = () => {
                         <div
                             key={index}
                             className={`vd-card ${card.translation} ${card.rotation}`}
-                            onMouseEnter={() => handlePlay(index)}
-                            onMouseLeave={() => handlePause(index)}
                         >
                             <video
                                 ref={(el) => setVideoRef(el, index)}
                                 src={card.src}
-                                playsInline muted loop
+                                playsInline muted loop autoPlay
                                 preload="auto"
                                 className="size-full object-cover"
                             />
@@ -191,7 +197,7 @@ const TestimonialSection = () => {
                                 <video
                                     ref={(el) => setVideoRef(el, index)}
                                     src={card.src}
-                                    playsInline muted loop
+                                    playsInline muted loop autoPlay
                                     preload="metadata"
                                     className="w-full h-full object-cover"
                                 />

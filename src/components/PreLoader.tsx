@@ -1,88 +1,79 @@
 import { useEffect, useState } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
-import preImg from "../assets/s1cklogo-trnsp.webp"
+import preImg from "../assets/s1cklogo-trnsp.webp";
+
+const MIN_VISIBLE_MS = 350;
+const FONT_WAIT_MS = 600;
 
 const PreLoader = ({ onComplete }: { onComplete: () => void }) => {
     const [progress, setProgress] = useState(0);
-    const [canHide, setCanHide] = useState(false); // flag to control hiding
+    const [canHide, setCanHide] = useState(false);
 
     useEffect(() => {
-        const MIN_DURATION = 1000; // minimum 1 seconds
         const startTime = performance.now();
+        let done = false;
 
-        const resources: (HTMLImageElement | HTMLVideoElement)[] = [
-            ...Array.from(document.images),
-            ...Array.from(document.querySelectorAll("video")),
-        ];
+        const finish = () => {
+            if (done) return;
+            done = true;
+            setProgress(100);
 
-        const total = resources.length || 1;
-        let loaded = 0;
-
-        const updateProgress = () => {
-            loaded++;
-            const percent = Math.round((loaded / total) * 100);
-            setProgress((prev) => (percent > prev ? percent : prev));
+            const elapsed = performance.now() - startTime;
+            const wait = Math.max(0, MIN_VISIBLE_MS - elapsed);
+            window.setTimeout(() => setCanHide(true), wait);
         };
 
-        resources.forEach((res) => {
-            if (
-                (res instanceof HTMLImageElement && res.complete) ||
-                (res instanceof HTMLVideoElement && res.readyState >= 3)
-            ) {
-                updateProgress();
-            } else {
-                res.addEventListener("load", updateProgress);
-                res.addEventListener("loadeddata", updateProgress);
-                res.addEventListener("error", updateProgress);
-            }
-        });
+        const tick = (value: number) => {
+            setProgress((prev) => Math.max(prev, value));
+        };
 
-        if (document.fonts) {
-            document.fonts.ready.then(() => {
-                setProgress((prev) => (prev < 90 ? 90 : prev));
-            });
+        tick(40);
+
+        const domReady =
+            document.readyState === "complete"
+                ? Promise.resolve()
+                : new Promise<void>((resolve) => {
+                      const onReady = () => {
+                          document.removeEventListener("DOMContentLoaded", onReady);
+                          resolve();
+                      };
+                      if (document.readyState === "interactive") resolve();
+                      else document.addEventListener("DOMContentLoaded", onReady);
+                  });
+
+        domReady.then(() => tick(70));
+
+        const fontsRace = document.fonts
+            ? Promise.race([
+                  document.fonts.ready,
+                  new Promise<void>((r) => window.setTimeout(r, FONT_WAIT_MS)),
+              ])
+            : Promise.resolve();
+
+        fontsRace.then(() => tick(90));
+
+        if (document.readyState === "complete") {
+            tick(95);
+            finish();
+        } else {
+            window.addEventListener("load", () => {
+                tick(95);
+                finish();
+            }, { once: true });
         }
 
-        const interval = setInterval(() => {
-            setProgress((prev) => {
-                if (prev >= 100) {
-                    clearInterval(interval);
-                    const elapsed = performance.now() - startTime;
-                    const remaining = MIN_DURATION - elapsed;
-                    if (remaining > 0) {
-                        setTimeout(() => setCanHide(true), remaining);
-                    } else {
-                        setCanHide(true);
-                    }
-                    return 100;
-                }
-                return prev + 1;
-            });
-        }, 50);
+        // Safety cap — never block the hero longer than ~1.2s
+        const cap = window.setTimeout(finish, 1200);
 
-        const handleWindowLoad = () => {
-            const elapsed = performance.now() - startTime;
-            const remaining = MIN_DURATION - elapsed;
-            if (remaining > 0) {
-                setTimeout(() => setCanHide(true), remaining);
-            } else {
-                setCanHide(true);
-            }
-        };
-        window.addEventListener("load", handleWindowLoad);
-
-        return () => {
-            clearInterval(interval);
-            window.removeEventListener("load", handleWindowLoad);
-        };
+        return () => window.clearTimeout(cap);
     }, []);
 
     useGSAP(() => {
         if (progress >= 100 && canHide) {
             gsap.to(".preloader", {
                 opacity: 0,
-                duration: 0.5,
+                duration: 0.35,
                 ease: "power2.out",
                 onComplete,
             });
@@ -90,12 +81,21 @@ const PreLoader = ({ onComplete }: { onComplete: () => void }) => {
     }, [progress, canHide, onComplete]);
 
     return (
-        <div className="preloader fixed inset-0 flex flex-col items-center justify-end pb-20 z-[9999] bg-cream" style={{color: '#1a1a1a'}}>
-            <img src={preImg} alt="pre img" className="lg:mb-40 mb-[60%] lg:w-[20%] w-[40%]" />
-            <p className="lg:text-2xl text-xl tracking-[0.2em] uppercase" style={{fontFamily: 'Syne, sans-serif', fontWeight: 600, color: '#1a1a1a'}}>{progress}%</p>
+        <div
+            className="preloader fixed inset-0 flex flex-col items-center justify-end pb-20 z-[9999] bg-cream pointer-events-none"
+            style={{ color: "#1a1a1a" }}
+            aria-hidden={canHide}
+        >
+            <img src={preImg} alt="" className="lg:mb-40 mb-[60%] lg:w-[20%] w-[40%]" />
+            <p
+                className="lg:text-2xl text-xl tracking-[0.2em] uppercase"
+                style={{ fontFamily: "Syne, sans-serif", fontWeight: 600, color: "#1a1a1a" }}
+            >
+                {progress}%
+            </p>
             <div className="mt-3 lg:w-[10rem] w-52 h-[1px] bg-sand overflow-hidden">
                 <div
-                    className="h-full preloader-bar transition-all duration-150 ease-linear"
+                    className="h-full preloader-bar transition-all duration-100 ease-linear"
                     style={{ width: `${progress}%` }}
                 />
             </div>

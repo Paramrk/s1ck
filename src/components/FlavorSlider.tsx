@@ -35,7 +35,7 @@ const FlavorSlider = () => {
                 return (
                     <div
                         key={flavor.name}
-                        className={`fp-${i} absolute inset-0 flex items-center justify-center`}
+                        className={`fp-${i} absolute inset-0 flex items-center justify-center max-md:flex-col max-md:justify-between max-md:gap-1 max-md:px-3 max-md:py-1`}
                         style={{
                             opacity: isFirst ? 1 : 0,
                         }}
@@ -232,13 +232,12 @@ const FlavorSlider = () => {
                             <line x1="60%" y1="70%" x2="80%" y2="76%" stroke={flavor.accentColor} strokeWidth="0.5" opacity="0.2" />
                         </svg>
 
-                        {/* ─── MOBILE DETAIL: Above caption ─── */}
+                        {/* ─── MOBILE DETAIL: below bottle ─── */}
                         <div
-                            className={`detail-mobile-${i} absolute z-30 lg:hidden left-0 right-0 flex flex-col items-center gap-1 px-5`}
+                            className={`detail-mobile-${i} max-md:order-2 max-md:relative max-md:shrink-0 max-md:w-full absolute z-30 lg:hidden left-0 right-0 flex flex-col items-center gap-1 px-5 max-md:px-2 max-md:py-1`}
                             style={{
                                 fontFamily: "Syne, sans-serif",
                                 opacity: vis,
-                                bottom: "20%",
                             }}
                         >
                             <div className="flex items-center gap-1.5 mb-0.5">
@@ -266,6 +265,7 @@ const FlavorSlider = () => {
                         </div>
 
                         {/* ─── BOTTLE ─── */}
+                        <div className="relative max-md:order-1 max-md:flex max-md:flex-1 max-md:items-center max-md:justify-center max-md:w-full max-md:min-h-0 max-md:max-h-[58%] lg:contents">
                         {drinkSrc && (
                             <img
                                 src={drinkSrc}
@@ -273,7 +273,7 @@ const FlavorSlider = () => {
                                 loading={isFirst ? "eager" : "lazy"}
                                 decoding="async"
                                 draggable={false}
-                                className="product-bottle relative z-10 h-[38%] md:h-[65%] max-h-[540px] object-contain"
+                                className="product-bottle relative z-10 max-md:h-full max-md:max-h-full max-md:w-auto max-md:object-contain h-[38%] md:h-[65%] max-h-[540px] object-contain"
                                 style={{
                                     filter: "drop-shadow(0 30px 60px rgba(0,0,0,0.28)) drop-shadow(0 10px 20px rgba(0,0,0,0.14))",
                                     willChange: "transform",
@@ -281,9 +281,21 @@ const FlavorSlider = () => {
                             />
                         )}
 
+                        {/* ─── Floor shadow ─── */}
+                        <div
+                            className="floor-shadow absolute bottom-[6%] md:bottom-[12%] left-1/2 -translate-x-1/2 pointer-events-none rounded-full max-md:bottom-[4%]"
+                            style={{
+                                width: "40%",
+                                height: "20px",
+                                background: "radial-gradient(ellipse, rgba(0,0,0,0.18) 0%, rgba(0,0,0,0) 70%)",
+                                filter: "blur(4px)",
+                            }}
+                        />
+                        </div>
+
                         {/* ─── BOTTOM CAPTION: Name & Counter ─── */}
                         <div
-                            className="product-caption absolute z-30 bottom-[7%] md:bottom-[5%] left-1/2 -translate-x-1/2 text-center w-[92%] md:w-[85%]"
+                            className="product-caption max-md:order-3 max-md:relative max-md:bottom-auto max-md:left-auto max-md:translate-x-0 max-md:shrink-0 max-md:w-full max-md:pb-0 absolute z-30 bottom-[7%] md:bottom-[5%] left-1/2 -translate-x-1/2 text-center w-[92%] md:w-[85%]"
                         >
                             <p
                                 className="text-[0.45rem] md:text-[0.65rem] uppercase tracking-[0.35em] text-stone mb-0.5"
@@ -292,7 +304,7 @@ const FlavorSlider = () => {
                                 S1CK Signature
                             </p>
                             <h3
-                                className="text-charcoal text-lg md:text-3xl tracking-[0.03em] leading-tight"
+                                className="text-charcoal text-xl md:text-3xl tracking-[0.03em] leading-tight"
                                 style={{ fontFamily: "Syne, sans-serif", fontWeight: 700 }}
                             >
                                 {flavor.name}
@@ -307,17 +319,6 @@ const FlavorSlider = () => {
                                 {String(i + 1).padStart(2, "0")} / {String(visibleFlavors.length).padStart(2, "0")}
                             </p>
                         </div>
-
-                        {/* ─── Floor shadow ─── */}
-                        <div
-                            className="floor-shadow absolute bottom-[8%] md:bottom-[12%] left-1/2 -translate-x-1/2 pointer-events-none rounded-full"
-                            style={{
-                                width: "40%",
-                                height: "20px",
-                                background: "radial-gradient(ellipse, rgba(0,0,0,0.18) 0%, rgba(0,0,0,0) 70%)",
-                                filter: "blur(4px)",
-                            }}
-                        />
                     </div>
                 );
             })}

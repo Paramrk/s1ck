@@ -147,18 +147,18 @@ const ShopPage = () => {
     }, [handleMouseLeave]);
 
     return (
-        <main className="shop-page" ref={containerRef}>
+        <main className="shop-page h-dvh overflow-hidden" ref={containerRef}>
             <Navbar variant="light" />
 
-            <div className="flex lg:flex-row flex-col w-full h-dvh relative">
+            <div className="shop-split flex h-full min-h-0 w-full flex-col lg:flex-row">
 
 
 
                 {/* ─── Men Panel ─── */}
                 <Link
                     to="/shop/men"
-                    className="shop-panel shop-panel-men relative overflow-hidden cursor-pointer block"
-                    style={{ flex: 1, textDecoration: "none" }}
+                    className="shop-panel shop-panel-men relative flex h-full min-h-0 min-h-[50dvh] flex-1 cursor-pointer overflow-hidden lg:min-h-0"
+                    style={{ textDecoration: "none" }}
                     onMouseEnter={hasFineHover ? () => handleMouseEnter("men") : undefined}
                     onMouseMove={hasFineHover ? (e) => handleMouseMove(e, "men") : undefined}
                     onMouseLeave={hasFineHover ? () => handlePanelLeave("men") : undefined}
@@ -169,7 +169,7 @@ const ShopPage = () => {
                             ref={menImgRef}
                             src={menImg}
                             alt="Men's Collection"
-                            className="panel-img-men w-[110%] h-[110%] object-cover absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+                            className="panel-img-men absolute inset-0 h-full w-full min-h-full min-w-full object-cover object-center"
                         />
                     </div>
 
@@ -178,7 +178,7 @@ const ShopPage = () => {
 
                     {/* Number watermark */}
                     <span
-                        className="panel-number absolute top-8 left-10 md:top-12 md:left-14 z-20 text-cream/[0.06] text-[5rem] md:text-[10rem] font-bold leading-none select-none pointer-events-none"
+                        className="panel-number absolute top-8 left-10 md:top-12 md:left-14 z-20 text-cream/25 text-[5rem] md:text-[10rem] font-bold leading-none select-none pointer-events-none"
                         style={{ fontFamily: "Syne, sans-serif" }}
                     >
                         01
@@ -223,8 +223,8 @@ const ShopPage = () => {
                 {/* ─── Women Panel ─── */}
                 <Link
                     to="/shop/women"
-                    className="shop-panel shop-panel-women relative overflow-hidden cursor-pointer block"
-                    style={{ flex: 1, textDecoration: "none" }}
+                    className="shop-panel shop-panel-women relative flex h-full min-h-0 min-h-[50dvh] flex-1 cursor-pointer overflow-hidden lg:min-h-0"
+                    style={{ textDecoration: "none" }}
                     onMouseEnter={hasFineHover ? () => handleMouseEnter("women") : undefined}
                     onMouseMove={hasFineHover ? (e) => handleMouseMove(e, "women") : undefined}
                     onMouseLeave={hasFineHover ? () => handlePanelLeave("women") : undefined}
@@ -235,7 +235,7 @@ const ShopPage = () => {
                             ref={womenImgRef}
                             src={womenImg}
                             alt="Women's Collection"
-                            className="panel-img-women w-[110%] h-[110%] object-cover absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+                            className="panel-img-women absolute inset-0 h-full w-full min-h-full min-w-full object-cover object-center"
                         />
                     </div>
 
@@ -244,7 +244,7 @@ const ShopPage = () => {
 
                     {/* Number watermark */}
                     <span
-                        className="panel-number absolute top-8 right-10 md:top-12 md:right-14 z-20 text-cream/[0.06] text-[5rem] md:text-[10rem] font-bold leading-none select-none pointer-events-none"
+                        className="panel-number absolute top-8 right-10 md:top-12 md:right-14 z-20 text-cream/25 text-[5rem] md:text-[10rem] font-bold leading-none select-none pointer-events-none"
                         style={{ fontFamily: "Syne, sans-serif" }}
                     >
                         02

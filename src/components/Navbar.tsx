@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import NavMenu from "./NavMenu";
 import s1ckLogo from "../assets/images/s1ck-logo-transparent.webp";
+import { useScrollDirectionVisibility } from "../hooks/useScrollDirectionVisibility";
+import { useNavbarLogoInvert } from "../hooks/useNavbarLogoInvert";
 
 interface NavbarProps {
     variant?: "dark" | "light";
@@ -11,16 +13,50 @@ interface NavbarProps {
 
 const Navbar: React.FC<NavbarProps> = ({ variant = "dark" }) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const isLight = variant === "light";
+    const pillShellRef = useRef<HTMLDivElement>(null);
+    const menuRef = useRef<HTMLDivElement>(null);
+    const logoRef = useRef<HTMLImageElement>(null);
+    const forceLightChrome = variant === "light";
     const location = useLocation();
     const isShopPage = location.pathname.startsWith("/shop");
 
+    const pillVisible = useScrollDirectionVisibility({ disabled: isMenuOpen });
+    const { useLightLogo, lightLogoClass } = useNavbarLogoInvert(logoRef, {
+        forceLight: forceLightChrome,
+    });
+
     useGSAP(() => {
-        const els = Array.from(document.querySelectorAll<HTMLElement>(".nav-logo, .menu-hover"));
+        const shell = pillShellRef.current;
+        if (!shell) return;
+
+        gsap.set(shell, { xPercent: -50, willChange: "transform, opacity" });
+
+        const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+        if (reducedMotion) {
+            gsap.set(shell, {
+                autoAlpha: pillVisible ? 1 : 0,
+                pointerEvents: pillVisible ? "auto" : "none",
+            });
+            return;
+        }
+
+        gsap.to(shell, {
+            y: pillVisible ? 0 : -28,
+            autoAlpha: pillVisible ? 1 : 0,
+            duration: 0.42,
+            ease: pillVisible ? "power3.out" : "power2.in",
+            pointerEvents: pillVisible ? "auto" : "none",
+            overwrite: "auto",
+        });
+    }, { dependencies: [pillVisible] });
+
+    useGSAP(() => {
+        const logo = document.querySelector<HTMLElement>(".nav-logo");
+        const menu = menuRef.current;
+        const els = [logo, menu].filter(Boolean) as HTMLElement[];
         if (!els.length) return;
 
-        // Cursor-follow is meaningless on touch devices — skip the listeners entirely
-        // so :hover-stuck transforms never linger after a tap.
         const hasFineHover =
             typeof window !== "undefined" &&
             window.matchMedia("(hover: hover) and (pointer: fine)").matches;
@@ -28,9 +64,6 @@ const Navbar: React.FC<NavbarProps> = ({ variant = "dark" }) => {
         const disposers: Array<() => void> = [];
 
         els.forEach((el) => {
-            const isCentered = el.classList.contains("menu-hover");
-            if (isCentered) gsap.set(el, { xPercent: -50 });
-
             if (!hasFineHover) return;
 
             const onMove = (e: MouseEvent) => {
@@ -58,12 +91,18 @@ const Navbar: React.FC<NavbarProps> = ({ variant = "dark" }) => {
 
     return (
         <>
-            <nav className="fixed top-0 left-0 z-50 flex items-center justify-between md:p-6 sm:p-4 p-3 w-full bg-transparent">
+            <nav
+                data-nav-chrome
+                className="fixed top-0 left-0 z-50 flex items-center justify-between md:p-6 sm:p-4 p-3 w-full bg-transparent"
+            >
                 <Link to="/" className="block">
                     <img
+                        ref={logoRef}
                         src={s1ckLogo}
                         alt="navbar-logo"
-                        className={`md:w-18 w-20 nav-logo ${isLight ? "brightness-0 invert" : ""}`}
+                        className={`md:w-18 w-20 nav-logo transition-[filter] duration-500 ease-out ${
+                            useLightLogo ? lightLogoClass : ""
+                        }`}
                     />
                 </Link>
 
@@ -71,14 +110,14 @@ const Navbar: React.FC<NavbarProps> = ({ variant = "dark" }) => {
                     <Link
                         to="/shop"
                         className={`hidden md:block group sm:px-6 px-4 py-2 border transition-all duration-500 text-center cursor-pointer ${
-                            isLight
+                            useLightLogo
                                 ? "border-cream/30 bg-transparent hover:bg-cream"
                                 : "border-charcoal bg-white hover:bg-charcoal"
                         }`}
                     >
                         <span
                             className={`text-xs font-medium p-0 m-0 transition-colors duration-500 ${
-                                isLight
+                                useLightLogo
                                     ? "text-cream group-hover:text-charcoal"
                                     : "text-charcoal group-hover:text-cream"
                             }`}
@@ -90,10 +129,17 @@ const Navbar: React.FC<NavbarProps> = ({ variant = "dark" }) => {
                 )}
             </nav>
 
-            {/* Menu toggle */}
+            {/* Menu toggle — shell handles scroll hide/show; inner keeps cursor-follow */}
             <div
-                className={`menu-hover flex items-center gap-2 px-5 py-2.5 backdrop-blur-xl border rounded-full cursor-pointer fixed lg:top-6 top-3 left-1/2 z-[1000] group transition-all duration-500 ${
-                    isLight
+                ref={pillShellRef}
+                data-nav-chrome
+                className="pill-shell fixed lg:top-6 top-3 left-1/2 z-[1000]"
+                aria-hidden={!pillVisible && !isMenuOpen}
+            >
+            <div
+                ref={menuRef}
+                className={`menu-hover flex items-center gap-2 px-5 py-2.5 backdrop-blur-xl border rounded-full cursor-pointer group transition-colors duration-500 ${
+                    useLightLogo
                         ? "bg-white/10 border-cream/20 hover:bg-cream"
                         : "bg-white/60 border-ivory/60 hover:bg-charcoal"
                 }`}
@@ -101,19 +147,19 @@ const Navbar: React.FC<NavbarProps> = ({ variant = "dark" }) => {
             >
                 <div className="flex flex-col gap-[4px] items-center justify-center">
                     <span className={`block w-4 h-[1.5px] transition-all duration-400 origin-center ${
-                        isLight
+                        useLightLogo
                             ? `bg-cream group-hover:bg-charcoal ${isMenuOpen ? "rotate-45 translate-y-[2.75px]" : ""}`
                             : `bg-charcoal group-hover:bg-cream ${isMenuOpen ? "rotate-45 translate-y-[2.75px]" : ""}`
                     }`} />
                     <span className={`block w-4 h-[1.5px] transition-all duration-400 origin-center ${
-                        isLight
+                        useLightLogo
                             ? `bg-cream group-hover:bg-charcoal ${isMenuOpen ? "-rotate-45 -translate-y-[2.75px]" : ""}`
                             : `bg-charcoal group-hover:bg-cream ${isMenuOpen ? "-rotate-45 -translate-y-[2.75px]" : ""}`
                     }`} />
                 </div>
                 <span
                     className={`text-[0.6rem] uppercase tracking-[0.2em] transition-colors duration-500 ${
-                        isLight
+                        useLightLogo
                             ? "text-cream group-hover:text-charcoal"
                             : "text-charcoal group-hover:text-cream"
                     }`}
@@ -121,6 +167,7 @@ const Navbar: React.FC<NavbarProps> = ({ variant = "dark" }) => {
                 >
                     {isMenuOpen ? "Close" : "Menu"}
                 </span>
+            </div>
             </div>
             <NavMenu isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
         </>

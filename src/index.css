@@ -90,8 +90,16 @@ body::-webkit-scrollbar { display: none; }
     .hero-container {
         @apply relative bg-cream w-full h-dvh overflow-hidden;
 
+        .hero-media-layer {
+            @apply absolute inset-0 z-0;
+        }
+
+        .hero-scroll-layer {
+            @apply relative z-10 w-full h-full;
+        }
+
         .hero-content {
-            @apply relative z-10 w-full h-full flex flex-col 2xl:justify-center items-center translate-y-2 pt-28 md:translate-y-10 md:pt-32 2xl:pt-0;
+            @apply relative w-full h-full flex flex-col 2xl:justify-center items-center translate-y-2 pt-28 md:translate-y-10 md:pt-32 2xl:pt-0;
 
             .hero-title {
                 @apply 2xl:text-[5.5rem] md:text-[3.8rem] text-[2rem] uppercase leading-[1.08] tracking-[-0.02em] 2xl:mb-0 mb-1;
@@ -186,6 +194,60 @@ body::-webkit-scrollbar { display: none; }
             font-weight: 700;
         }
 
+        /* Clip vertically for char reveal; keep horizontal room for last glyph */
+        .first-text-split,
+        .second-text-split {
+            overflow-x: visible;
+            overflow-y: clip;
+        }
+
+        .first-text-split h1,
+        .second-text-split h1,
+        .first-text-split .line,
+        .second-text-split .line,
+        .first-text-split .word,
+        .second-text-split .word,
+        .first-text-split .char,
+        .second-text-split .char {
+            overflow: visible;
+        }
+
+        .flavor-headline-stack {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .flavor-headline-stack,
+        .flavor-headline-stack .line,
+        .flavor-headline-stack .flavor-split-line,
+        .flavor-headline-line {
+            text-align: left !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            margin-inline: 0 !important;
+            padding-inline: 0 !important;
+            align-self: flex-start !important;
+            justify-content: flex-start;
+            width: fit-content;
+            max-width: 100%;
+        }
+
+        .flavor-headline-line {
+            display: block;
+            white-space: nowrap;
+        }
+
+        .flavor-headline-stack .line,
+        .flavor-headline-stack .flavor-split-line {
+            display: block !important;
+        }
+
+        .flavor-headline-stack .char {
+            margin: 0;
+            padding: 0;
+        }
+
         .flavor-text-scroll h2 {
             font-family: "Syne", sans-serif;
             font-weight: 700;
@@ -223,6 +285,25 @@ body::-webkit-scrollbar { display: none; }
             z-index: 10 !important;
             background-color: transparent !important;
             background: transparent !important;
+        }
+
+        .benefit-pin-stage {
+            isolation: isolate;
+        }
+
+        .benefit-pin-hole {
+            will-change: clip-path;
+        }
+
+        .benefit-pin-video {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .benefit-pin-ring {
+            will-change: background, opacity;
         }
 
         .vd-pin {
@@ -265,11 +346,27 @@ body::-webkit-scrollbar { display: none; }
 
     /* ── SHOP PAGE ── */
     .shop-page {
-        @apply min-h-dvh bg-cream;
+        @apply min-h-dvh bg-charcoal;
+
+        .shop-split {
+            @apply h-full min-h-0;
+        }
+
+        .shop-panel {
+            @apply min-h-0;
+        }
     }
 
     .product-card {
         @apply border border-ivory bg-warm-white overflow-hidden transition-all duration-500 hover:border-champagne;
+    }
+
+    .affiliate-page .affiliate-hero {
+        @apply isolate overflow-hidden;
+    }
+
+    .affiliate-page .affiliate-hero-content {
+        padding-top: max(7rem, calc(env(safe-area-inset-top, 0px) + 5rem));
     }
 
     /* ── FOOTER ── */
@@ -281,6 +378,25 @@ body::-webkit-scrollbar { display: none; }
             @apply border border-[#ffffff20] md:size-[4vw] sm:size-14 size-12 md:p-0 p-3 flex justify-center items-center rounded-full hover:bg-[#ffffff10] transition-colors cursor-pointer;
         }
 
+        .footer-social-icon {
+            width: 1.35rem;
+            height: 1.35rem;
+            object-fit: contain;
+            display: block;
+        }
+
+        .footer-arrow-icon {
+            width: 1.25rem;
+            height: 1.25rem;
+            object-fit: contain;
+            display: block;
+        }
+
+        .footer-brand-logo {
+            display: block;
+            height: auto;
+        }
+
         input {
             @apply 2xl:text-2xl md:text-xl text-lg placeholder:font-medium placeholder:tracking-[0.08em] bg-transparent text-cream;
             font-family: "Syne", sans-serif;
@@ -288,7 +404,7 @@ body::-webkit-scrollbar { display: none; }
         }
 
         .copyright-box {
-            @apply 2xl:absolute w-full md:px-7 px-5 py-5 bottom-0 md:text-[0.6rem] text-[0.65rem] flex gap-7 md:flex-row flex-col-reverse md:justify-between justify-center items-center;
+            @apply w-full md:px-7 px-5 py-5 md:text-[0.6rem] text-[0.65rem] flex gap-7 md:flex-row flex-col-reverse md:justify-between justify-center items-center;
             color: rgba(255,255,255,0.35);
             font-family: "Syne", sans-serif;
             font-weight: 400;
@@ -305,7 +421,46 @@ body::-webkit-scrollbar { display: none; }
 }
 
 /* ── Animations ─────────────────────────────────────────────────────────── */
-.spin-circle { animation: spin 20s linear infinite; }
+/* Blend over the video (hint layer sits above the pin stage) */
+.benefit-scroll-hint-layer {
+    mix-blend-mode: difference;
+    pointer-events: none;
+}
+
+.benefit-scroll-hint-stack {
+    margin: 0;
+    text-align: center;
+    line-height: 1.08;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+@supports not (mix-blend-mode: difference) {
+    .benefit-scroll-hint-layer {
+        mix-blend-mode: normal;
+    }
+
+    .benefit-scroll-hint-stack {
+        color: #111111;
+    }
+}
+
+.benefit-scroll-hint-stack span {
+    display: block;
+    text-align: center;
+    white-space: nowrap;
+}
+
+@media (min-width: 1024px) {
+    .benefit-scroll-arrow {
+        display: none;
+    }
+
+    .benefit-scroll-hint-layer--mobile {
+        mix-blend-mode: difference !important;
+        background-color: transparent !important;
+    }
+}
 
 /* Responsive floor-shadow sizing override (inline sets mobile values) */
 .floor-shadow {
@@ -388,6 +543,15 @@ body::-webkit-scrollbar { display: none; }
 
 /* Mobile button tap feedback */
 @media (max-width: 768px) {
+    .hero-container {
+        background-color: var(--color-parchment);
+    }
+
+    .hero-container .hero-content .hero-text-scroll h1 {
+        text-align: center;
+        white-space: normal;
+    }
+
     .sick-btn,
     .sick-btn-filled,
     .hero-button {
@@ -442,15 +606,13 @@ body::-webkit-scrollbar { display: none; }
 /* ── GPU compositor hints for scroll-animated layers ───────────────────── */
 /* Only promote the most critical layers. Over-promoting causes VRAM       */
 /* thrash on mobile which is worse than no promotion at all.               */
-.hero-container,
+.hero-scroll-layer,
 .flavor-section [class*="fp-"],
 .pin-box .vd-card,
-.pheromone-panel,
-.video-box {
+.pheromone-panel {
     will-change: transform;
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
-    transform: translateZ(0);
 }
 
 /* Compositor isolation for pinned sections — helps mobile browsers */
@@ -550,8 +712,275 @@ body::-webkit-scrollbar { display: none; }
     -webkit-backface-visibility: hidden;
 }
 
-/* Mobile performance overrides */
+/* Benefit section — mobile scroll pin overlay */
+@media (max-width: 1023px) {
+    .benefit-section .video-pin-root {
+        background-color: #ffffff;
+    }
+
+    .benefit-mobile-overlay {
+        justify-content: space-between;
+    }
+
+    .benefit-mobile-top,
+    .benefit-mobile-bottom {
+        position: relative;
+        z-index: 1;
+    }
+
+    .benefit-mobile-circle-anchor {
+        pointer-events: none;
+        position: relative;
+        z-index: 2;
+        overflow: hidden;
+        color: #111111;
+        mix-blend-mode: normal;
+        background-color: #ffffff;
+        transition: background-color 0.15s ease, color 0.15s ease;
+    }
+
+    .benefit-mobile-scroll-hint .benefit-scroll-hint-stack {
+        color: inherit;
+        line-height: 1.15;
+    }
+
+    .benefit-mobile-scroll-hint .benefit-scroll-hint-stack span {
+        display: block;
+        text-align: center;
+        width: 100%;
+        font-weight: 500;
+    }
+
+    .benefit-mobile-scroll-hint .benefit-scroll-arrow {
+        color: inherit;
+    }
+
+    .benefit-mobile-scroll-hint.is-inverting {
+        mix-blend-mode: difference;
+        color: #ffffff;
+        background-color: transparent;
+        isolation: auto;
+    }
+
+    .benefit-mobile-scroll-hint.is-inverting .benefit-scroll-hint-stack,
+    .benefit-mobile-scroll-hint.is-inverting .benefit-scroll-arrow {
+        color: #ffffff;
+    }
+
+    @supports not (mix-blend-mode: difference) {
+        .benefit-mobile-scroll-hint.is-inverting {
+            mix-blend-mode: normal;
+            color: #111111;
+        }
+    }
+}
+
+/* GPU compositor hints for carousel layers — keep minimal */
 @media (max-width: 768px) {
+    .flavor-section .flavor-layout {
+        /* Clear fixed navbar + as-seen-on bar on mobile */
+        padding-top: 8.25rem;
+        min-height: calc(100dvh - 2.75rem);
+        padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
+    }
+
+    .flavor-section .as-seen-on {
+        top: 4.75rem;
+    }
+
+    .flavor-section .flavor-title-col .general-title {
+        font-size: inherit;
+        letter-spacing: -0.02em;
+    }
+
+    .flavor-section .bestseller-title,
+    .flavor-section .worldwide-title {
+        font-size: clamp(2.1rem, 9.5vw, 2.5rem);
+        line-height: 0.92;
+    }
+
+    .flavor-section .flavor-text-scroll h2 {
+        font-size: 0.8rem;
+        letter-spacing: 0.04em;
+    }
+
+    .flavor-section .flavor-carousel-col {
+        min-height: 260px;
+        max-height: min(50dvh, 400px);
+    }
+
+    .flavor-section .product-bottle {
+        height: 100% !important;
+        max-height: 100% !important;
+        width: auto !important;
+    }
+
+    .flavor-section [class*="detail-mobile-"] {
+        position: relative !important;
+        bottom: auto !important;
+        margin-top: 0.15rem;
+    }
+
+    .flavor-section .product-caption {
+        position: relative !important;
+        bottom: auto !important;
+        left: auto !important;
+        transform: none !important;
+        margin-top: 0.1rem;
+    }
+
+    .flavor-section .product-caption h3 {
+        font-size: 1.35rem;
+    }
+
+    .flavor-section .floor-shadow {
+        width: 52% !important;
+        height: 24px !important;
+    }
+
+    .flavor-section .flavor-cta {
+        flex-shrink: 0;
+    }
+
+    /* Footer — mobile layout */
+    .footer-section {
+        padding-bottom: max(1rem, env(safe-area-inset-bottom));
+    }
+
+    .footer-section .footer-title-wrap {
+        overflow: visible;
+        width: 100%;
+        max-width: 100%;
+        padding-inline: 0.75rem;
+        box-sizing: border-box;
+    }
+
+    .footer-section .footer-title-mobile {
+        font-family: "Syne", sans-serif;
+        font-weight: 800;
+        font-size: clamp(1.1rem, 6.8vw, 1.5rem);
+        line-height: 0.92;
+        letter-spacing: -0.045em;
+        text-transform: uppercase;
+        max-width: 100%;
+        margin-inline: auto;
+    }
+
+    .footer-section .footer-title-line {
+        display: block;
+        overflow: visible;
+        text-align: center;
+        white-space: nowrap;
+        max-width: 100%;
+    }
+
+    .footer-section .footer-hero {
+        min-height: auto;
+    }
+
+    .footer-section .footer-vip-block {
+        max-width: 24rem;
+        margin-inline: auto;
+    }
+
+    .footer-section .footer-vip-perks {
+        position: relative;
+        z-index: 2;
+        width: 100%;
+    }
+
+    .footer-section .footer-brand-row {
+        position: relative;
+        z-index: 1;
+        width: 100%;
+        margin-inline: auto;
+    }
+
+    .footer-section .footer-brand-emblem {
+        position: relative;
+        z-index: 2;
+    }
+
+    .footer-section .footer-brand-line {
+        min-width: 0;
+        height: 1px;
+        background-color: rgba(255, 255, 255, 0.28);
+    }
+
+    .footer-section .footer-social-row {
+        position: relative;
+        z-index: 2;
+    }
+
+    .footer-section .footer-links-row {
+        width: 100%;
+    }
+
+    .footer-section .footer-links-grid p {
+        line-height: 1.55;
+    }
+
+    .footer-section .footer-newsletter p {
+        font-size: 0.78rem;
+        line-height: 1.6;
+    }
+
+    .footer-section .footer-affiliate-block {
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        padding-top: 2.5rem;
+        padding-bottom: 3rem;
+        margin-bottom: 0;
+        max-width: 28rem;
+        margin-inline: auto;
+        overflow: visible;
+    }
+
+    .footer-section .footer-affiliate-perks {
+        position: relative;
+        z-index: 2;
+        width: 100%;
+    }
+
+    .footer-section .footer-affiliate-cta {
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+        flex-shrink: 0;
+    }
+
+    /* Affiliate page — prevent hero/footer overlap */
+    .affiliate-page {
+        overflow-x: clip;
+    }
+
+    .affiliate-page .affiliate-hero-content > * {
+        position: relative;
+    }
+
+    .affiliate-page .footer-section .footer-hero {
+        min-height: auto;
+    }
+
+    .footer-section .copyright-box {
+        position: relative;
+        padding-bottom: max(1.25rem, env(safe-area-inset-bottom));
+    }
+
+    .nutrition-section .nut-headline-clip {
+        overflow-x: visible;
+        padding-bottom: 0.35rem;
+    }
+
+    .nutrition-section .nut-headline-line {
+        max-width: 100%;
+    }
+
+    .nutrition-section h1 {
+        font-size: clamp(2rem, 9vw, 2.5rem);
+        line-height: 1;
+    }
+
     .flavor-carousel-stage {
         perspective: none !important;
         transform-style: flat !important;

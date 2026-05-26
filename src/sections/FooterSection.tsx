@@ -1,172 +1,257 @@
+import { useEffect } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
-import { SplitText } from "gsap/all";
-import { getImage } from '../utils/media';
+import { SplitText, ScrollTrigger } from "gsap/all";
+import { Link } from "react-router-dom";
+import { getImage } from "../utils/media";
+import AffiliateSection from "./AffiliateSection";
 
-const FooterSection = () => {
+gsap.registerPlugin(ScrollTrigger);
+
+const FooterSection = ({
+    hideAffiliateTeaser = false,
+    hideVipTeaser = false,
+}: {
+    hideAffiliateTeaser?: boolean;
+    hideVipTeaser?: boolean;
+}) => {
 
     useGSAP(() => {
         const mm = gsap.matchMedia();
 
         const buildTitle = (mobile: boolean) => {
-            document.fonts.ready.then(() => {
-                const footTextSplit = SplitText.create(".footer-title-animation", { type: "chars" });
+            const run = () => {
+                if (mobile) {
+                    gsap.utils.toArray<HTMLElement>(".footer-title-line").forEach((line) => {
+                        const split = SplitText.create(line, { type: "chars" });
+                        gsap.from(split.chars, {
+                            yPercent: 100,
+                            opacity: 0,
+                            stagger: 0.018,
+                            ease: "power2.out",
+                            duration: 0.65,
+                            scrollTrigger: {
+                                trigger: ".footer-title-mobile",
+                                start: "top 92%",
+                                toggleActions: "play none none none",
+                                once: true,
+                            },
+                        });
+                    });
+                    return;
+                }
+
+                const footTextSplit = SplitText.create(".footer-title-desktop", { type: "chars" });
 
                 gsap.from(footTextSplit.chars, {
-                    yPercent: mobile ? 120 : 200,
-                    stagger: mobile ? 0.015 : 0.02,
+                    yPercent: 200,
+                    stagger: 0.02,
                     ease: "power1.inOut",
                     zIndex: 0,
                     scrollTrigger: {
                         trigger: ".footer-section",
-                        start: mobile ? "top 60%" : "top 50%",
-                        end: mobile ? "top 20%" : "top 10%",
+                        start: "top 50%",
+                        end: "top 10%",
                         scrub: 1.5,
-                    }
+                    },
                 });
-            });
+            };
+
+            if (mobile) {
+                run();
+                document.fonts?.ready?.then(() => ScrollTrigger.refresh());
+            } else {
+                document.fonts.ready.then(run);
+            }
         };
 
-        mm.add("(min-width: 769px)", () => buildTitle(false));
+        const buildMobileFooterUi = () => {
+            const run = () => {
+                const vipBlock = ".footer-vip-block";
 
-        mm.add("(max-width: 768px)", () => {
-            buildTitle(true);
-
-            document.fonts.ready.then(() => {
-                gsap.from(".footer-section .flex.items-center.gap-3.mb-6", {
+                if (!hideVipTeaser) {
+                    gsap.from(`${vipBlock} > *`, {
                     opacity: 0,
-                    y: 30,
-                    ease: "power3.out",
+                    y: 28,
+                    stagger: 0.07,
+                    ease: "power2.out",
+                    duration: 0.55,
                     scrollTrigger: {
-                        trigger: ".footer-section .flex.items-center.gap-3.mb-6",
-                        start: "top 95%",
-                        end: "top 60%",
-                        scrub: 1.5,
-                    }
+                        trigger: vipBlock,
+                        start: "top 90%",
+                        toggleActions: "play none none none",
+                        once: true,
+                    },
                 });
-
-                gsap.from(".footer-section h2, .footer-section h1:not(.footer-title-animation)", {
-                    opacity: 0,
-                    y: 40,
-                    stagger: 0.1,
-                    ease: "power3.out",
-                    scrollTrigger: {
-                        trigger: ".footer-section h2",
-                        start: "top 95%",
-                        end: "top 50%",
-                        scrub: 1.5,
-                    }
-                });
-
-                gsap.from(".footer-section button", {
-                    opacity: 0,
-                    y: 30,
-                    scale: 0.95,
-                    ease: "power3.out",
-                    scrollTrigger: {
-                        trigger: ".footer-section button",
-                        start: "top 95%",
-                        end: "top 60%",
-                        scrub: 1.5,
-                    }
-                });
+                }
 
                 gsap.from(".social-btn", {
                     opacity: 0,
-                    scale: 0.7,
-                    stagger: 0.06,
-                    ease: "power3.out",
+                    scale: 0.85,
+                    stagger: 0.05,
+                    ease: "power2.out",
+                    duration: 0.45,
                     scrollTrigger: {
-                        trigger: ".social-btn",
-                        start: "top 95%",
-                        end: "top 60%",
-                        scrub: 1.5,
-                    }
+                        trigger: ".footer-social-row",
+                        start: "top 92%",
+                        toggleActions: "play none none none",
+                        once: true,
+                    },
                 });
 
-                gsap.from(".footer-section .flex.items-start.md\\:gap-10 > div", {
+                gsap.from(".footer-links-grid > div", {
                     opacity: 0,
-                    x: -30,
+                    x: -24,
                     stagger: 0.06,
-                    ease: "power3.out",
+                    ease: "power2.out",
+                    duration: 0.5,
                     scrollTrigger: {
-                        trigger: ".footer-section .flex.items-start.md\\:gap-10",
-                        start: "top 95%",
-                        end: "top 55%",
-                        scrub: 1.5,
-                    }
+                        trigger: ".footer-links-grid",
+                        start: "top 92%",
+                        toggleActions: "play none none none",
+                        once: true,
+                    },
                 });
 
-                gsap.from(".footer-section .md\\:max-w-sm", {
+                gsap.from(".footer-newsletter", {
                     opacity: 0,
-                    y: 30,
-                    ease: "power3.out",
+                    y: 24,
+                    ease: "power2.out",
+                    duration: 0.5,
                     scrollTrigger: {
-                        trigger: ".footer-section .md\\:max-w-sm",
-                        start: "top 95%",
-                        end: "top 60%",
-                        scrub: 1.5,
-                    }
+                        trigger: ".footer-newsletter",
+                        start: "top 92%",
+                        toggleActions: "play none none none",
+                        once: true,
+                    },
                 });
-            });
+
+                requestAnimationFrame(() => ScrollTrigger.refresh());
+            };
+
+            run();
+            document.fonts?.ready?.then(() => ScrollTrigger.refresh());
+        };
+
+        mm.add("(min-width: 769px)", () => {
+            buildTitle(false);
+        });
+
+        mm.add("(max-width: 768px)", () => {
+            buildTitle(true);
+            buildMobileFooterUi();
         });
 
         return () => mm.revert();
+    }, [hideVipTeaser]);
+
+    useEffect(() => {
+        const resetAffiliateVisibility = () => {
+            gsap.set(".footer-affiliate-block, .footer-affiliate-block *", {
+                opacity: 1,
+                y: 0,
+                clearProps: "opacity,transform",
+            });
+        };
+        resetAffiliateVisibility();
+        const t1 = window.setTimeout(resetAffiliateVisibility, 100);
+        const t2 = window.setTimeout(() => ScrollTrigger.refresh(), 250);
+        return () => {
+            window.clearTimeout(t1);
+            window.clearTimeout(t2);
+        };
     }, []);
 
     return (
-        <section className="footer-section lg:pt-20">
+        <section className="footer-section lg:pt-20" data-nav-logo="light">
 
-            <div className="2xl:h-[110dvh] relative z-100 lg:pt-[8vh] pt-[8vh]">
-                <div className="overflow-hidden">
-                    <h1 className="general-title text-center text-cream footer-title-animation lg:pb-0 pb-5">#STAYDANGEROUS</h1>
+            <div className="footer-hero relative lg:pt-[8vh] pt-10 pb-4">
+                <div className="footer-title-wrap px-4">
+                    <h1 className="footer-title-desktop hidden md:block general-title text-center text-cream lg:pb-0 pb-5">
+                        #STAYDANGEROUS
+                    </h1>
+                    <h1 className="footer-title-mobile md:hidden text-center text-cream pb-2" aria-label="#STAYDANGEROUS">
+                        <span className="footer-title-line">#STAY</span>
+                        <span className="footer-title-line">DANGEROUS</span>
+                    </h1>
                 </div>
 
+                {!hideAffiliateTeaser && <AffiliateSection variant="footer" />}
+
                 {/* VIP Club Banner */}
-                <div className="flex flex-col items-center justify-center mt-16 md:mt-24 z-20 relative px-5 text-center">
-                    <div className="flex items-center gap-3 mb-6">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="white" stroke="white" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
+                {!hideVipTeaser && (
+                <div className="footer-vip-block relative z-20 flex flex-col items-center justify-center mt-10 md:mt-24 px-5 text-center">
+                    <div className="flex flex-wrap items-center justify-center gap-3 mb-5 md:mb-6">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="white" stroke="white" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 md:w-7 md:h-7">
                             <path d="M2 4l3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14v2H5z" />
                         </svg>
-                        <div className="border border-white/30 px-4 py-1.5">
-                            <p className="text-white text-[0.65rem] tracking-[0.25em] font-bold">EXCLUSIVE ACCESS</p>
+                        <div className="border border-white/30 px-3 py-1 md:px-4 md:py-1.5">
+                            <p className="text-white text-[0.58rem] md:text-[0.65rem] tracking-[0.22em] md:tracking-[0.25em] font-bold">EXCLUSIVE ACCESS</p>
                         </div>
                     </div>
-                    <h2 className="text-white text-3xl md:text-5xl font-bold uppercase tracking-wide mt-2" style={{fontFamily: '"Syne", sans-serif'}}>JOIN THE <span className="text-white/50">VIP CLUB</span></h2>
-                    <h1 className="text-white text-4xl md:text-7xl font-bold uppercase tracking-wide mt-2" style={{fontFamily: '"Syne", sans-serif'}}>UP TO 35% OFF</h1>
-                    
-                    <div className="flex flex-col items-center mt-8 text-white/70 text-[0.65rem] tracking-[0.15em] space-y-2 uppercase" style={{fontFamily: '"Syne", sans-serif'}}>
+                    <h2 className="text-white text-[clamp(1.35rem,5.5vw,1.75rem)] md:text-5xl font-bold uppercase tracking-wide mt-1 md:mt-2 leading-tight" style={{ fontFamily: "Syne, sans-serif" }}>
+                        JOIN THE <span className="text-white/50">VIP CLUB</span>
+                    </h2>
+                    <p className="text-white text-[clamp(1.75rem,8vw,2.25rem)] md:text-7xl font-bold uppercase tracking-wide mt-2 leading-[0.95]" style={{ fontFamily: "Syne, sans-serif" }}>
+                        UP TO 35% OFF
+                    </p>
+
+                    <div
+                        className="footer-vip-perks flex flex-col items-center mt-6 md:mt-8 text-white/70 text-[0.58rem] md:text-[0.65rem] tracking-[0.12em] md:tracking-[0.15em] space-y-1.5 md:space-y-2 uppercase max-w-xs md:max-w-none"
+                        style={{ fontFamily: "Syne, sans-serif" }}
+                    >
                         <p>PREMIUM FRAGRANCES DELIVERED MONTHLY</p>
                         <p>EXCLUSIVE MEMBER-ONLY COLLECTIONS</p>
                     </div>
 
-                    <button className="mt-10 bg-white text-black px-10 py-4 text-[0.7rem] font-bold tracking-[0.2em] hover:opacity-80 transition-all uppercase flex items-center gap-2 cursor-pointer" style={{fontFamily: '"Syne", sans-serif'}}>
-                        UNLOCK VIP STATUS <span>&rarr;</span>
-                    </button>
+                    <Link
+                        to="/vip-club"
+                        className="relative z-20 mt-8 md:mt-10 bg-white text-black px-8 md:px-10 py-3.5 md:py-4 text-[0.62rem] md:text-[0.7rem] font-bold tracking-[0.18em] md:tracking-[0.2em] hover:opacity-80 transition-all uppercase inline-flex items-center gap-2"
+                        style={{ fontFamily: "Syne, sans-serif" }}
+                    >
+                        UNLOCK VIP STATUS <span aria-hidden>&rarr;</span>
+                    </Link>
+                </div>
+                )}
+
+                <div className="footer-brand-row relative z-20 mt-12 md:mt-16 px-5 pt-10 md:pt-12">
+                    <div className="footer-brand-emblem mx-auto flex w-full max-w-[18rem] items-center justify-center gap-4 sm:max-w-xs md:max-w-md md:gap-6">
+                        <span className="footer-brand-line h-px flex-1 bg-white/25" aria-hidden />
+                        <img
+                            src={getImage("s1ck-logo-transparent.webp")}
+                            alt="S1CK"
+                            className="footer-brand-logo w-[3.75rem] shrink-0 brightness-0 invert opacity-90 md:w-[5.5rem]"
+                            loading="lazy"
+                            decoding="async"
+                        />
+                        <span className="footer-brand-line h-px flex-1 bg-white/25" aria-hidden />
+                    </div>
                 </div>
             </div>
 
-
-
-            <div className="flex-center gap-3 relative z-10 md:mt-10 mt-5">
-                <div className="social-btn">
-                    <img src={getImage("yt.svg")} alt="yt" />
-                </div>
-                <div className="social-btn">
-                    <img src={getImage("insta.svg")} alt="instagram" />
-                </div>
-                <div className="social-btn">
-                    <img src={getImage("tiktok.svg")} alt="tiktok" />
-                </div>
+            <div className="footer-social-row flex-center gap-3 relative z-20 mt-8 md:mt-10 px-5">
+                <a href="#" className="social-btn" aria-label="YouTube">
+                    <img src={getImage("yt.svg")} alt="" className="footer-social-icon" />
+                </a>
+                <a href="#" className="social-btn" aria-label="Instagram">
+                    <img src={getImage("insta.svg")} alt="" className="footer-social-icon" />
+                </a>
+                <a href="#" className="social-btn" aria-label="TikTok">
+                    <img src={getImage("tiktok.svg")} alt="" className="footer-social-icon" />
+                </a>
             </div>
 
-            <div className="mt-30 lg:mb-32 mb-20 md:px-7 px-5 flex gap-10 md:flex-row flex-col justify-between items-start text-cream font-paragraph md:text-sm font-medium">
-                <div className="flex items-start md:gap-10 gap-5">
+            <div className="footer-links-row mt-12 md:mt-30 lg:mb-32 mb-16 md:px-7 px-5 flex md:flex-row flex-col justify-between items-start md:items-start gap-10 text-cream font-paragraph md:text-sm text-[0.8rem] font-medium">
+                <div className="footer-links-grid grid grid-cols-3 gap-x-4 gap-y-3 w-full md:w-auto md:flex md:items-start md:gap-10">
                     <div>
                         <p>S1CK Scents</p>
                     </div>
                     <div>
-                        <p>S1CK Club</p>
+                        <p>
+                            <Link to="/vip-club" className="hover:text-cream transition-colors">
+                                S1CK Club
+                            </Link>
+                        </p>
                         <p>Campus Reps</p>
                         <p>Brand Partners</p>
                     </div>
@@ -174,20 +259,25 @@ const FooterSection = () => {
                         <p>Our Story</p>
                         <p>Contact</p>
                         <p>S1CK Files</p>
+                        <p>
+                            <Link to="/affiliate" className="hover:text-cream transition-colors">
+                                Affiliate
+                            </Link>
+                        </p>
                     </div>
                 </div>
-                <div className="md:max-w-sm">
-                    <p>
+                <div className="footer-newsletter w-full md:max-w-sm md:mt-0">
+                    <p className="leading-relaxed">
                         Drop alerts. Early access. S1CK content.
                         No spam — we're not that basic.
                     </p>
-                    <div className="flex justify-between items-center border-b border-[#faf7f233] py-4 md:mt-6">
+                    <div className="flex justify-between items-center gap-3 border-b border-[#faf7f233] py-3 md:py-4 mt-4 md:mt-6">
                         <input
                             type="email"
                             placeholder="Enter your email"
-                            className="w-full placeholder:font-sans placeholder:text-[#8a7a6a]"
+                            className="w-full min-w-0 placeholder:font-sans placeholder:text-[#8a7a6a] text-base md:text-lg"
                         />
-                        <img src={getImage("arrow.svg")} alt="arrow" />
+                        <img src={getImage("arrow.svg")} alt="" className="footer-arrow-icon shrink-0" />
                     </div>
                 </div>
             </div>

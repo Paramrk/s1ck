@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import "remixicon/fonts/remixicon.css";
 
 import HomePage from "./pages/HomePage";
@@ -7,6 +7,7 @@ import MenShopPage from "./pages/MenShopPage";
 import WomenShopPage from "./pages/WomenShopPage";
 import OurStoryPage from "./pages/OurStoryPage";
 import VipClubPage from "./pages/VipClubPage";
+import AffiliatePage from "./pages/AffiliatePage";
 
 const App = () => {
     return (
@@ -17,6 +18,8 @@ const App = () => {
             <Route path="/shop/women" element={<WomenShopPage />} />
             <Route path="/our-story" element={<OurStoryPage />} />
             <Route path="/vip-club" element={<VipClubPage />} />
+            <Route path="/unlock-vip" element={<Navigate to="/vip-club" replace />} />
+            <Route path="/affiliate" element={<AffiliatePage />} />
         </Routes>
     );
 };

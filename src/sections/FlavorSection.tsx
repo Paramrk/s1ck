@@ -304,7 +304,7 @@ const FlavorSection = () => {
             <div className="pointer-events-none absolute inset-0 z-0 bg-[radial-gradient(circle_at_25%_85%,rgba(17,17,17,0.05),transparent_60%)]" />
 
             {/* AS SEEN ON top bar */}
-            <div className="as-seen-on absolute top-0 left-0 right-0 z-30 border-b border-ivory bg-white/75 backdrop-blur-sm">
+            <div className="as-seen-on absolute top-0 max-md:top-[4.75rem] left-0 right-0 z-30 border-b border-ivory bg-white/75 backdrop-blur-sm">
                 <div
                     className="flex items-center justify-center gap-5 md:gap-12 py-3 md:py-4 text-charcoal text-[0.55rem] md:text-[0.7rem] uppercase tracking-[0.25em]"
                     style={{ fontFamily: "Syne, sans-serif" }}
@@ -331,25 +331,25 @@ const FlavorSection = () => {
                 Unlock 10% Off
             </div>
 
-            {/* Main editorial layout — mobile: title on top + carousel below | desktop: side by side */}
-            <div className="relative z-10 h-screen w-full flex flex-col lg:flex-row pt-10 md:pt-16 lg:pt-20 pb-14 md:pb-24">
-                <div className="lg:w-[35%] w-full flex items-center justify-center lg:justify-start px-4 md:px-12 lg:pl-14 xl:pl-20 2xl:pl-28 py-2 lg:py-0 lg:h-full shrink-0">
+            {/* Main editorial layout — mobile: title / carousel / CTA grid | desktop: side by side */}
+            <div className="flavor-layout relative z-10 w-full flex flex-col lg:flex-row h-screen max-md:h-auto max-md:min-h-[calc(100dvh-2.75rem)] max-md:grid max-md:grid-rows-[auto_minmax(0,1fr)_auto] max-md:gap-y-2 pt-10 max-md:pt-[8.25rem] md:pt-16 lg:pt-20 pb-14 max-md:pb-3 md:pb-24">
+                <div className="flavor-title-col lg:w-[35%] w-full flex items-center justify-start px-4 max-md:px-5 max-md:pl-5 md:px-12 lg:pl-14 xl:pl-20 2xl:pl-28 py-2 max-md:py-0 lg:py-0 lg:h-full shrink-0">
                     <FlavorTitle />
                 </div>
-                <div className="lg:w-[65%] w-full flex-1 lg:h-full relative min-h-0">
+                <div className="flavor-carousel-col lg:w-[65%] w-full flex-1 lg:h-full relative min-h-0 max-md:min-h-[260px] max-md:max-h-[50dvh]">
                     <FlavorSlider />
                 </div>
-            </div>
 
-            {/* CTA */}
-            <div className="absolute md:bottom-[6%] bottom-[2%] left-1/2 -translate-x-1/2 z-40 flex justify-center">
-                <button
-                    type="button"
-                    className="text-[0.7rem] md:text-sm rounded-full bg-charcoal text-cream px-8 md:px-10 md:py-4 py-3 cursor-pointer shadow-[0_12px_32px_rgba(0,0,0,0.18)] hover:bg-sick-red transition-all tracking-[0.25em] uppercase"
-                    style={{ fontFamily: "Syne, sans-serif", fontWeight: 600 }}
-                >
-                    Shop Best Sellers
-                </button>
+                {/* CTA — in document flow on mobile so it isn't clipped; absolute on desktop */}
+                <div className="flavor-cta max-md:relative max-md:z-40 max-md:flex max-md:justify-center max-md:px-4 max-md:pb-[max(0.75rem,env(safe-area-inset-bottom))] lg:absolute lg:bottom-[6%] lg:left-1/2 lg:-translate-x-1/2 z-40 flex justify-center w-full pointer-events-none max-md:pointer-events-auto">
+                    <button
+                        type="button"
+                        className="pointer-events-auto max-md:w-full max-md:max-w-sm text-[0.72rem] md:text-sm rounded-full bg-charcoal text-cream px-8 md:px-10 py-3.5 md:py-4 cursor-pointer shadow-[0_12px_32px_rgba(0,0,0,0.18)] hover:bg-sick-red transition-all tracking-[0.22em] md:tracking-[0.25em] uppercase"
+                        style={{ fontFamily: "Syne, sans-serif", fontWeight: 600 }}
+                    >
+                        Shop Best Sellers
+                    </button>
+                </div>
             </div>
         </section>
     );

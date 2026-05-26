@@ -2,7 +2,7 @@
 
 // Glob import all images and videos
 const images: Record<string, { default: string }> = import.meta.glob(
-    "../assets/images/*.{webp,svg}",
+    "../assets/images/*.{webp,svg,png,jpg,jpeg}",
     { eager: true }
 );
 

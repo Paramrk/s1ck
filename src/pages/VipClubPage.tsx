@@ -453,7 +453,7 @@ const VipClubPage = () => {
                 </div>
             </section>
 
-            <FooterSection />
+            <FooterSection hideAffiliateTeaser hideVipTeaser />
         </main>
     );
 };
