@@ -32,7 +32,7 @@ function readScrollY(): number {
         return window.scrollY || document.documentElement.scrollTop;
     }
 
-    return target.scrollTop;
+    return (target as HTMLElement).scrollTop;
 }
 
 interface Options {

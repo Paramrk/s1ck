@@ -133,16 +133,6 @@ const TestimonialSection = () => {
         if (el) vdRf.current[index] = el;
     };
 
-    const handlePlay = (index: number): void => {
-        const video = vdRf.current[index];
-        if (video) video.play().catch(() => {});
-    };
-
-    const handlePause = (index: number): void => {
-        const video = vdRf.current[index];
-        if (video) video.pause();
-    };
-
     return (
         <section className="testimonials-section">
             <div className="relative w-full lg:h-[130vh] h-auto min-h-[90vh]">
