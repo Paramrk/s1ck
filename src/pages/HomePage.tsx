@@ -4,6 +4,7 @@ import HeroSection from "../sections/HeroSection";
 import gsap from "gsap";
 import MessageSection from "../sections/MessageSection";
 import FlavorSection from "../sections/FlavorSection";
+import ScentCompositionSection from "../sections/ScentCompositionSection";
 import { ScrollSmoother } from "gsap/all";
 import { useGSAP } from "@gsap/react";
 import NutritionSection from "../sections/NutritionSection";
@@ -59,9 +60,8 @@ const HomePage = () => {
                             <DeferredSection minHeight="100dvh">
                                 <MessageSection />
                             </DeferredSection>
-                            <DeferredSection minHeight="100dvh">
-                                <FlavorSection />
-                            </DeferredSection>
+                            <FlavorSection />
+                            <ScentCompositionSection />
                             <DeferredSection minHeight="100dvh">
                                 <NutritionSection showMockup={true} />
                             </DeferredSection>

@@ -3,7 +3,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useMediaQuery } from "react-responsive";
 import { useRef } from "react";
-import { flavorlists } from "../constants/details";
+import { visibleFlavorlists } from "../constants/visibleFlavors";
 import FlavorTitle from "../components/FlavorTitle";
 import FlavorSlider from "../components/FlavorSlider";
 
@@ -17,25 +17,31 @@ const FlavorSection = () => {
     useGSAP(() => {
         if (!sectionRef.current) return;
 
-        const productCount = flavorlists.length;
-        const scrollLength = isMob ? productCount * 400 : productCount * 850;
+        const productCount = visibleFlavorlists.length;
+        if (productCount < 2) return;
+
+        // One fixed time-slice per product; scroll distance scales with count
+        const stepDur = isMob ? 1.65 : 1.1;
+        const scrollLength = isMob ? productCount * 1100 : productCount * 900;
+        const timelineSpan = (productCount - 1) * stepDur;
 
         const tl = gsap.timeline({
             scrollTrigger: {
-                trigger: ".flavor-section",
+                trigger: sectionRef.current,
                 start: "top top",
                 end: `+=${scrollLength}`,
-                // Higher scrub on mobile = more lerp smoothing = fewer visual hitches
-                scrub: isMob ? 1.8 : 1.2,
+                scrub: isMob ? 1.25 : 1.2,
                 pin: true,
+                pinSpacing: true,
                 anticipatePin: 1,
+                invalidateOnRefresh: true,
             },
         });
 
-        // Background hue shift
         tl.to(".flavor-bg-tint", {
             backgroundPosition: "100% 50%",
             ease: "none",
+            duration: timelineSpan,
         }, 0);
 
         // Floating detail selectors for each product
@@ -51,8 +57,10 @@ const FlavorSection = () => {
         // Connector lines inside each fp panel
         const connectorSel = (idx: number) => `.fp-${idx} .connector-lines`;
 
-        flavorlists.forEach((flavor, i) => {
+        visibleFlavorlists.forEach((flavor, i) => {
             if (i === 0) return;
+
+            const at = i * stepDur;
 
             const prev = `.fp-${i - 1}`;
             const curr = `.fp-${i}`;
@@ -74,7 +82,7 @@ const FlavorSection = () => {
             const prevConnectors = connectorSel(i - 1);
             const currConnectors = connectorSel(i);
 
-            tl.addLabel(`step-${i}`)
+            tl.addLabel(`step-${i}`, at)
 
                 // ═══ EXIT previous product ═══
                 // Mobile: no blur/rotateY/scale (GPU-killer during scrub)
@@ -91,50 +99,50 @@ const FlavorSection = () => {
                     filter: "blur(14px)",
                     duration: 0.6,
                     ease: "power2.inOut",
-                }, `step-${i}`)
+                }, at)
 
                 // Float OUT — each detail drifts away from center with fade
                 .to(prevFloats[0], { // tone: top-left → drifts up-left
                     opacity: 0, x: -50, y: -30,
                     duration: 0.35, ease: "power2.in",
-                }, `step-${i}`)
+                }, at)
                 .to(prevFloats[1], { // tagline: top-right → drifts up-right
                     opacity: 0, x: 50, y: -30,
                     duration: 0.35, ease: "power2.in",
-                }, `step-${i}`)
+                }, at)
                 .to(prevFloats[2], { // top notes: mid-left → drifts left
                     opacity: 0, x: -60,
                     duration: 0.3, ease: "power2.in",
-                }, `step-${i}+=0.02`)
+                }, at + 0.02)
                 .to(prevFloats[3], { // heart notes: mid-right → drifts right
                     opacity: 0, x: 60,
                     duration: 0.3, ease: "power2.in",
-                }, `step-${i}+=0.02`)
+                }, at + 0.02)
                 .to(prevFloats[4], { // base notes: bottom-left → drifts down-left
                     opacity: 0, x: -50, y: 30,
                     duration: 0.35, ease: "power2.in",
-                }, `step-${i}+=0.03`)
+                }, at + 0.03)
                 .to(prevFloats[5], { // profile: bottom-right → drifts down-right
                     opacity: 0, x: 50, y: 30,
                     duration: 0.35, ease: "power2.in",
-                }, `step-${i}+=0.03`)
+                }, at + 0.03)
 
                 // Connector lines fade out
                 .to(prevConnectors, {
                     opacity: 0, duration: 0.25, ease: "power2.in",
-                }, `step-${i}`)
+                }, at)
 
                 // Mobile detail out
                 .to(prevDetailMobile, {
                     opacity: 0, y: 25, duration: 0.25, ease: "power2.in",
-                }, `step-${i}`)
+                }, at)
 
                 // Dot shrink
                 .to(prevDot, {
                     height: 6,
                     backgroundColor: "rgba(17,17,17,0.15)",
                     duration: 0.3,
-                }, `step-${i}`)
+                }, at)
 
                 // ═══ ENTER current product ═══
                 // Mobile: simple fade+slide (no blur/rotateY/scale)
@@ -160,7 +168,7 @@ const FlavorSection = () => {
                     filter: "blur(0px)",
                     duration: 0.65,
                     ease: "power2.out",
-                }, `step-${i}`)
+                }, at)
 
                 // Bottle entrance — simpler on mobile
                 .fromTo(currBottle, isMob ? {
@@ -181,7 +189,7 @@ const FlavorSection = () => {
                     scale: 1,
                     duration: 0.75,
                     ease: "power3.out",
-                }, `step-${i}`)
+                }, at)
 
                 // Glow bloom
                 .fromTo(currGlow, {
@@ -190,7 +198,7 @@ const FlavorSection = () => {
                     scale: 1, opacity: 1,
                     duration: isMob ? 0.6 : 0.85,
                     ease: "power2.out",
-                }, `step-${i}`)
+                }, at)
 
                 // Caption rise
                 .fromTo(currCaption, {
@@ -199,7 +207,7 @@ const FlavorSection = () => {
                     opacity: 1, yPercent: 0,
                     duration: 0.45,
                     ease: "power2.out",
-                }, `step-${i}+=0.2`)
+                }, at + 0.2)
 
                 // ═══ Float IN — details drift toward their positions from center ═══
                 .fromTo(currFloats[0], { // tone: from center → top-left
@@ -207,37 +215,37 @@ const FlavorSection = () => {
                 }, {
                     opacity: 1, x: 0, y: 0,
                     duration: 0.45, ease: "power3.out",
-                }, `step-${i}+=0.15`)
+                }, at + 0.15)
                 .fromTo(currFloats[1], { // tagline: from center → top-right
                     opacity: 0, x: -50, y: 40,
                 }, {
                     opacity: 1, x: 0, y: 0,
                     duration: 0.45, ease: "power3.out",
-                }, `step-${i}+=0.18`)
+                }, at + 0.18)
                 .fromTo(currFloats[2], { // top notes: from center → mid-left
                     opacity: 0, x: 60, y: 15,
                 }, {
                     opacity: 1, x: 0, y: 0,
                     duration: 0.4, ease: "power3.out",
-                }, `step-${i}+=0.22`)
+                }, at + 0.22)
                 .fromTo(currFloats[3], { // heart notes: from center → mid-right
                     opacity: 0, x: -60, y: 15,
                 }, {
                     opacity: 1, x: 0, y: 0,
                     duration: 0.4, ease: "power3.out",
-                }, `step-${i}+=0.22`)
+                }, at + 0.22)
                 .fromTo(currFloats[4], { // base notes: from center → bottom-left
                     opacity: 0, x: 50, y: -35,
                 }, {
                     opacity: 1, x: 0, y: 0,
                     duration: 0.45, ease: "power3.out",
-                }, `step-${i}+=0.26`)
+                }, at + 0.26)
                 .fromTo(currFloats[5], { // profile: from center → bottom-right
                     opacity: 0, x: -50, y: -35,
                 }, {
                     opacity: 1, x: 0, y: 0,
                     duration: 0.45, ease: "power3.out",
-                }, `step-${i}+=0.28`)
+                }, at + 0.28)
 
                 // Connector lines fade in
                 .fromTo(currConnectors, {
@@ -246,7 +254,7 @@ const FlavorSection = () => {
                     opacity: 1,
                     duration: 0.6,
                     ease: "power2.out",
-                }, `step-${i}+=0.3`)
+                }, at + 0.3)
 
                 // Mobile detail entrance
                 .fromTo(currDetailMobile, {
@@ -255,7 +263,7 @@ const FlavorSection = () => {
                     opacity: 1, y: 0,
                     duration: 0.4,
                     ease: "power2.out",
-                }, `step-${i}+=0.25`)
+                }, at + 0.25)
 
                 // Profile bars fill
                 .to(`.profile-bar-${i}`, {
@@ -273,19 +281,26 @@ const FlavorSection = () => {
                             }
                         });
                     },
-                }, `step-${i}+=0.35`)
+                }, at + 0.35)
 
                 // Dot expand
                 .to(currDot, {
                     height: 24,
                     backgroundColor: flavor.accentColor,
                     duration: 0.3,
-                }, `step-${i}+=0.1`);
+                }, at + 0.1);
         });
 
-        const refreshHandle = setTimeout(() => ScrollTrigger.refresh(), 250);
-        return () => clearTimeout(refreshHandle);
-    }, [isMob]);
+        const refresh = () => ScrollTrigger.refresh(true);
+        const t1 = window.setTimeout(refresh, 100);
+        const t2 = window.setTimeout(refresh, 450);
+        const t3 = window.setTimeout(refresh, 900);
+        return () => {
+            window.clearTimeout(t1);
+            window.clearTimeout(t2);
+            window.clearTimeout(t3);
+        };
+    }, { scope: sectionRef, dependencies: [isMob], revertOnUpdate: true });
 
     return (
         <section ref={sectionRef} className="flavor-section relative bg-white overflow-hidden">
@@ -332,7 +347,7 @@ const FlavorSection = () => {
             </div>
 
             {/* Main editorial layout — mobile: title / carousel / CTA grid | desktop: side by side */}
-            <div className="flavor-layout relative z-10 w-full flex flex-col lg:flex-row h-screen max-md:h-auto max-md:min-h-[calc(100dvh-2.75rem)] max-md:grid max-md:grid-rows-[auto_minmax(0,1fr)_auto] max-md:gap-y-2 pt-10 max-md:pt-[8.25rem] md:pt-16 lg:pt-20 pb-14 max-md:pb-3 md:pb-24">
+            <div className="flavor-layout relative z-10 w-full flex flex-col lg:flex-row h-screen max-md:h-[calc(100dvh-2.75rem)] max-md:min-h-[calc(100dvh-2.75rem)] max-md:grid max-md:grid-rows-[auto_minmax(0,1fr)_auto] max-md:gap-y-2 pt-10 max-md:pt-[8.25rem] md:pt-16 lg:pt-20 pb-14 max-md:pb-3 md:pb-24">
                 <div className="flavor-title-col lg:w-[35%] w-full flex items-center justify-start px-4 max-md:px-5 max-md:pl-5 md:px-12 lg:pl-14 xl:pl-20 2xl:pl-28 py-2 max-md:py-0 lg:py-0 lg:h-full shrink-0">
                     <FlavorTitle />
                 </div>

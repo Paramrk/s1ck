@@ -8,6 +8,7 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
+    "remove-fruits-bg": "node scripts/remove-fruits-bg.mjs",
     "deploy": "pnpm build && wrangler pages deploy dist --project-name=s1ck-pheromones --branch=main --commit-dirty=true"
   },
   "dependencies": {

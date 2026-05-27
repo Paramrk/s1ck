@@ -1,4 +1,4 @@
-import { flavorlists } from "../constants/details";
+import { visibleFlavorlists } from "../constants/visibleFlavors";
 
 const images: Record<string, { default: string }> = import.meta.glob(
     "../assets/images/*.{webp,svg}",
@@ -11,13 +11,6 @@ const getImage = (fileName?: string): string | undefined => {
     return images[key]?.default;
 };
 
-const visibleFlavors = flavorlists.filter((flavor) => {
-    const hasName = flavor.name.trim().length > 0;
-    const hasAsset = [flavor.bgImage, flavor.elementsImage, flavor.drinkImage]
-        .some((v) => v?.trim().length);
-    return hasName && hasAsset;
-});
-
 const FlavorSlider = () => {
     return (
         <div
@@ -27,7 +20,7 @@ const FlavorSlider = () => {
                 perspectiveOrigin: "50% 48%",
             }}
         >
-            {visibleFlavors.map((flavor, i) => {
+            {visibleFlavorlists.map((flavor, i) => {
                 const drinkSrc = getImage(flavor.drinkImage);
                 const isFirst = i === 0;
                 const vis = isFirst ? 1 : 0;
@@ -316,7 +309,7 @@ const FlavorSlider = () => {
                                     color: flavor.accentColor,
                                 }}
                             >
-                                {String(i + 1).padStart(2, "0")} / {String(visibleFlavors.length).padStart(2, "0")}
+                                {String(i + 1).padStart(2, "0")} / {String(visibleFlavorlists.length).padStart(2, "0")}
                             </p>
                         </div>
                     </div>
@@ -325,7 +318,7 @@ const FlavorSlider = () => {
 
             {/* ─── Scroll progress dots ─── */}
             <div className="carousel-dots absolute right-2 md:right-8 top-1/2 -translate-y-1/2 z-40 flex flex-col gap-1.5 md:gap-2">
-                {visibleFlavors.map((flavor, i) => (
+                {visibleFlavorlists.map((flavor, i) => (
                     <div
                         key={flavor.name}
                         className={`carousel-dot-${i}`}
