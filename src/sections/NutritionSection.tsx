@@ -136,7 +136,7 @@ const NutritionSection = ({ showMockup = false }: { showMockup?: boolean }) => {
                                 trigger: ".nutrition-section",
                                 start: "top top",
                                 end: "bottom top",
-                                scrub: true,
+                                scrub: 1.2,
                             },
                         });
                     });

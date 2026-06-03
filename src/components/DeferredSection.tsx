@@ -1,6 +1,16 @@
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 
+let refreshTimer: ReturnType<typeof setTimeout> | null = null;
+
+function scheduleScrollRefresh() {
+    if (refreshTimer) clearTimeout(refreshTimer);
+    refreshTimer = setTimeout(() => {
+        refreshTimer = null;
+        ScrollTrigger.refresh(true);
+    }, 100);
+}
+
 type DeferredSectionProps = {
     children: ReactNode;
     /** Placeholder height so layout stays stable before mount */
@@ -40,8 +50,7 @@ const DeferredSection = ({
 
     useEffect(() => {
         if (!mounted) return;
-        const id = requestAnimationFrame(() => ScrollTrigger.refresh());
-        return () => cancelAnimationFrame(id);
+        scheduleScrollRefresh();
     }, [mounted]);
 
     return (

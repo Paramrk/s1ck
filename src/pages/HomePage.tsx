@@ -24,7 +24,7 @@ const HomePage = () => {
     useScrollTriggerRefresh();
 
     useGSAP(() => {
-        if (!loaded || ScrollSmoother.get()) return;
+        if (ScrollSmoother.get()) return;
 
         const isMobile = window.innerWidth <= 768;
         ScrollTrigger.config({ ignoreMobileResize: true });
@@ -33,12 +33,17 @@ const HomePage = () => {
             ScrollSmoother.create({
                 wrapper: "#smooth-wrapper",
                 content: "#smooth-content",
-                smooth: 1.15,
+                smooth: 1.5,
                 effects: false,
             });
         }
 
         ScrollTrigger.refresh();
+    }, []);
+
+    useGSAP(() => {
+        if (!loaded) return;
+        requestAnimationFrame(() => ScrollTrigger.refresh(true));
     }, [loaded]);
 
     useEffect(() => {

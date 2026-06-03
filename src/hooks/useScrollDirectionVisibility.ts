@@ -103,6 +103,10 @@ export function useScrollDirectionVisibility({
                     lastY.current = y;
                 },
             });
+
+            return () => {
+                scrollTrigger?.kill();
+            };
         }
 
         const evaluate = () => {

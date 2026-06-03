@@ -983,11 +983,11 @@ body::-webkit-scrollbar { display: none; }
     -webkit-backface-visibility: hidden;
 }
 
-/* Compositor isolation for pinned sections — helps mobile browsers */
+/* Compositor isolation for pinned sections */
 .flavor-section,
 .pheromone-benefits-section,
 .testimonials-section {
-    contain: layout style paint;
+    contain: paint;
 }
 
 /* ── 3D Carousel Flavor Section ──────────────────────────────────────────── */
@@ -1042,6 +1042,11 @@ body::-webkit-scrollbar { display: none; }
 @keyframes floatDrift3 {
     0%, 100% { transform: translateX(0px); }
     50% { transform: translateX(-4px); }
+}
+
+/* Pause idle float drift while GSAP scrubs the carousel — avoids transform fighting */
+.flavor-section.is-scroll-pinned [class*="float-"] {
+    animation-play-state: paused;
 }
 
 .flavor-section [class*="float-tone-"] {

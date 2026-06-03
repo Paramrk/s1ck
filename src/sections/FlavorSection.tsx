@@ -2,8 +2,9 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useMediaQuery } from "react-responsive";
-import { useRef } from "react";
+import { useRef, Fragment } from "react";
 import { visibleFlavorlists } from "../constants/visibleFlavors";
+import { asSeenOnLogos } from "../constants/asSeenOn";
 import FlavorTitle from "../components/FlavorTitle";
 import FlavorSlider from "../components/FlavorSlider";
 
@@ -30,11 +31,14 @@ const FlavorSection = () => {
                 trigger: sectionRef.current,
                 start: "top top",
                 end: `+=${scrollLength}`,
-                scrub: isMob ? 1.25 : 1.2,
+                scrub: isMob ? 1.35 : 1.4,
                 pin: true,
                 pinSpacing: true,
                 anticipatePin: 1,
                 invalidateOnRefresh: true,
+                onToggle: (self) => {
+                    sectionRef.current?.classList.toggle("is-scroll-pinned", self.isActive);
+                },
             },
         });
 
@@ -320,16 +324,26 @@ const FlavorSection = () => {
 
             {/* AS SEEN ON top bar */}
             <div className="as-seen-on absolute top-0 max-md:top-[4.75rem] left-0 right-0 z-30 border-b border-ivory bg-white/75 backdrop-blur-sm">
-                <div
-                    className="flex items-center justify-center gap-5 md:gap-12 py-3 md:py-4 text-charcoal text-[0.55rem] md:text-[0.7rem] uppercase tracking-[0.25em]"
-                    style={{ fontFamily: "Syne, sans-serif" }}
-                >
-                    <span className="text-stone hidden sm:inline">As Seen On</span>
-                    <span className="font-bold tracking-[0.18em]">FOX</span>
-                    <span className="w-px h-3 bg-ivory" />
-                    <span className="font-bold tracking-[0.18em]">USA TODAY</span>
-                    <span className="w-px h-3 bg-ivory" />
-                    <span className="font-bold tracking-[0.18em]">MarketWatch</span>
+                <div className="flex items-center justify-center gap-3 sm:gap-5 md:gap-10 py-3 md:py-4 px-4">
+                    <span
+                        className="text-stone hidden sm:inline text-[0.55rem] md:text-[0.7rem] uppercase tracking-[0.25em] shrink-0"
+                        style={{ fontFamily: "Syne, sans-serif" }}
+                    >
+                        As Seen On
+                    </span>
+                    {asSeenOnLogos.map((logo, index) => (
+                        <Fragment key={logo.alt}>
+                            {index > 0 && <span className="w-px h-3 bg-ivory shrink-0 hidden sm:block" aria-hidden />}
+                            <img
+                                src={logo.src}
+                                alt={logo.alt}
+                                loading="lazy"
+                                decoding="async"
+                                draggable={false}
+                                className="as-seen-on-logo h-3 sm:h-3.5 md:h-4 w-auto max-w-[4.5rem] sm:max-w-none object-contain object-center"
+                            />
+                        </Fragment>
+                    ))}
                 </div>
             </div>
 

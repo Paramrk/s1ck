@@ -106,6 +106,7 @@ const PheromoneBenefits = ({ showMockup = false }: { showMockup?: boolean }) => 
                             x: `${(1 - p) * 100}%`,
                             opacity: p > 0.01 ? 1 : 0,
                             zIndex: i + 1,
+                            force3D: true,
                         });
 
                         const numEl = panel.querySelector<HTMLElement>(".bg-number");

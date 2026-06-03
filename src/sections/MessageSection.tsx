@@ -21,7 +21,7 @@ const MessageSection = () => {
                             trigger: line,
                             start: isMobile ? "top 80%" : "top 65%",
                             end: isMobile ? "bottom 60%" : "bottom 45%",
-                            scrub: isMobile ? 1 : true,
+                            scrub: isMobile ? 1 : 1.3,
                         }
                     });
                 });

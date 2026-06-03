@@ -75,7 +75,7 @@ const ScentCompositionSection = () => {
                     scroller: scroller ?? undefined,
                     start: "top top",
                     end: `+=${scrollLength}`,
-                    scrub: isMob ? 1.25 : 0.85,
+                    scrub: isMob ? 1.25 : 1.3,
                     pin: true,
                     pinSpacing: true,
                     anticipatePin: 1,

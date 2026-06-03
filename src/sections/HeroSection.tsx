@@ -68,7 +68,7 @@ const HeroSection = () => {
                     trigger: ".hero-container",
                     start: "1% top",
                     end: "bottom top",
-                    scrub: isMobile ? 0.6 : true,
+                    scrub: isMobile ? 0.8 : 1.4,
                 },
             });
         };

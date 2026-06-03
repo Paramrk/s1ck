@@ -24,7 +24,7 @@ const TestimonialSection = () => {
                     trigger: ".testimonials-section",
                     start: "top bottom",
                     end: "500% top",
-                    scrub: true,
+                    scrub: 1.5,
                     pinSpacing: false,
                 }
             });
