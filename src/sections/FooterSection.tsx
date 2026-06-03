@@ -5,15 +5,18 @@ import { SplitText, ScrollTrigger } from "gsap/all";
 import { Link } from "react-router-dom";
 import { getImage } from "../utils/media";
 import AffiliateSection from "./AffiliateSection";
+import WholesalerSection from "./WholesalerSection";
 
 gsap.registerPlugin(ScrollTrigger);
 
 const FooterSection = ({
     hideAffiliateTeaser = false,
     hideVipTeaser = false,
+    hideWholesalerTeaser = false,
 }: {
     hideAffiliateTeaser?: boolean;
     hideVipTeaser?: boolean;
+    hideWholesalerTeaser?: boolean;
 }) => {
 
     useGSAP(() => {
@@ -214,6 +217,8 @@ const FooterSection = ({
                 </div>
                 )}
 
+                {!hideWholesalerTeaser && <WholesalerSection variant="footer" />}
+
                 <div className="footer-brand-row relative z-20 mt-12 md:mt-16 px-5 pt-10 md:pt-12">
                     <div className="footer-brand-emblem mx-auto flex w-full max-w-[18rem] items-center justify-center gap-4 sm:max-w-xs md:max-w-md md:gap-6">
                         <span className="footer-brand-line h-px flex-1 bg-white/25" aria-hidden />
@@ -262,6 +267,11 @@ const FooterSection = ({
                         <p>
                             <Link to="/affiliate" className="hover:text-cream transition-colors">
                                 Affiliate
+                            </Link>
+                        </p>
+                        <p>
+                            <Link to="/wholesaler" className="hover:text-cream transition-colors">
+                                Wholesaler
                             </Link>
                         </p>
                     </div>

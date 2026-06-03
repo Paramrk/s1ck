@@ -32,6 +32,7 @@ const NavMenu: React.FC<NavMenuProps> = ({ isOpen, onClose }) => {
         { name: "Our Story", img: menu1, path: "/our-story" },
         { name: "VIP Club",  img: menu4, path: "/vip-club" },
         { name: "Affiliate", img: menu3, path: "/affiliate" },
+        { name: "Wholesaler", img: menu1, path: "/wholesaler" },
         { name: "Contact" },
     ];
 

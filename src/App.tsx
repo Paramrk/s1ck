@@ -8,6 +8,7 @@ import WomenShopPage from "./pages/WomenShopPage";
 import OurStoryPage from "./pages/OurStoryPage";
 import VipClubPage from "./pages/VipClubPage";
 import AffiliatePage from "./pages/AffiliatePage";
+import WholesalerPage from "./pages/WholesalerPage";
 
 const App = () => {
     return (
@@ -20,6 +21,7 @@ const App = () => {
             <Route path="/vip-club" element={<VipClubPage />} />
             <Route path="/unlock-vip" element={<Navigate to="/vip-club" replace />} />
             <Route path="/affiliate" element={<AffiliatePage />} />
+            <Route path="/wholesaler" element={<WholesalerPage />} />
         </Routes>
     );
 };
