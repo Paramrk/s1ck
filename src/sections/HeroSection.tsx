@@ -4,8 +4,8 @@ import { useMediaQuery } from "react-responsive";
 import { getImage, getVideo } from "../utils/media";
 
 const heroBgVid = getVideo("hero-bg-3.mp4");
+const heroMobileVid = getVideo("hero-mobile.mp4");
 const heroPoster = getImage("herobg.webp");
-const heroMobileBg = getImage("herobg.webp");
 
 const HeroSection = () => {
     const isTabHero = useMediaQuery({
@@ -60,7 +60,7 @@ const HeroSection = () => {
             // Parallax only the content layer — not the video/images
             gsap.to(".hero-scroll-layer", {
                 rotate: isMobile ? 2 : 5,
-                scale: isMobile ? 0.97 : 0.92,
+                scale: isMobile ? 1 : 0.92,
                 yPercent: isMobile ? 10 : 22,
                 ease: "none",
                 force3D: true,
@@ -93,13 +93,15 @@ const HeroSection = () => {
             <div className="hero-container max-md:bg-parchment">
                 <div className="hero-media-layer" aria-hidden>
                     {isTabHero ? (
-                        <img
-                            src={heroMobileBg}
-                            alt=""
-                            loading="eager"
-                            fetchPriority="high"
-                            decoding="async"
-                            className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full max-w-none h-auto object-contain object-bottom max-md:inset-0 max-md:h-full max-md:w-full max-md:translate-x-0 max-md:object-cover max-md:object-bottom"
+                        <video
+                            src={heroMobileVid}
+                            poster={heroPoster}
+                            autoPlay
+                            loop
+                            playsInline
+                            muted
+                            preload="metadata"
+                            className="absolute inset-0 h-full w-full object-cover object-bottom"
                         />
                     ) : (
                         <>

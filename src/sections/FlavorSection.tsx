@@ -1,12 +1,14 @@
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { ScrollSmoother } from "gsap/all";
 import { useMediaQuery } from "react-responsive";
 import { useRef, Fragment } from "react";
 import { visibleFlavorlists } from "../constants/visibleFlavors";
 import { asSeenOnLogos } from "../constants/asSeenOn";
 import FlavorTitle from "../components/FlavorTitle";
 import FlavorSlider from "../components/FlavorSlider";
+import { getProductCarouselTiming } from "../utils/productCarouselScroll";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -21,17 +23,21 @@ const FlavorSection = () => {
         const productCount = visibleFlavorlists.length;
         if (productCount < 2) return;
 
-        // One fixed time-slice per product; scroll distance scales with count
-        const stepDur = isMob ? 1.65 : 1.1;
-        const scrollLength = isMob ? productCount * 1100 : productCount * 900;
-        const timelineSpan = (productCount - 1) * stepDur;
+        const { holdDur, transDur, scrollLength, totalDuration, transStart, snap } =
+            getProductCarouselTiming(productCount, isMob);
+
+        const scroller = ScrollSmoother.get()
+            ? document.getElementById("smooth-wrapper") ?? undefined
+            : undefined;
 
         const tl = gsap.timeline({
             scrollTrigger: {
                 trigger: sectionRef.current,
+                scroller,
                 start: "top top",
                 end: `+=${scrollLength}`,
-                scrub: isMob ? 1.35 : 1.4,
+                scrub: 0.35,
+                snap,
                 pin: true,
                 pinSpacing: true,
                 anticipatePin: 1,
@@ -42,10 +48,12 @@ const FlavorSection = () => {
             },
         });
 
+        tl.addLabel("product-0", 0).to({}, { duration: holdDur, ease: "none" }, 0);
+
         tl.to(".flavor-bg-tint", {
             backgroundPosition: "100% 50%",
             ease: "none",
-            duration: timelineSpan,
+            duration: totalDuration,
         }, 0);
 
         // Floating detail selectors for each product
@@ -64,7 +72,7 @@ const FlavorSection = () => {
         visibleFlavorlists.forEach((flavor, i) => {
             if (i === 0) return;
 
-            const at = i * stepDur;
+            const at = transStart(i);
 
             const prev = `.fp-${i - 1}`;
             const curr = `.fp-${i}`;
@@ -86,14 +94,13 @@ const FlavorSection = () => {
             const prevConnectors = connectorSel(i - 1);
             const currConnectors = connectorSel(i);
 
-            tl.addLabel(`step-${i}`, at)
-
+            tl
                 // ═══ EXIT previous product ═══
                 // Mobile: no blur/rotateY/scale (GPU-killer during scrub)
                 .to(prev, isMob ? {
                     opacity: 0,
                     xPercent: -15,
-                    duration: 0.5,
+                    duration: 0.35,
                     ease: "power2.inOut",
                 } : {
                     opacity: 0,
@@ -101,7 +108,7 @@ const FlavorSection = () => {
                     rotateY: -40,
                     yPercent: -12,
                     filter: "blur(14px)",
-                    duration: 0.6,
+                    duration: 0.4,
                     ease: "power2.inOut",
                 }, at)
 
@@ -162,7 +169,7 @@ const FlavorSection = () => {
                 }, isMob ? {
                     opacity: 1,
                     xPercent: 0,
-                    duration: 0.55,
+                    duration: 0.38,
                     ease: "power2.out",
                 } : {
                     opacity: 1,
@@ -170,7 +177,7 @@ const FlavorSection = () => {
                     rotateY: 0,
                     yPercent: 0,
                     filter: "blur(0px)",
-                    duration: 0.65,
+                    duration: 0.42,
                     ease: "power2.out",
                 }, at)
 
@@ -293,6 +300,12 @@ const FlavorSection = () => {
                     backgroundColor: flavor.accentColor,
                     duration: 0.3,
                 }, at + 0.1);
+
+            const settledAt = at + transDur;
+            tl.addLabel(`product-${i}`, settledAt);
+            if (i < productCount - 1) {
+                tl.to({}, { duration: holdDur, ease: "none" }, settledAt);
+            }
         });
 
         const refresh = () => ScrollTrigger.refresh(true);

@@ -10,6 +10,7 @@ import {
     scentCompositions,
     type ScentCompositionItem,
 } from "../constants/scentComposition";
+import { getProductCarouselTiming } from "../utils/productCarouselScroll";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -50,11 +51,13 @@ const ScentCompositionSection = () => {
         () => {
             const section = sectionRef.current;
             if (!section) return;
+            if (count < 2) return;
+
+            const { holdDur, transDur, scrollLength, transStart, snap } =
+                getProductCarouselTiming(count, isMob);
+            const scroller = getScrollScroller();
 
             const bottleEnterY = isMob ? 0 : 110;
-            const stepDuration = isMob ? 1.15 : 1;
-            const scrollLength = isMob ? count * 1100 : count * 1100;
-            const scroller = getScrollScroller();
 
             scentCompositions.forEach((entry, i) => {
                 if (i === 0) {
@@ -75,7 +78,8 @@ const ScentCompositionSection = () => {
                     scroller: scroller ?? undefined,
                     start: "top top",
                     end: `+=${scrollLength}`,
-                    scrub: isMob ? 1.25 : 1.3,
+                    scrub: 0.35,
+                    snap,
                     pin: true,
                     pinSpacing: true,
                     anticipatePin: 1,
@@ -83,14 +87,12 @@ const ScentCompositionSection = () => {
                 },
             });
 
-            if (isMob) {
-                tl.to({}, { duration: 0.45, ease: "none" }, 0);
-            }
+            tl.addLabel("product-0", 0).to({}, { duration: holdDur, ease: "none" }, 0);
 
             for (let i = 1; i < count; i++) {
                 const item = scentCompositions[i];
                 const prev = i - 1;
-                const at = i * stepDuration;
+                const at = transStart(i);
                 const panelIn = `.sc-panel-${i}`;
                 const panelOut = `.sc-panel-${prev}`;
 
@@ -101,23 +103,21 @@ const ScentCompositionSection = () => {
                         ? `${panelOut} .sc-bottle-wrap`
                         : null;
 
-                tl.addLabel(`sc-step-${i}`, at);
-
                 if (fadeOutPrevBottle) {
                     tl.to(
                         fadeOutPrevBottle,
-                        { opacity: 0, duration: 0.35, ease: "power2.inOut" },
+                        { opacity: 0, duration: 0.25, ease: "power2.inOut" },
                         at,
                     );
                 }
 
-                tl.to(panelOut, { autoAlpha: 0, duration: 0.32, ease: "power2.in" }, at)
+                tl.to(panelOut, { autoAlpha: 0, duration: 0.24, ease: "power2.in" }, at)
                     .set(panelOut, { visibility: "hidden", zIndex: 1 }, at)
                     .set(panelIn, { visibility: "visible", zIndex: 2 }, at)
                     .fromTo(
                         panelIn,
                         { autoAlpha: 0 },
-                        { autoAlpha: 1, duration: 0.35, ease: "power2.out" },
+                        { autoAlpha: 1, duration: 0.28, ease: "power2.out" },
                         at,
                     );
 
@@ -125,15 +125,15 @@ const ScentCompositionSection = () => {
                     tl.fromTo(
                         bottleWrap,
                         { opacity: 0 },
-                        { opacity: 1, duration: 0.55, ease: "power2.inOut" },
-                        at + 0.08,
+                        { opacity: 1, duration: 0.35, ease: "power2.inOut" },
+                        at + 0.05,
                     );
                 } else {
                     tl.fromTo(
                         bottleWrap,
                         { yPercent: bottleEnterY, opacity: 0 },
-                        { yPercent: 0, opacity: 1, duration: 0.6, ease: "power3.out" },
-                        at + 0.03,
+                        { yPercent: 0, opacity: 1, duration: 0.38, ease: "power3.out" },
+                        at + 0.02,
                     );
                 }
 
@@ -159,8 +159,10 @@ const ScentCompositionSection = () => {
                         at,
                     );
 
-                if (isMob) {
-                    tl.to({}, { duration: 0.5, ease: "none" }, at + 0.72);
+                const settledAt = at + transDur;
+                tl.addLabel(`product-${i}`, settledAt);
+                if (i < count - 1) {
+                    tl.to({}, { duration: holdDur, ease: "none" }, settledAt);
                 }
             }
 

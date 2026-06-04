@@ -91,7 +91,7 @@ body::-webkit-scrollbar { display: none; }
         @apply relative bg-cream w-full h-dvh overflow-hidden;
 
         .hero-media-layer {
-            @apply absolute inset-0 z-0;
+            @apply absolute inset-0 z-0 overflow-hidden;
         }
 
         .hero-scroll-layer {
