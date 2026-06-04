@@ -95,7 +95,6 @@ const HeroSection = () => {
                     {isTabHero ? (
                         <video
                             src={heroMobileVid}
-                            poster={heroPoster}
                             autoPlay
                             loop
                             playsInline
