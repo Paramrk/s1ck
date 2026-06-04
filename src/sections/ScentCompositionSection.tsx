@@ -275,10 +275,10 @@ const ScentCompositionSection = () => {
     return (
         <section
             ref={sectionRef}
-            className="scent-composition-section relative overflow-hidden bg-white"
+            className="scent-composition-section relative max-md:overflow-visible overflow-hidden bg-white"
             aria-labelledby="scent-composition-heading"
         >
-            <div className="scent-composition-inner relative z-10 flex max-md:h-[100dvh] max-md:max-h-[100dvh] max-md:flex-col max-md:justify-between max-md:overflow-hidden max-md:px-4 max-md:pt-[3.35rem] max-md:pb-3 md:h-dvh md:min-h-[600px] md:max-h-dvh md:flex md:flex-col md:px-6 md:pt-10 md:pb-[4.5rem] lg:px-12 xl:px-16">
+            <div className="scent-composition-inner relative z-10 flex max-md:h-[100dvh] max-md:max-h-[100dvh] max-md:flex-col max-md:justify-between max-md:overflow-visible max-md:px-4 max-md:pt-[3.35rem] max-md:pb-3 md:h-dvh md:min-h-[600px] md:max-h-dvh md:flex md:flex-col md:px-6 md:pt-10 md:pb-[4.5rem] lg:px-12 xl:px-16">
                 <header className="sc-section-header shrink-0 w-full flex justify-center z-30 max-md:pb-0 md:mb-3 lg:mb-4">
                     <ScentSectionTitle />
                 </header>

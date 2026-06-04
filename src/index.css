@@ -400,6 +400,8 @@ body::-webkit-scrollbar { display: none; }
     @media (max-width: 768px) {
         .scent-composition-section {
             min-height: 100dvh;
+            overflow-x: clip;
+            overflow-y: visible;
         }
 
         .scent-composition-section .sc-flavor-text-scroll {
@@ -411,46 +413,167 @@ body::-webkit-scrollbar { display: none; }
             flex: 0 0 auto;
         }
 
+        .scent-composition-section .scent-composition-inner {
+            overflow: visible;
+        }
+
         .scent-composition-section .sc-panel-stage {
             flex: 1 1 auto;
             min-height: 0;
             width: 100%;
             display: flex;
             flex-direction: column;
+            overflow: visible;
         }
 
         .scent-composition-section .sc-panel {
-            display: flex !important;
-            flex-direction: column;
+            display: grid !important;
+            grid-template-rows: minmax(min(48dvh, 380px), 1fr) auto;
+            grid-template-columns: 1fr;
             height: 100%;
             min-height: 0;
-            gap: 0.35rem;
-            justify-content: flex-start;
+            gap: 0.25rem;
+            justify-content: stretch;
+            overflow: visible;
         }
 
         .scent-composition-section .sc-bottle-col {
-            flex: 1 1 auto;
-            min-height: 0;
+            grid-row: 1;
+            flex: none;
+            min-height: min(48dvh, 380px);
             max-height: none;
             width: 100%;
             display: flex;
-            align-items: flex-start;
+            align-items: flex-end;
             justify-content: center;
-            padding-bottom: 0;
+            padding: 0 0 0.25rem;
             overflow: visible;
         }
 
         .scent-composition-section .sc-stage {
+            position: relative;
             height: 100%;
             width: 100%;
-            min-height: min(34dvh, 280px);
-            max-height: 100%;
+            max-width: min(100%, 480px);
+            min-height: min(42dvh, 320px);
+            max-height: min(52dvh, 430px);
             flex: 1 1 auto;
             display: flex;
-            align-items: center;
+            align-items: flex-end;
             justify-content: center;
-            padding-top: 0.25rem;
+            padding: 0.35rem 0.5rem 0.15rem;
             overflow: visible;
+            transform: none;
+        }
+
+        .scent-composition-section .sc-fruits-0,
+        .scent-composition-section .sc-fruits-1,
+        .scent-composition-section .sc-fruits-2 {
+            inset: 6% 2% 14%;
+            overflow: visible;
+        }
+
+        .scent-composition-section .scent-fruit-spin {
+            width: 5.25rem !important;
+            height: 5.25rem !important;
+            max-width: 5.75rem;
+            max-height: 5.75rem;
+        }
+
+        /* Soft wash — wide ellipse, no visible box */
+        .scent-composition-section .sc-bottle-glow--mobile {
+            width: min(100%, 460px) !important;
+            height: min(48vw, 220px) !important;
+            max-width: none !important;
+            top: 58% !important;
+            left: 50% !important;
+            transform: translate(-50%, -50%) !important;
+            border-radius: 50% !important;
+            filter: blur(48px);
+            opacity: 0.5;
+        }
+
+        .scent-composition-section .sc-stage .sc-bottle-wrap {
+            height: auto !important;
+            max-height: 100% !important;
+            min-height: 0;
+            width: 100%;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            transform: none !important;
+            transform-origin: center bottom !important;
+        }
+
+        .scent-composition-section .sc-stage .sc-bottle-splash {
+            position: relative !important;
+            inset: auto !important;
+            height: auto !important;
+            max-height: 100% !important;
+            width: 100%;
+            align-items: center !important;
+            justify-content: center !important;
+            transform: none !important;
+            translate: none !important;
+            scale: 1 !important;
+        }
+
+        .scent-composition-section .sc-panel-2 .sc-bottle-glow--mobile {
+            top: 56% !important;
+            height: min(44vw, 210px) !important;
+            opacity: 0.45;
+        }
+
+        .scent-composition-section .sc-fruits-2 {
+            inset: 4% 2% 12%;
+        }
+
+        .scent-composition-section .sc-stage .sc-bottle-wrap img {
+            max-height: min(50dvh, 410px);
+            height: auto;
+            width: auto;
+            max-width: min(92vw, 380px);
+            margin-inline: auto;
+            object-fit: contain;
+            object-position: center bottom;
+        }
+
+        .scent-composition-section .sc-panel-0 .sc-bottle-wrap img {
+            max-height: min(51dvh, 420px);
+            max-width: min(90vw, 370px);
+            transform: scale(1.5);
+            transform-origin: center bottom;
+        }
+
+        .scent-composition-section .sc-panel-1 .sc-bottle-wrap img {
+            max-height: min(50dvh, 405px);
+            max-width: min(88vw, 340px);
+            transform: scale(1.5) translateY(0.85rem);
+            transform-origin: center bottom;
+        }
+
+        .scent-composition-section .sc-stage .sc-splash-img {
+            max-height: min(48dvh, 390px);
+            max-width: min(90vw, 350px);
+            height: auto;
+            width: auto;
+            margin-inline: auto;
+            object-fit: contain;
+            object-position: center center;
+        }
+
+        .scent-composition-section .sc-panel-2 .sc-splash-img {
+            transform: scale(1.5);
+            transform-origin: center bottom;
+        }
+
+        .scent-composition-section .sc-copy {
+            grid-row: 2;
+            flex: 0 0 auto;
+            isolation: isolate;
+            margin-top: 0;
+            position: relative;
+            z-index: 5;
         }
 
         .scent-composition-section .sc-title-block {
@@ -466,92 +589,6 @@ body::-webkit-scrollbar { display: none; }
         .scent-composition-section .sc-flavor-text-scroll p {
             font-size: 0.52rem;
             letter-spacing: 0.08em;
-        }
-
-        .scent-composition-section .sc-fruits-0,
-        .scent-composition-section .sc-fruits-1,
-        .scent-composition-section .sc-fruits-2 {
-            inset: 0 5% 12%;
-        }
-
-        .scent-composition-section .scent-fruit-spin {
-            width: 3.65rem !important;
-            height: 3.65rem !important;
-            max-width: 4.25rem;
-            max-height: 4.25rem;
-        }
-
-        /* Soft wash — wide ellipse, no visible box */
-        .scent-composition-section .sc-bottle-glow--mobile {
-            width: min(120vw, 480px) !important;
-            height: min(52vw, 220px) !important;
-            max-width: none !important;
-            top: 44% !important;
-            left: 50% !important;
-            transform: translate(-50%, -50%) !important;
-            border-radius: 50% !important;
-            filter: blur(56px);
-            opacity: 0.5;
-        }
-
-        .scent-composition-section .sc-stage .sc-bottle-wrap {
-            height: 100% !important;
-            max-height: 100% !important;
-            min-height: 0;
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transform: none !important;
-            transform-origin: center center !important;
-        }
-
-        .scent-composition-section .sc-stage .sc-bottle-splash {
-            position: relative !important;
-            inset: auto !important;
-            height: 100% !important;
-            max-height: 100% !important;
-            width: 100%;
-            align-items: center !important;
-            justify-content: center !important;
-            transform: none !important;
-            translate: none !important;
-        }
-
-        .scent-composition-section .sc-panel-2 .sc-bottle-glow--mobile {
-            top: 46% !important;
-            height: min(48vw, 200px) !important;
-            opacity: 0.45;
-        }
-
-        .scent-composition-section .sc-fruits-2 {
-            inset: 4% 3% 8%;
-        }
-
-        .scent-composition-section .sc-stage .sc-bottle-wrap img {
-            max-height: min(46dvh, 420px);
-            height: auto;
-            width: auto;
-            max-width: 94vw;
-            margin-inline: auto;
-            object-fit: contain;
-            object-position: center center;
-        }
-
-        .scent-composition-section .sc-stage .sc-splash-img {
-            max-height: min(44dvh, 400px);
-            max-width: min(92vw, 360px);
-            height: auto;
-            width: auto;
-            margin-inline: auto;
-            object-fit: contain;
-            object-position: center center;
-        }
-
-        .scent-composition-section .sc-copy {
-            flex: 0 0 auto;
-            isolation: isolate;
-            margin-top: 0.15rem;
         }
 
         .scent-composition-section .sc-dots-row {
