@@ -9,6 +9,7 @@ import OurStoryPage from "./pages/OurStoryPage";
 import VipClubPage from "./pages/VipClubPage";
 import AffiliatePage from "./pages/AffiliatePage";
 import WholesalerPage from "./pages/WholesalerPage";
+import ProductDetailPage from "./pages/ProductDetailPage";
 
 const App = () => {
     return (
@@ -22,6 +23,7 @@ const App = () => {
             <Route path="/unlock-vip" element={<Navigate to="/vip-club" replace />} />
             <Route path="/affiliate" element={<AffiliatePage />} />
             <Route path="/wholesaler" element={<WholesalerPage />} />
+            <Route path="/product/:handle" element={<ProductDetailPage />} />
         </Routes>
     );
 };

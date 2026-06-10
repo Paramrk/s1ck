@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -9,12 +9,14 @@ import { flavorlists } from "../constants/details";
 import { getImage } from "../utils/media";
 import menImg from "../assets/menu-img/men-menu.webp";
 import { useScrollTriggerRefresh } from "../hooks/useScrollTriggerRefresh";
+import { getProductsByCollection, getMergedProduct } from "../utils/shopify";
 
 gsap.registerPlugin(ScrollTrigger);
 
 const MenShopPage = () => {
     const pageRef = useRef<HTMLDivElement>(null);
     const heroImgRef = useRef<HTMLImageElement>(null);
+    const [shopifyProducts, setShopifyProducts] = useState<any[]>([]);
     useScrollTriggerRefresh();
 
     const hasFineHover =
@@ -23,6 +25,16 @@ const MenShopPage = () => {
 
     useEffect(() => {
         window.scrollTo(0, 0);
+        
+        getProductsByCollection("men")
+            .then((products) => {
+                if (products && products.length > 0) {
+                    setShopifyProducts(products);
+                }
+            })
+            .catch((err) => console.error("Error loading products from Shopify:", err));
+
+
         return () => {
             ScrollTrigger.getAll().forEach((t) => t.kill());
         };
@@ -191,15 +203,35 @@ const MenShopPage = () => {
                             className="text-champagne text-[0.6rem] uppercase tracking-[0.35em]"
                             style={{ fontFamily: "Syne, sans-serif", fontWeight: 600 }}
                         >
-                            Collection — {flavorlists.length} scents
+                            Collection — {shopifyProducts.length > 0 ? shopifyProducts.length : flavorlists.length} scents
                         </p>
                     </div>
 
                     <div className="product-grid grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-x-8 gap-y-14">
-                        {flavorlists.map((product, i) => (
-                            <div
-                                key={product.name}
-                                className="product-card group cursor-pointer"
+                        {(shopifyProducts.length > 0
+                            ? shopifyProducts.map((p) => {
+                                  const merged = getMergedProduct(p);
+                                  return {
+                                      id: p.id,
+                                      name: p.title,
+                                      handle: p.handle,
+                                      image: merged?.displayImage || "",
+                                      price: `$${parseFloat(p.priceRange?.minVariantPrice?.amount || "0").toFixed(2)}`,
+                                  };
+                              })
+                            : flavorlists.map((p) => ({
+                                  id: p.name,
+                                  name: p.name,
+                                  handle: p.name.toLowerCase().replace(/[èéêë]/g, "e").replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, ""),
+                                  image: getImage(p.drinkImage || ""),
+                                  price: "$89.00",
+                              }))
+                        ).map((product, i) => (
+                            <Link
+                                to={product.handle ? `/product/${product.handle}` : "#"}
+                                key={product.id}
+                                className="product-card group cursor-pointer block text-current"
+                                style={{ textDecoration: "none" }}
                                 onMouseEnter={hasFineHover ? handleCardEnter : undefined}
                                 onMouseLeave={hasFineHover ? handleCardLeave : undefined}
                             >
@@ -211,13 +243,19 @@ const MenShopPage = () => {
                                     >
                                         {String(i + 1).padStart(2, "0")}
                                     </span>
-                                    <img
-                                        src={getImage(product.drinkImage || "")}
-                                        alt={product.name}
-                                        loading="lazy"
-                                        decoding="async"
-                                        className="card-img absolute inset-0 w-full h-full object-cover object-center"
-                                    />
+                                    {product.image ? (
+                                        <img
+                                            src={product.image}
+                                            alt={product.name}
+                                            loading="lazy"
+                                            decoding="async"
+                                            className="card-img absolute inset-0 w-full h-full object-cover object-center"
+                                        />
+                                    ) : (
+                                        <div className="absolute inset-0 w-full h-full flex items-center justify-center text-charcoal/30 bg-parchment">
+                                            No Image
+                                        </div>
+                                    )}
                                 </div>
                                 <div className="pt-5 flex items-start justify-between">
                                     <div>
@@ -231,12 +269,12 @@ const MenShopPage = () => {
                                             className="text-stone text-xs mt-1.5 tracking-wide"
                                             style={{ fontFamily: "Inter, sans-serif", fontWeight: 400 }}
                                         >
-                                            $89.00
+                                            {product.price}
                                         </p>
                                     </div>
                                     <i className="ri-arrow-right-up-line text-taupe text-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                                 </div>
-                            </div>
+                            </Link>
                         ))}
                     </div>
                 </div>

@@ -1,11 +1,13 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import NavMenu from "./NavMenu";
+import CartDrawer from "./CartDrawer";
 import s1ckLogo from "../assets/images/s1ck-logo-transparent.webp";
 import { useScrollDirectionVisibility } from "../hooks/useScrollDirectionVisibility";
 import { useNavbarLogoInvert } from "../hooks/useNavbarLogoInvert";
+import { cartStore } from "../utils/cartStore";
 
 interface NavbarProps {
     variant?: "dark" | "light";
@@ -13,12 +15,35 @@ interface NavbarProps {
 
 const Navbar: React.FC<NavbarProps> = ({ variant = "dark" }) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [isCartOpen, setIsCartOpen] = useState(false);
+    const [cartCount, setCartCount] = useState(0);
     const pillShellRef = useRef<HTMLDivElement>(null);
     const menuRef = useRef<HTMLDivElement>(null);
     const logoRef = useRef<HTMLImageElement>(null);
     const forceLightChrome = variant === "light";
     const location = useLocation();
     const isShopPage = location.pathname.startsWith("/shop");
+
+    useEffect(() => {
+        const updateCount = () => {
+            const items = cartStore.getCart();
+            const count = items.reduce((acc, curr) => acc + curr.quantity, 0);
+            setCartCount(count);
+        };
+
+        updateCount();
+        const unsubscribe = cartStore.subscribe(updateCount);
+        window.addEventListener("cart-updated", updateCount);
+
+        const handleOpenCart = () => setIsCartOpen(true);
+        window.addEventListener("open-cart", handleOpenCart);
+
+        return () => {
+            unsubscribe();
+            window.removeEventListener("cart-updated", updateCount);
+            window.removeEventListener("open-cart", handleOpenCart);
+        };
+    }, []);
 
     const pillVisible = useScrollDirectionVisibility({ disabled: isMenuOpen });
     const { useLightLogo, lightLogoClass } = useNavbarLogoInvert(logoRef, {
@@ -106,27 +131,47 @@ const Navbar: React.FC<NavbarProps> = ({ variant = "dark" }) => {
                     />
                 </Link>
 
-                {!isShopPage && (
-                    <Link
-                        to="/shop"
-                        className={`hidden md:block group sm:px-6 px-4 py-2 border transition-all duration-500 text-center cursor-pointer ${
+                <div className="flex items-center gap-3">
+                    {/* Cart Trigger */}
+                    <button
+                        onClick={() => setIsCartOpen(true)}
+                        className={`group sm:px-5 px-3 py-2 border transition-all duration-500 text-center cursor-pointer flex items-center gap-2 ${
                             useLightLogo
-                                ? "border-cream/30 bg-transparent hover:bg-cream"
-                                : "border-charcoal bg-white hover:bg-charcoal"
+                                ? "border-cream/30 bg-transparent hover:bg-cream text-cream hover:text-charcoal"
+                                : "border-charcoal bg-white hover:bg-charcoal text-charcoal hover:text-cream"
                         }`}
                     >
+                        <i className="ri-shopping-bag-line text-sm" />
                         <span
-                            className={`text-xs font-medium p-0 m-0 transition-colors duration-500 ${
-                                useLightLogo
-                                    ? "text-cream group-hover:text-charcoal"
-                                    : "text-charcoal group-hover:text-cream"
-                            }`}
-                            style={{ fontFamily: 'Syne, sans-serif', letterSpacing: '0.18em' }}
+                            className="text-xs font-semibold p-0 m-0"
+                            style={{ fontFamily: 'Syne, sans-serif', letterSpacing: '0.15em' }}
                         >
-                            SHOP NOW
+                            BAG ({cartCount})
                         </span>
-                    </Link>
-                )}
+                    </button>
+
+                    {!isShopPage && (
+                        <Link
+                            to="/shop"
+                            className={`hidden md:block group sm:px-6 px-4 py-2 border transition-all duration-500 text-center cursor-pointer ${
+                                useLightLogo
+                                    ? "border-cream/30 bg-transparent hover:bg-cream"
+                                    : "border-charcoal bg-white hover:bg-charcoal"
+                            }`}
+                        >
+                            <span
+                                className={`text-xs font-medium p-0 m-0 transition-colors duration-500 ${
+                                    useLightLogo
+                                        ? "text-cream group-hover:text-charcoal"
+                                        : "text-charcoal group-hover:text-cream"
+                                }`}
+                                style={{ fontFamily: 'Syne, sans-serif', letterSpacing: '0.18em' }}
+                            >
+                                SHOP NOW
+                            </span>
+                        </Link>
+                    )}
+                </div>
             </nav>
 
             {/* Menu toggle — shell handles scroll hide/show; inner keeps cursor-follow */}
@@ -170,6 +215,7 @@ const Navbar: React.FC<NavbarProps> = ({ variant = "dark" }) => {
             </div>
             </div>
             <NavMenu isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
+            <CartDrawer isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
         </>
     );
 };
