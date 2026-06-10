@@ -70,6 +70,7 @@ export async function getProductByHandle(handle: string) {
         product(handle: $handle) {
           id
           title
+          handle
           description
           images(first: 5) {
             nodes {
@@ -156,7 +157,7 @@ export function getMergedProduct(shopifyProduct: any) {
 
     const handle = (shopifyProduct.handle || "").toLowerCase();
 
-    const localProduct = flavorlists.find((f) => {
+    const localProduct = handle ? flavorlists.find((f) => {
         const normalizedLocal = f.name
             .toLowerCase()
             .replace(/[èéêë]/g, "e")
@@ -167,7 +168,7 @@ export function getMergedProduct(shopifyProduct: any) {
             handle.includes(normalizedLocal) ||
             normalizedLocal.includes(handle)
         );
-    });
+    }) : undefined;
 
     const displayImage = localProduct?.drinkImage
         ? getImage(localProduct.drinkImage)

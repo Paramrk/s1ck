@@ -3,6 +3,8 @@ import { cartStore } from "../utils/cartStore";
 import type { CartItem } from "../utils/cartStore";
 import { createShopifyCheckout } from "../utils/shopify";
 import gsap from "gsap";
+import preImg from "../assets/s1cklogo-trnsp.webp";
+
 
 interface CartDrawerProps {
     isOpen: boolean;
@@ -247,6 +249,44 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
                     </div>
                 )}
             </div>
+
+            {/* Redirecting Overlay */}
+            {isCheckingOut && (
+                <div className="fixed inset-0 z-[9999] bg-charcoal flex flex-col items-center justify-center text-cream">
+                    <div className="flex flex-col items-center max-w-md px-6 text-center space-y-8">
+                        {/* Glowing Logo Container */}
+                        <div className="relative flex items-center justify-center">
+                            <div className="absolute inset-0 bg-sick-red/25 blur-3xl rounded-full scale-150 animate-pulse" />
+                            <img
+                                src={preImg}
+                                alt="S1CK"
+                                className="relative w-32 md:w-40 filter brightness-0 invert"
+                            />
+                        </div>
+
+                        {/* Title & Status */}
+                        <div className="space-y-3">
+                            <div className="flex items-center justify-center gap-2">
+                                <span className="h-1.5 w-1.5 rounded-full bg-sick-red animate-ping" />
+                                <span className="text-[0.65rem] tracking-[0.3em] text-sick-red font-bold uppercase">
+                                    Secure Connection
+                                </span>
+                            </div>
+                            <h2 className="text-xl md:text-2xl font-bold tracking-[0.1em] uppercase">
+                                Redirecting to Checkout
+                            </h2>
+                            <p className="text-stone text-[0.7rem] uppercase tracking-widest max-w-[280px] mx-auto leading-relaxed opacity-80">
+                                Please do not close this tab or refresh the page.
+                            </p>
+                        </div>
+
+                        {/* Custom loading bar */}
+                        <div className="w-48 h-[2px] bg-stone/20 overflow-hidden relative rounded-full">
+                            <div className="h-full bg-sick-red w-full absolute left-0 top-0 origin-left animate-[loading-bar_1.5s_infinite_ease-in-out]" />
+                        </div>
+                    </div>
+                </div>
+            )}
         </>
     );
 };
