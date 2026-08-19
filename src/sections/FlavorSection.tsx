@@ -813,13 +813,25 @@ const FlavorSection = () => {
                 }}
             />
 
-            {/* Header: Centered title overlay */}
+            {/* Header: title kicker on mobile/tablet; full heading on desktop */}
             <div className="bestseller-heading absolute top-6 md:top-10 inset-x-0 z-20 flex flex-col items-center pointer-events-none px-4 text-center">
                 <span className="bestseller-heading-kicker mb-1 text-[0.65rem] font-bold uppercase tracking-[0.35em] md:text-xs">
                     Signature Collection
                 </span>
                 <h2
-                    className="bestseller-heading-title text-2xl sm:text-3xl md:text-5xl uppercase tracking-tight font-black"
+                    className="bestseller-heading-title hidden text-2xl uppercase tracking-tight font-black sm:text-3xl md:text-5xl lg:block"
+                    style={{ fontFamily: "Syne, sans-serif" }}
+                >
+                    The Bestsellers
+                </h2>
+            </div>
+
+            {/* Mobile + tablet — bottom center title, lifted above the product pill */}
+            <div
+                className={`bestseller-heading pointer-events-none absolute inset-x-0 bottom-16 z-20 flex flex-col items-center px-4 text-center sm:bottom-[4.75rem] lg:hidden ${experienceStarted ? "" : "opacity-0"}`}
+            >
+                <h2
+                    className="bestseller-heading-title text-xl uppercase tracking-tight font-black sm:text-2xl"
                     style={{ fontFamily: "Syne, sans-serif" }}
                 >
                     The Bestsellers
