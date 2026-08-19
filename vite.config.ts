@@ -6,12 +6,10 @@ import mkcert from 'vite-plugin-mkcert'
 const IMAGE_EXTS = /\.(png|jpg|jpeg|webp|gif|svg)$/i;
 const VIDEO_EXTS = /\.(mp4|webm|mov)$/i;
 const FONT_EXTS = /\.(woff|woff2|ttf|otf|eot)$/i;
+const enableDevHttps = !process.env.VERCEL && !process.env.CI;
 
 // https://vite.dev/config/
-export default defineConfig(({ command }) => {
-  const isDev = command === "serve";
-
-  return {
+export default defineConfig({
   base: './',
   experimental: {
     renderBuiltUrl(filename, { hostType }) {
@@ -89,16 +87,12 @@ export default defineConfig(({ command }) => {
       }
     }
   },
-  plugins: [react(), tailwindcss(), ...(isDev ? [mkcert()] : [])],
-  ...(isDev
+  plugins: [react(), tailwindcss(), ...(enableDevHttps ? [mkcert()] : [])],
+  server: enableDevHttps
     ? {
-        server: {
-          https: true,
-          hmr: {
-            overlay: false,
-          },
+        hmr: {
+          overlay: false,
         },
       }
-    : {}),
-  };
-});
+    : undefined,
+})
