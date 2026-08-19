@@ -1404,10 +1404,19 @@ body::-webkit-scrollbar { display: none; }
 }
 
 /* ── Animations ─────────────────────────────────────────────────────────── */
-/* Blend over the video (hint layer sits above the pin stage) */
+/* Blend over the video — text only; clock stays on .benefit-center-clock */
 .benefit-scroll-hint-layer {
     mix-blend-mode: difference;
     pointer-events: none;
+}
+
+.benefit-center-stack {
+    isolation: isolate;
+}
+
+.benefit-center-clock {
+    mix-blend-mode: normal;
+    isolation: isolate;
 }
 
 .benefit-scroll-hint-stack {

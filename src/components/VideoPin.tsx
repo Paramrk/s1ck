@@ -4,6 +4,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 import { getVideo } from "../utils/media";
+import TickingClock from "./TickingClock";
 
 const pinVideo = getVideo("video-1.mp4") || "https://pub-14765fe2465f48c99a2845f3997a3cb2.r2.dev/pin-video.mp4";
 
@@ -303,6 +304,7 @@ const VideoPin = () => {
                 uiContainer.style.opacity = "0";
                 uiContainer.style.visibility = "hidden";
                 uiContainer.style.pointerEvents = "none";
+                uiContainer.style.transform = `translateY(${-fadeOutEnd * 150}px)`;
             }
         };
 
@@ -439,7 +441,7 @@ const VideoPin = () => {
                 {/* 3. Master Mobile UI Container (Fades out and completely vanishes first) */}
                 <div
                     ref={mobileUiRef}
-                    className="benefit-mobile-ui-master absolute inset-0 z-[200] flex flex-col items-center justify-between py-16 px-5 transition-transform ease-out"
+                    className="benefit-mobile-ui-master absolute inset-0 z-[200] flex flex-col items-center justify-between py-16 px-5"
                 >
                     <div className="benefit-mobile-top w-full flex flex-col items-center text-center shrink-0">
                         <p
@@ -491,10 +493,11 @@ const VideoPin = () => {
                         </div>
                     </div>
 
-                    <div className="col-center shrink-0">
-                        <div
-                            className="benefit-mobile-circle-anchor benefit-mobile-scroll-hint size-[5.5rem] rounded-full flex flex-col items-center justify-center pointer-events-none bg-white z-[210]"
-                        >
+                    <div className="col-center shrink-0 flex flex-col items-center gap-3">
+                        <div className="benefit-mobile-circle-anchor benefit-center-clock rounded-full flex items-center justify-center pointer-events-none bg-white z-[210] shadow-[0_6px_24px_rgba(0,0,0,0.07)] border border-charcoal/5 p-1.5">
+                            <TickingClock size={72} />
+                        </div>
+                        <div className="benefit-mobile-scroll-hint flex flex-col items-center pointer-events-none">
                             <p
                                 className="benefit-scroll-hint-stack text-[0.45rem] tracking-[0.14em] mb-0 w-full text-center"
                                 style={{ fontFamily: "Syne, sans-serif", fontWeight: 500 }}
@@ -579,21 +582,24 @@ const VideoPin = () => {
                 {/* 3. Master Desktop UI Container (Fades out and completely vanishes first) */}
                 <div
                     ref={desktopUiRef}
-                    className="benefit-desktop-ui-master absolute inset-0 z-[200] pointer-events-none transition-transform ease-out"
+                    className="benefit-desktop-ui-master absolute inset-0 z-[200] pointer-events-none"
                 >
-                    {/* Hint Layer (Scroll to discover) */}
-                    <div
-                        className="benefit-scroll-hint-layer absolute inset-0 z-[210] flex flex-col items-center justify-center pointer-events-none"
-                    >
-                        <p
-                            className="benefit-scroll-hint-stack text-[0.72rem] uppercase tracking-[0.16em] font-bold text-center"
-                            style={{ fontFamily: "Syne, sans-serif", fontWeight: 700 }}
-                        >
-                            <span>Scroll</span>
-                            <span>To</span>
-                            <span>Discover</span>
-                        </p>
-                        <span className="benefit-scroll-arrow mt-1 text-sm leading-none" aria-hidden>↓</span>
+                    {/* Center clock — kept outside blend layer so it stays clean during scroll */}
+                    <div className="benefit-center-stack absolute inset-0 z-[210] flex flex-col items-center justify-center pointer-events-none">
+                        <div className="benefit-center-clock rounded-full bg-white shadow-[0_8px_32px_rgba(0,0,0,0.08)] border border-charcoal/5 p-3">
+                            <TickingClock size={132} />
+                        </div>
+                        <div className="benefit-scroll-hint-layer mt-4 flex flex-col items-center">
+                            <p
+                                className="benefit-scroll-hint-stack text-[0.72rem] uppercase tracking-[0.16em] font-bold text-center"
+                                style={{ fontFamily: "Syne, sans-serif", fontWeight: 700 }}
+                            >
+                                <span>Scroll</span>
+                                <span>To</span>
+                                <span>Discover</span>
+                            </p>
+                            <span className="benefit-scroll-arrow mt-1 text-sm leading-none" aria-hidden>↓</span>
+                        </div>
                     </div>
 
                     {/* Left Benefit Card */}

@@ -142,6 +142,7 @@ export function useNavbarLogoInvert(
 
         window.addEventListener("scroll", schedule, { passive: true });
         window.addEventListener("resize", schedule, { passive: true });
+        window.addEventListener("nav-logo-resample", schedule);
 
         const wrapper = document.getElementById("smooth-wrapper");
         wrapper?.addEventListener("scroll", schedule, { passive: true });
@@ -152,6 +153,7 @@ export function useNavbarLogoInvert(
         return () => {
             window.removeEventListener("scroll", schedule);
             window.removeEventListener("resize", schedule);
+            window.removeEventListener("nav-logo-resample", schedule);
             wrapper?.removeEventListener("scroll", schedule);
             ro.disconnect();
         };

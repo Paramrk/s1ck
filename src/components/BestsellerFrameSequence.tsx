@@ -2,10 +2,11 @@ import { forwardRef, useEffect, useImperativeHandle, useRef } from "react";
 
 const FRAME_RATE = 60;
 const FRAMES_PER_SHEET = 6;
-const DESKTOP_DECODED_SHEETS = 4;
-const MOBILE_DECODED_SHEETS = 6;
+const DESKTOP_DECODED_SHEETS = 12;
+const MOBILE_DECODED_SHEETS = 14;
 const DESKTOP_FRAME_COUNT = 662;
 const MOBILE_FRAME_COUNT = 666;
+const PRELOAD_CONCURRENCY = 5;
 
 const desktopSpriteModules = import.meta.glob<{ default: string }>(
     "../assets/bestseller-sprites/desktop/*.webp",
@@ -31,12 +32,14 @@ export type BestsellerFrameSequenceHandle = {
 type BestsellerFrameSequenceProps = {
     mobile: boolean;
     cueTimes: readonly number[];
+    onPreloadProgress?: (progress: number) => void;
+    onPreloadComplete?: () => void;
 };
 
 const BestsellerFrameSequence = forwardRef<
     BestsellerFrameSequenceHandle,
     BestsellerFrameSequenceProps
->(({ mobile, cueTimes }, ref) => {
+>(({ mobile, cueTimes, onPreloadProgress, onPreloadComplete }, ref) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const stageRef = useRef<HTMLDivElement>(null);
     const decodedRef = useRef(new Map<number, HTMLImageElement>());
@@ -44,13 +47,17 @@ const BestsellerFrameSequence = forwardRef<
     const requestedFrameRef = useRef(0);
     const previousFrameRef = useRef(0);
     const sequenceVersionRef = useRef(0);
+    const preloadCallbacksRef = useRef({ onPreloadProgress, onPreloadComplete });
+
     const sprites = mobile ? MOBILE_SPRITES : DESKTOP_SPRITES;
     const frameCount = mobile ? MOBILE_FRAME_COUNT : DESKTOP_FRAME_COUNT;
     const maxDecodedSheets = mobile ? MOBILE_DECODED_SHEETS : DESKTOP_DECODED_SHEETS;
-    const forwardRunway = mobile ? 4 : 2;
+    const forwardRunway = mobile ? 8 : 6;
     const dimensions = mobile
         ? { width: 540, height: 960 }
         : { width: 1280, height: 720 };
+
+    preloadCallbacksRef.current = { onPreloadProgress, onPreloadComplete };
 
     const pruneDecodedSheets = () => {
         const requestedSheet = Math.floor(requestedFrameRef.current / FRAMES_PER_SHEET);
@@ -89,8 +96,6 @@ const BestsellerFrameSequence = forwardRef<
             canvas.height,
         );
 
-        // Refresh insertion order so the frames closest to the current
-        // playhead survive the small decoded-frame cache.
         decodedRef.current.delete(sheetIndex);
         decodedRef.current.set(sheetIndex, image);
         return true;
@@ -110,13 +115,10 @@ const BestsellerFrameSequence = forwardRef<
             image.decoding = "async";
             image.fetchPriority = priority;
             image.onload = async () => {
-                // Waiting for decode prevents drawImage from forcing a large
-                // sprite decode on the animation frame itself.
                 try {
                     await image.decode();
                 } catch {
-                    // Loaded images remain drawable on browsers with partial
-                    // HTMLImageElement.decode support.
+                    // Loaded images remain drawable on browsers with partial decode support.
                 }
 
                 loadingRef.current.delete(safeIndex);
@@ -149,24 +151,25 @@ const BestsellerFrameSequence = forwardRef<
                 0,
                 Math.min(frameCount - 1, Math.round(seconds * FRAME_RATE)),
             );
+            const sheetIndex = Math.floor(index / FRAMES_PER_SHEET);
+
+            if (
+                index === requestedFrameRef.current &&
+                decodedRef.current.has(sheetIndex)
+            ) {
+                return;
+            }
+
             const direction = index >= previousFrameRef.current ? 1 : -1;
             previousFrameRef.current = index;
             requestedFrameRef.current = index;
 
-            // Canvas pixels persist until a replacement is decoded, so an
-            // unavailable frame can never expose the layer underneath.
             drawFrame(index);
-            const sheetIndex = Math.floor(index / FRAMES_PER_SHEET);
             void loadSheet(sheetIndex, "high");
-            // The scroll timeline can cover several source frames per display
-            // refresh. Decode a short runway in the active direction so the
-            // 60 fps sequence stays ahead of fast wheel/touch input.
             void loadSheet(sheetIndex + direction, "high");
             for (let offset = 2; offset <= forwardRunway; offset += 1) {
                 void loadSheet(sheetIndex + direction * offset);
             }
-            // Keep one sheet behind the playhead decoded so a small reverse
-            // gesture never has to wait for another decode.
             void loadSheet(sheetIndex - direction);
         },
     }), [sprites, frameCount, forwardRunway]);
@@ -188,58 +191,72 @@ const BestsellerFrameSequence = forwardRef<
                 context.fillRect(0, 0, canvas.width, canvas.height);
             }
         }
-        void loadSheet(0);
-
-        const stage = stageRef.current;
-        if (!stage || sprites.length < 2) return;
 
         let cancelled = false;
-        let observer: IntersectionObserver | undefined;
 
         const preloadSequence = async () => {
+            if (sprites.length === 0) {
+                preloadCallbacksRef.current.onPreloadProgress?.(100);
+                preloadCallbacksRef.current.onPreloadComplete?.();
+                return;
+            }
+
             const cueSheets = cueTimes.map((time) =>
                 Math.floor(Math.round(time * FRAME_RATE) / FRAMES_PER_SHEET),
             );
-            const decodePriority = [0, 1, 2].filter((index) => index < sprites.length);
-
-            await Promise.all(decodePriority.map((index) => loadSheet(index, "high")));
-
-            // Warm cue neighborhoods first, then the remaining sequence. This
-            // fills the HTTP cache without retaining every decoded sprite in
-            // memory; nearby frames are decoded on demand by setTime().
             const priority = Array.from(new Set([
+                0,
+                1,
+                2,
                 ...cueSheets.flatMap((sheet) => [sheet - 1, sheet, sheet + 1]),
                 ...sprites.map((_, index) => index),
             ])).filter((index) => index >= 0 && index < sprites.length);
 
-            const workers = Array.from({ length: 6 }, async (_, workerIndex) => {
-                for (let index = workerIndex; index < priority.length; index += 6) {
+            let completed = 0;
+            const total = priority.length;
+            const report = () => {
+                if (cancelled) return;
+                const progress = Math.min(100, Math.round((completed / total) * 100));
+                preloadCallbacksRef.current.onPreloadProgress?.(progress);
+            };
+
+            report();
+            void loadSheet(0, "high");
+
+            let cursor = 0;
+            const workers = Array.from({ length: PRELOAD_CONCURRENCY }, async () => {
+                while (cursor < priority.length) {
                     if (cancelled) return;
+                    const index = priority[cursor];
+                    cursor += 1;
+
                     try {
-                        await fetch(sprites[priority[index]], { cache: "force-cache" });
+                        await fetch(sprites[index], { cache: "force-cache" });
                     } catch {
-                        // On-demand image loading remains available.
+                        // loadSheet remains available if fetch fails.
                     }
+
+                    await loadSheet(index, index < 3 ? "high" : "low");
+                    completed += 1;
+                    report();
                 }
             });
+
             await Promise.all(workers);
+
+            if (!cancelled) {
+                preloadCallbacksRef.current.onPreloadProgress?.(100);
+                preloadCallbacksRef.current.onPreloadComplete?.();
+                drawFrame(0);
+            }
         };
 
-        observer = new IntersectionObserver(
-            ([entry]) => {
-                if (!entry.isIntersecting) return;
-                observer?.disconnect();
-                void preloadSequence();
-            },
-            { rootMargin: mobile ? "1800px 0px" : "1400px 0px" },
-        );
-        observer.observe(stage);
+        void preloadSequence();
 
         return () => {
             cancelled = true;
-            observer?.disconnect();
         };
-    }, [sprites, cueTimes]);
+    }, [sprites, cueTimes, dimensions.height, dimensions.width]);
 
     return (
         <div
