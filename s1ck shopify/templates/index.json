@@ -1,0 +1,598 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "custom_liquid_XQCt9U": {
+      "type": "custom-liquid",
+      "custom_css": [
+        ".video-container {position: relative; width: 100%; overflow: hidden; padding-top: calc((9 / 21) * 100%); /* Aspect ratio 21:9 */}",
+        "#myVideo {position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;}",
+        ".overlay {position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0); /* 50% black overlay */}",
+        "@media (max-width: 768px) {.video-container {padding-top: 0; } #myVideo {position: relative; height: 250px; width: 100%; }}"
+      ],
+      "settings": {
+        "custom_liquid": "<div id=\"videoContainer\" class=\"video-container\">\n        <video id=\"myVideo\" autoplay muted loop playsinline>\n            <source src=\"https://cdn.shopify.com/videos/c/o/v/6e95ae1992424163aa8a69f4c42b40f9.mp4\" type=\"video/mp4\">\n            Your browser does not support the video tag.\n        </video>\n        <div id=\"videoOverlay\" class=\"overlay\"></div>\n    </div>",
+        "custom_class": ""
+      }
+    },
+    "scrolling_promotion_jjrFyf": {
+      "type": "scrolling-promotion",
+      "blocks": {
+        "announcement_w3tNiH": {
+          "type": "announcement",
+          "settings": {
+            "custom_svg": "<svg class=\"icon icon-thunder\" viewbox=\"0 0 247.12 384.06\">\n  <g id=\"Layer_1-2\" data-name=\"Layer 1\">\n    <path d=\"m243.97,171.43c-10.29,9.35-20.59,18.69-30.89,28.03-47.55,43.12-95.1,86.24-142.64,129.36-19,17.22-37.99,34.45-56.99,51.68-.61.55-1.21,1.14-1.87,1.64-3.21,2.47-6.36,2.55-9.1.25-2.68-2.24-3.29-5.62-1.32-9.04,3.19-5.56,6.57-11.01,9.87-16.5,28.2-46.84,56.41-93.68,84.6-140.52.39-.64.73-1.3,1.43-2.56h-3.44c-17.14,0-34.29.03-51.44-.06-1.83-.01-3.91-.35-5.45-1.26-3.73-2.2-4.1-7.07-.93-10.59,3.63-4.01,7.42-7.88,11.14-11.8C105.86,127.97,164.78,65.89,223.7,3.8c.29-.3.58-.6.87-.89,3.22-3.2,6.29-3.76,9.36-1.7,3.05,2.05,3.89,5.65,2.11,9.56-3.4,7.49-6.85,14.97-10.28,22.45-18.71,40.84-37.42,81.67-56.13,122.51-.33.74-.58,1.51-1,2.64,1.29.07,2.32.18,3.35.18,22.14.01,44.28.01,66.43,0,3.23,0,6.16.61,7.85,3.77,1.67,3.14.92,6.19-2.29,9.11Z\"></path>\n  </g>\n</svg>",
+            "icon_size": "medium",
+            "text": "BUY ANY 2 GET 15% OFF",
+            "text_size": 18,
+            "text_link": ""
+          }
+        },
+        "announcement_nafDhJ": {
+          "type": "announcement",
+          "settings": {
+            "custom_svg": "<svg class=\"icon icon-thunder\" viewbox=\"0 0 247.12 384.06\">\n  <g id=\"Layer_1-2\" data-name=\"Layer 1\">\n    <path d=\"m243.97,171.43c-10.29,9.35-20.59,18.69-30.89,28.03-47.55,43.12-95.1,86.24-142.64,129.36-19,17.22-37.99,34.45-56.99,51.68-.61.55-1.21,1.14-1.87,1.64-3.21,2.47-6.36,2.55-9.1.25-2.68-2.24-3.29-5.62-1.32-9.04,3.19-5.56,6.57-11.01,9.87-16.5,28.2-46.84,56.41-93.68,84.6-140.52.39-.64.73-1.3,1.43-2.56h-3.44c-17.14,0-34.29.03-51.44-.06-1.83-.01-3.91-.35-5.45-1.26-3.73-2.2-4.1-7.07-.93-10.59,3.63-4.01,7.42-7.88,11.14-11.8C105.86,127.97,164.78,65.89,223.7,3.8c.29-.3.58-.6.87-.89,3.22-3.2,6.29-3.76,9.36-1.7,3.05,2.05,3.89,5.65,2.11,9.56-3.4,7.49-6.85,14.97-10.28,22.45-18.71,40.84-37.42,81.67-56.13,122.51-.33.74-.58,1.51-1,2.64,1.29.07,2.32.18,3.35.18,22.14.01,44.28.01,66.43,0,3.23,0,6.16.61,7.85,3.77,1.67,3.14.92,6.19-2.29,9.11Z\"></path>\n  </g>\n</svg>",
+            "icon_size": "medium",
+            "text": "BUY ANY 3 GET 20% OFF",
+            "text_size": 18,
+            "text_link": ""
+          }
+        }
+      },
+      "block_order": [
+        "announcement_w3tNiH",
+        "announcement_nafDhJ"
+      ],
+      "custom_css": [
+        ".m-scrolling-promotion-section {border-width: 1px 0 1px 0; border-color: rgb(var(--color-border));}",
+        "@media (max-width: 767px) {.m-promotion__text {font-size: 30px; } .m-promotion__item img {--image-height: 70px; } .m-section-py {padding-top: 15px; padding-bottom: 15px; }}"
+      ],
+      "settings": {
+        "container": "w-full",
+        "direction": "left",
+        "speed": 10,
+        "item_gap": 10,
+        "item_gap_mobile": 20,
+        "color_scheme": "",
+        "padding_top": 20,
+        "padding_bottom": 20,
+        "custom_class": ""
+      }
+    },
+    "custom_liquid_A3HJxW": {
+      "type": "custom-liquid",
+      "settings": {
+        "custom_liquid": "<div class=\"as-seen-on\">\n        <div class=\"as-seen-on-text\">AS SEEN ON</div>\n        <div class=\"logos-container\">\n            <img src=\"https://cdn.shopify.com/s/files/1/0022/0358/2529/files/Fox-logo_1.png?v=1722110543\" alt=\"Fox Logo\">\n            <img src=\"https://cdn.shopify.com/s/files/1/0022/0358/2529/files/usa-today-logo_1.png?v=1722110543\" alt=\"USA Today Logo\">\n            <img src=\"https://cdn.shopify.com/s/files/1/0022/0358/2529/files/marketwatch-logo_1.png?v=1722110543\" alt=\"MarketWatch Logo\">\n            <img src=\"https://cdn.shopify.com/s/files/1/0022/0358/2529/files/digital-journal.png?v=1722110543\" alt=\"Digital Journal Logo\">\n        </div>\n    </div>\n<style>\n.as-seen-on {\n    background-color: #ddd;\n    padding: 25px 0;\n    text-align: center;\ndisplay:flex;\nflex-direction:row;\njustify-content:center;\nalign-items:center;\n}\n\n.as-seen-on-text {\n    font-size: 25px;\n    font-weight: bold;\n    color: #000;\n    margin-right: 100px;\n    display: inline-block; /* Keep the text inline with the logos */\n    vertical-align: middle;\n}\n\n.logos-container {\n    display: flex;\nalign: middle;\ngap:25px;\n}\n\n.logos-container img {\n    height: 25px; /* Set a fixed height for all logos */\n    width: auto;  /* Maintain aspect ratio */\n}\n\n/* Mobile-specific styles */\n@media (max-width: 768px) {\n    .as-seen-on {\n        padding: 10px 0;\ndisplay:flex;\nflex-direction:column;\n    }\n\n    .as-seen-on-text {\nfont-size:20px;\n        display: block; /* Move the headline to the top */\n        margin-bottom: 25px;\nmargin-left:auto;\nmargin-right:auto;\nmargin-top:25px;\n    }\n\n    .logos-container {\n        display: flex;\nflex-direction:row;\n        justify-content: center;\n        flex-wrap: nowrap; /* Keep all logos in one line */\ngap:20px;\nmargin-bottom:20px;\n    }\n\n    .logos-container img {\n        height: 15px; \n    }\n}\n</style>",
+        "custom_class": ""
+      }
+    },
+    "rich_text_regchg": {
+      "type": "rich-text",
+      "blocks": {
+        "subheading_kaeyXF": {
+          "type": "subheading",
+          "settings": {
+            "subheading": "⭐ ⭐ ⭐ ⭐ ⭐ Over 100,000+ Happy Customers"
+          }
+        },
+        "heading_dmBpiP": {
+          "type": "heading",
+          "settings": {
+            "heading": "<h1 style=\"font-size: 32px;\">SCIENTIFICALLY FORMULATED TO ATTRACT⭐</h1>",
+            "heading_size": "h3"
+          }
+        },
+        "text_7aMitw": {
+          "type": "text",
+          "settings": {
+            "text": "<p>Rated #1 Pheromones 6 Years In A Row By House Of Pheromones</p>"
+          }
+        },
+        "button_b3wzLp": {
+          "type": "button",
+          "settings": {
+            "button_label": "GET upto 50% OFF",
+            "button_link": "https://s1ckshop.com/pages/fragrances-bundle",
+            "button_style": "m-button--secondary",
+            "button_size": ""
+          }
+        }
+      },
+      "block_order": [
+        "subheading_kaeyXF",
+        "heading_dmBpiP",
+        "text_7aMitw",
+        "button_b3wzLp"
+      ],
+      "custom_css": [
+        ".custom-banner-scientific {}"
+      ],
+      "settings": {
+        "container": "container",
+        "color_scheme": "dark",
+        "content_alignment": "center",
+        "padding_top": 100,
+        "padding_bottom": 100,
+        "custom_class": "custom-banner-scientific",
+        "animations": "inherit"
+      }
+    },
+    "162251092958fcda7c": {
+      "type": "product-tabs",
+      "blocks": {
+        "162251092958fcda7c-0": {
+          "type": "tab",
+          "settings": {
+            "title": "BEST SELLER",
+            "collection": "best-sellers"
+          }
+        },
+        "162251092958fcda7c-1": {
+          "type": "tab",
+          "settings": {
+            "title": "NEW ARRIVAL",
+            "collection": "new-release"
+          }
+        }
+      },
+      "block_order": [
+        "162251092958fcda7c-0",
+        "162251092958fcda7c-1"
+      ],
+      "custom_css": [
+        ".m-section__header {--m-section-header-spacing-bottom: 60px;}"
+      ],
+      "settings": {
+        "heading": "",
+        "heading_size": "h3",
+        "subheading": "",
+        "description": "",
+        "header_alignment": "center",
+        "container": "container-fluid",
+        "color_scheme": "",
+        "tab_header": "horizontal",
+        "limit": 10,
+        "show_button": true,
+        "button_type": "link",
+        "button_label": "Shop All Products",
+        "button_style": "m-button--secondary",
+        "button_size": "",
+        "pcard_layout": "",
+        "pcard_image_ratio": "",
+        "show_vendor": false,
+        "items_per_row": 4,
+        "item_gap": 30,
+        "enable_slider": true,
+        "show_navigation": true,
+        "show_pagination": false,
+        "mobile_disable_slider": false,
+        "use_scroll_mobile": true,
+        "item_gap_mobile": 16,
+        "padding_top": 50,
+        "padding_bottom": 50,
+        "custom_class": "sf-home__product-tab",
+        "animations": "inherit"
+      }
+    },
+    "custom_liquid_dkYwBp": {
+      "type": "custom-liquid",
+      "settings": {
+        "custom_liquid": "<style>\n.cupios-section {\n            background-color: #232323;\n            text-align: center;\n            padding: 100px 20px;\n        }\n\n        .cupios-heading {\n            font-size: 2em;\nline-height:1em;\n            font-weight: bold;\n            color: #fff;\n            margin-bottom: 10px;\n        }\n\n        .cupios-subheading {\n            font-size: 1em;\nline-height:1.15em;\n            color: #ccc;\n            margin-bottom: 30px;\n        }\n\n        .cupios-features-grid {\n            display: flex;\n            flex-direction: row;\n            flex-wrap: wrap;\n            gap: 20px;\n            max-width: 1280px;\n            margin: 0 auto;\n            justify-content: center;\n        }\n\n        .cupios-feature {\n                background: linear-gradient(145deg, rgba(255, 255, 255, 0.9), rgba(240, 240, 240, 0.8));\n    backdrop-filter: blur(10px);\n    -webkit-backdrop-filter: blur(10px);\n    border: 1px solid rgba(255, 255, 255, 0.4);\n    border-radius: 12px;\n    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);\n\n            padding: 20px;\n            transition: transform 0.3s ease;\n            text-align: left; \n            width: 275px;\n        }\n\n        .cupios-feature:hover {\n            transform: translateY(-5px);\n        }\n\n        .cupios-feature-header {\n            display: flex;\n            align-items: center;\n            margin-bottom: 15px;\n        }\n\n        .cupios-feature-icon {\n            border-radius: 50%;\n            margin-right: 15px;\n            display: inline-block;\n            flex-shrink: 0; /* Prevent the icon from shrinking */\n        }\n\n        .cupios-feature-icon img {\n            max-width: 50px;\n            height: auto;\n        }\n\n        .cupios-feature-title {\n            font-size: 18px;\n            font-weight: 600;\n            color: #333;\n        }\n\n        .cupios-feature-text {\n            font-size: 16px;\n            color: #666;\n            line-height: 1.5;\n        }\n\n        @media (max-width: 1024px) {\n            .cupios-features-grid {\n                grid-template-columns: repeat(2, 1fr);\n            }\n        }\n\n        @media (max-width: 768px) {\n            .cupios-features-grid {\n                grid-template-columns: 1fr;\n            }\n.cupios-feature {\n    width: 350px;\n}\n        }\n    </style>\n    <div class=\"cupios-section\">\n        <div class=\"cupios-heading\">7 REASONS WHY S1CK PHEROMONES</div>\n        <div class=\"cupios-subheading\">It's time to upgrade your fragrance game with our scientifically formulated blends</div>\n\n        <div class=\"cupios-features-grid\">\n            <div class=\"cupios-feature\">\n                <div class=\"cupios-feature-header\">\n                    <div class=\"cupios-feature-icon\">\n                        <img src=\"https://cdn.shopify.com/s/files/1/0022/0358/2529/files/1_2f487f48-0c21-4796-b8bf-4114e31c9e2d.png?v=1724259532\" alt=\"Icon 1\">\n                    </div>\n                    <div class=\"cupios-feature-title\"> Engineered For Men & Women</div>\n                </div>\n                <div class=\"cupios-feature-text\">Crafted to boost natural pheromones in Men & Women</div>\n            </div>\n            <div class=\"cupios-feature\">\n                <div class=\"cupios-feature-header\">\n                    <div class=\"cupios-feature-icon\">\n                        <img src=\"https://cdn.shopify.com/s/files/1/0022/0358/2529/files/2_240a375c-7ac1-40fe-aaa1-f1288362342e.png?v=1724259532\" alt=\"Icon 2\">\n                    </div>\n                    <div class=\"cupios-feature-title\">Boosts Attraction And Confidence</div>\n                </div>\n                <div class=\"cupios-feature-text\">Formula that naturally amplifies your pheromone output</div>\n            </div>\n            <div class=\"cupios-feature\">\n                <div class=\"cupios-feature-header\">\n                    <div class=\"cupios-feature-icon\">\n                        <img src=\"https://cdn.shopify.com/s/files/1/0022/0358/2529/files/3_fd7e5fd7-3047-4d13-9de4-d0e66b007cf7.png?v=1724259532\" alt=\"Icon 3\">\n                    </div>\n                    <div class=\"cupios-feature-title\">Luxury At An Affordable Price</div>\n                </div>\n                <div class=\"cupios-feature-text\">We've made luxury smelling fragrances within reach for all</div>\n            </div>\n            <div class=\"cupios-feature\">\n                <div class=\"cupios-feature-header\">\n                    <div class=\"cupios-feature-icon\">\n                        <img src=\"https://cdn.shopify.com/s/files/1/0022/0358/2529/files/4_04486d22-2e49-418d-b4bb-d4bc712e5dc3.png?v=1724259532\" alt=\"Icon 4\">\n                    </div>\n                    <div class=\"cupios-feature-title\">100,000+ Happy Customers</div>\n                </div>\n                <div class=\"cupios-feature-text\">You're our #1 priority and we'll ensure your satisfaction</div>\n            </div>\n            <div class=\"cupios-feature\">\n                <div class=\"cupios-feature-header\">\n                    <div class=\"cupios-feature-icon\">\n                        <img src=\"https://cdn.shopify.com/s/files/1/0022/0358/2529/files/5_5c223888-e4b9-4bb7-9cd3-848ad498fe53.png?v=1724259532\" alt=\"Icon 5\">\n                    </div>\n                    <div class=\"cupios-feature-title\">30-Day Money-Back Guarantee</div>\n                </div>\n                <div class=\"cupios-feature-text\">Unsatisfied with the results? Send it back for a refund</div>\n            </div>\n            <div class=\"cupios-feature\">\n                <div class=\"cupios-feature-header\">\n                    <div class=\"cupios-feature-icon\">\n                        <img src=\"https://cdn.shopify.com/s/files/1/0022/0358/2529/files/6_e5af69fe-aa6b-4c4b-8574-fd7b299d9453.png?v=1724259532\" alt=\"Icon 6\">\n                    </div>\n                    <div class=\"cupios-feature-title\">Priority Shipping Worldwide</div>\n                </div>\n                <div class=\"cupios-feature-text\">Right to your doorstep wherever you are</div>\n            </div>\n            <div class=\"cupios-feature\">\n                <div class=\"cupios-feature-header\">\n                    <div class=\"cupios-feature-icon\">\n                        <img src=\"https://cdn.shopify.com/s/files/1/0022/0358/2529/files/7_4bb8768b-d2d7-48c8-8d5f-204628f37f44.png?v=1724259532\" alt=\"Icon 7\">\n                    </div>\n                    <div class=\"cupios-feature-title\">24/7 Customer Support</div>\n                </div>\n                <div class=\"cupios-feature-text\">Reach out via email and we'll take care of all your questions</div>\n            </div>\n        </div>\n    </div>",
+        "custom_class": ""
+      }
+    },
+    "1731141126136350c2": {
+      "type": "apps",
+      "blocks": {
+        "swipeup_reels_feed_xxKBzJ": {
+          "type": "shopify://apps/swipeup/blocks/reels-feed/7b6d7967-af4c-461a-9edb-73155220c3a4",
+          "settings": {
+            "swipeup_section_id": "",
+            "show_discount_badge": false,
+            "show_product_info": true,
+            "autoplay_all": false,
+            "show_playbutton": true,
+            "hide_decimals": false,
+            "preview_max_time": 3,
+            "background_color": "#f4f4f4",
+            "background_gradient": "",
+            "viewer_default_muted": true,
+            "product_details_enabled": true,
+            "viewer_autoplay_next": false,
+            "shop_button_text": "Shop",
+            "viewer_open_cart_after_shop": false,
+            "mute_text": "Mute",
+            "unmute_text": "Unmute",
+            "custom_css": ""
+          }
+        }
+      },
+      "block_order": [
+        "swipeup_reels_feed_xxKBzJ"
+      ],
+      "custom_css": [
+        ".rev-carousel {padding: 50px 0;}"
+      ],
+      "settings": {
+        "heading": "",
+        "heading_size": "h3",
+        "subheading": "",
+        "header_alignment": "center",
+        "container": "w-full",
+        "background_color": "#eeeeee",
+        "padding_top": 50,
+        "padding_bottom": 50,
+        "custom_class": "rev-carousel"
+      }
+    },
+    "custom_liquid_6tJdJC": {
+      "type": "custom-liquid",
+      "name": "Custom liquid",
+      "settings": {
+        "custom_liquid": "<!-- VIP Club Section - Centered with Glass Effect -->\n<div id=\"vip-club-section\" style=\"position: relative; margin: 25px 0;\">\n  <style>\n    #vip-club-section {\n      background: #000000;\n      border: 1px solid #ffffff;\n      position: relative;\n      overflow: hidden;\n      transition: all 0.3s ease;\n      min-height: 420px;\n      display: flex;\n      align-items: center;\n      justify-content: center;\n    }\n\n    #vip-club-section:hover {\n      border-color: #ffffff;\n      box-shadow: 0 0 25px rgba(255, 255, 255, 0.2);\n    }\n\n    /* Background Image Layer - More Visible */\n    .vip-bg-image {\n      position: absolute;\n      top: 0;\n      left: 0;\n      right: 0;\n      bottom: 0;\n      background-image: url('https://cdn.shopify.com/s/files/1/0022/0358/2529/files/bundle.png?v=1755504158');\n      background-size: cover;\n      background-position: center;\n      background-repeat: no-repeat;\n      opacity: 0.45;\n      z-index: 1;\n      filter: grayscale(20%) brightness(1);\n      transition: all 0.5s ease;\n      transform: scale(1.1);\n    }\n\n    #vip-club-section:hover .vip-bg-image {\n      opacity: 0.55;\n      filter: grayscale(10%) brightness(1.1);\n      transform: scale(1.15);\n    }\n\n    /* Dark Overlay for Better Contrast */\n    .vip-overlay {\n      position: absolute;\n      top: 0;\n      left: 0;\n      right: 0;\n      bottom: 0;\n      background: radial-gradient(\n        ellipse at center,\n        rgba(0, 0, 0, 0.4) 0%,\n        rgba(0, 0, 0, 0.7) 100%\n      );\n      z-index: 2;\n    }\n\n    /* Glass Container for Content */\n    .vip-glass-container {\n      position: relative;\n      z-index: 3;\n      background: rgba(0, 0, 0, 0.3);\n      backdrop-filter: blur(5px);\n      -webkit-backdrop-filter: blur(5px);\n      border: 1px solid rgba(255, 255, 255, 0.3);\n      border-radius: 0;\n      padding: 40px 50px;\n      max-width: 600px;\n      width: 90%;\n      text-align: center;\n      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);\n    }\n\n    /* Crown Icon */\n    .vip-crown {\n      font-size: 36px;\n      margin-bottom: 15px;\n      display: inline-block;\n      animation: float 3s ease-in-out infinite;\n      filter: grayscale(100%) brightness(2);\n    }\n\n    @keyframes float {\n      0%, 100% { transform: translateY(0px) rotate(0deg); }\n      50% { transform: translateY(-10px) rotate(5deg); }\n    }\n\n    /* VIP Badge */\n    .vip-badge {\n      display: inline-block;\n      background: rgba(255, 255, 255, 0.15);\n      border: 1px solid rgba(255, 255, 255, 0.6);\n      color: #ffffff;\n      padding: 5px 15px;\n      font-size: 10px;\n      font-weight: bold;\n      letter-spacing: 3px;\n      text-transform: uppercase;\n      margin-bottom: 20px;\n      position: relative;\n    }\n\n    /* Main Title */\n    .vip-title {\n      color: #ffffff;\n      font-size: 38px;\n      font-weight: 900;\n      text-transform: uppercase;\n      letter-spacing: 3px;\n      margin: 15px 0;\n      line-height: 1.1;\n      text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.9);\n    }\n\n    .vip-title .highlight {\n      background: linear-gradient(90deg, #ffffff, #f0f0f0, #ffffff);\n      -webkit-background-clip: text;\n      -webkit-text-fill-color: transparent;\n      background-clip: text;\n      animation: shimmer 3s linear infinite;\n      background-size: 200% 100%;\n    }\n\n    @keyframes shimmer {\n      0% { background-position: -200% center; }\n      100% { background-position: 200% center; }\n    }\n\n    /* Percentage Display */\n    .vip-percentage {\n      font-size: 52px;\n      font-weight: 900;\n      color: #ffffff;\n      margin: 25px 0;\n      letter-spacing: 2px;\n      text-shadow: 3px 3px 10px rgba(0, 0, 0, 0.9);\n      animation: pulse 2s ease-in-out infinite;\n      position: relative;\n    }\n\n    @keyframes pulse {\n      0%, 100% { transform: scale(1); }\n      50% { transform: scale(1.08); }\n    }\n\n    .vip-percentage .percent-number {\n      color: #ffffff;\n      position: relative;\n      display: inline-block;\n    }\n\n    .vip-percentage .percent-number::after {\n      content: '35%';\n      position: absolute;\n      top: 3px;\n      left: 3px;\n      color: rgba(255, 255, 255, 0.2);\n      z-index: -1;\n    }\n\n    /* Subtitle */\n    .vip-subtitle {\n      color: rgba(255, 255, 255, 0.85);\n      font-size: 14px;\n      text-transform: uppercase;\n      letter-spacing: 1.5px;\n      margin-bottom: 30px;\n      line-height: 1.6;\n    }\n\n    /* CTA Button */\n    .vip-cta {\n      display: inline-block;\n      background: #ffffff;\n      color: #000000;\n      padding: 15px 45px;\n      text-decoration: none;\n      font-weight: bold;\n      font-size: 14px;\n      text-transform: uppercase;\n      letter-spacing: 2px;\n      position: relative;\n      overflow: hidden;\n      transition: all 0.3s ease;\n      border: 2px solid #ffffff;\n    }\n\n    .vip-cta:hover {\n      background: transparent;\n      color: #ffffff;\n      transform: translateY(-3px);\n      box-shadow: 0 10px 25px rgba(255, 255, 255, 0.3);\n    }\n\n    .vip-cta span {\n      position: relative;\n      z-index: 2;\n    }\n\n    .vip-cta::before {\n      content: '';\n      position: absolute;\n      top: 0;\n      left: -100%;\n      width: 100%;\n      height: 100%;\n      background: #000000;\n      transition: left 0.3s ease;\n      z-index: 1;\n    }\n\n    .vip-cta:hover::before {\n      left: 0;\n    }\n\n    /* Animated Golden Particles */\n    .golden-particle {\n      position: absolute;\n      width: 4px;\n      height: 4px;\n      background: radial-gradient(circle, #ffd700, #ffed4e);\n      border-radius: 50%;\n      opacity: 0;\n      z-index: 4;\n      box-shadow: 0 0 8px #ffd700;\n    }\n\n    @keyframes golden-float {\n      0% {\n        opacity: 0;\n        transform: translateY(100px) translateX(0) scale(0);\n      }\n      20% {\n        opacity: 0.8;\n        transform: translateY(80px) translateX(-20px) scale(1);\n      }\n      80% {\n        opacity: 0.8;\n        transform: translateY(20px) translateX(20px) scale(1);\n      }\n      100% {\n        opacity: 0;\n        transform: translateY(0) translateX(0) scale(0.5);\n      }\n    }\n\n    .golden-particle:nth-child(1) { left: 10%; animation: golden-float 6s infinite; }\n    .golden-particle:nth-child(2) { left: 25%; animation: golden-float 6s infinite 1s; }\n    .golden-particle:nth-child(3) { left: 50%; animation: golden-float 6s infinite 2s; }\n    .golden-particle:nth-child(4) { left: 75%; animation: golden-float 6s infinite 3s; }\n    .golden-particle:nth-child(5) { left: 90%; animation: golden-float 6s infinite 4s; }\n    .golden-particle:nth-child(6) { left: 15%; animation: golden-float 6s infinite 2.5s; }\n    .golden-particle:nth-child(7) { left: 60%; animation: golden-float 6s infinite 3.5s; }\n    .golden-particle:nth-child(8) { left: 85%; animation: golden-float 6s infinite 4.5s; }\n\n    /* Corner Accents on Glass Container */\n    .glass-corner {\n      position: absolute;\n      width: 25px;\n      height: 25px;\n      border: 1px solid rgba(255, 255, 255, 0.6);\n    }\n\n    .glass-corner.top-left {\n      top: -1px;\n      left: -1px;\n      border-right: none;\n      border-bottom: none;\n    }\n\n    .glass-corner.top-right {\n      top: -1px;\n      right: -1px;\n      border-left: none;\n      border-bottom: none;\n    }\n\n    .glass-corner.bottom-left {\n      bottom: -1px;\n      left: -1px;\n      border-right: none;\n      border-top: none;\n    }\n\n    .glass-corner.bottom-right {\n      bottom: -1px;\n      right: -1px;\n      border-left: none;\n      border-top: none;\n    }\n\n    /* Responsive Design */\n    @media (max-width: 768px) {\n      #vip-club-section {\n        min-height: 450px;\n      }\n      \n      .vip-glass-container {\n        padding: 30px 25px;\n        width: 95%;\n      }\n      \n      .vip-title { font-size: 28px; }\n      .vip-percentage { font-size: 42px; }\n      .vip-subtitle { font-size: 12px; }\n      .vip-cta { padding: 12px 35px; }\n    }\n\n    /* Glitch Effect on Hover */\n    @keyframes glitch {\n      0%, 100% { \n        text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.9);\n      }\n      25% { \n        text-shadow: -2px 2px 8px rgba(255, 215, 0, 0.3), \n                     2px 2px 8px rgba(0, 0, 0, 0.9);\n      }\n      50% { \n        text-shadow: 2px -2px 8px rgba(255, 215, 0, 0.3), \n                     2px 2px 8px rgba(0, 0, 0, 0.9);\n      }\n    }\n\n    .vip-title:hover {\n      animation: glitch 0.3s ease-in-out;\n    }\n\n    /* Premium Border Animation */\n    #vip-club-section::before {\n      content: '';\n      position: absolute;\n      top: 0;\n      left: 0;\n      right: 0;\n      bottom: 0;\n      background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.15), transparent);\n      transform: translateX(-100%);\n      animation: border-shine 8s infinite;\n      z-index: 1;\n      pointer-events: none;\n    }\n\n    @keyframes border-shine {\n      0% { transform: translateX(-100%); }\n      50%, 100% { transform: translateX(200%); }\n    }\n  </style>\n\n  <!-- Background Image Layer -->\n  <div class=\"vip-bg-image\"></div>\n  \n  <!-- Dark Overlay -->\n  <div class=\"vip-overlay\"></div>\n  \n  <!-- Golden Particles -->\n  <div class=\"golden-particle\"></div>\n  <div class=\"golden-particle\"></div>\n  <div class=\"golden-particle\"></div>\n  <div class=\"golden-particle\"></div>\n  <div class=\"golden-particle\"></div>\n  <div class=\"golden-particle\"></div>\n  <div class=\"golden-particle\"></div>\n  <div class=\"golden-particle\"></div>\n\n  <!-- Glass Container with Content -->\n  <div class=\"vip-glass-container\">\n    <!-- Corner Accents -->\n    <div class=\"glass-corner top-left\"></div>\n    <div class=\"glass-corner top-right\"></div>\n    <div class=\"glass-corner bottom-left\"></div>\n    <div class=\"glass-corner bottom-right\"></div>\n\n    <!-- Content -->\n    <div class=\"vip-crown\">👑</div>\n    <div class=\"vip-badge\">Exclusive Access</div>\n    \n    <h3 class=\"vip-title\">\n      Join The <span class=\"highlight\">VIP CLUB</span>\n    </h3>\n    \n    <div class=\"vip-percentage\">\n      UP TO <span class=\"percent-number\">35%</span> OFF\n    </div>\n    \n    <div class=\"vip-subtitle\">\n      Premium fragrances delivered monthly<br>\n      Exclusive member-only collections\n    </div>\n    \n    <a href=\"https://s1ckshop.com/pages/monthly-box\" class=\"vip-cta\">\n      <span>Unlock VIP Status →</span>\n    </a>\n  </div>\n</div>\n\n<!-- Enhanced JavaScript -->\n<script>\n  // Number counting animation\n  const observer = new IntersectionObserver((entries) => {\n    entries.forEach(entry => {\n      if (entry.isIntersecting) {\n        const percentElement = entry.target.querySelector('.percent-number');\n        if (percentElement && !percentElement.classList.contains('counted')) {\n          percentElement.classList.add('counted');\n          let current = 0;\n          const target = 35;\n          const increment = target / 30;\n          const timer = setInterval(() => {\n            current += increment;\n            if (current >= target) {\n              current = target;\n              clearInterval(timer);\n            }\n            percentElement.textContent = Math.floor(current) + '%';\n          }, 40);\n        }\n      }\n    });\n  });\n\n  const vipSection = document.getElementById('vip-club-section');\n  if (vipSection) {\n    observer.observe(vipSection);\n  }\n\n  // Parallax effect on mouse move\n  vipSection.addEventListener('mousemove', function(e) {\n    const rect = this.getBoundingClientRect();\n    const x = e.clientX - rect.left;\n    const y = e.clientY - rect.top;\n    const centerX = rect.width / 2;\n    const centerY = rect.height / 2;\n    const deltaX = (x - centerX) / centerX;\n    const deltaY = (y - centerY) / centerY;\n    \n    const bgImage = this.querySelector('.vip-bg-image');\n    if (bgImage) {\n      bgImage.style.transform = `scale(1.15) translate(${deltaX * 15}px, ${deltaY * 15}px)`;\n    }\n  });\n\n  vipSection.addEventListener('mouseleave', function() {\n    const bgImage = this.querySelector('.vip-bg-image');\n    if (bgImage) {\n      bgImage.style.transform = 'scale(1.1)';\n    }\n  });\n</script>",
+        "custom_class": ""
+      }
+    },
+    "featured_collection_AyDddm": {
+      "type": "featured-collection",
+      "settings": {
+        "heading": "HOT BUNDLES RIGHT NOW",
+        "heading_size": "h3",
+        "subheading": "",
+        "description": "",
+        "header_alignment": "center",
+        "color_scheme": "",
+        "container": "container-fluid",
+        "collection": "our-top-picks",
+        "enable_flashsale": true,
+        "show_countdown": false,
+        "product_to_show": 8,
+        "items_per_row": 4,
+        "item_gap": 30,
+        "pcard_layout": "",
+        "pcard_image_ratio": "",
+        "show_vendor": false,
+        "hide_title": false,
+        "enable_slider": false,
+        "show_pagination": false,
+        "show_navigation": false,
+        "show_button_on_header": false,
+        "button_type": "link",
+        "button_text": "Shop now",
+        "button_style": "m-button--primary",
+        "button_size": "",
+        "infinite_load": false,
+        "max_page_load": 3,
+        "mobile_disable_slider": false,
+        "use_scroll_mobile": true,
+        "item_gap_mobile": 16,
+        "padding_top": 100,
+        "padding_bottom": 100,
+        "custom_class": "",
+        "animations": "inherit"
+      }
+    },
+    "7ea56e8d-5794-4708-8812-8ee9604a3a21": {
+      "type": "custom-content",
+      "blocks": {
+        "template--15977492021425__7ea56e8d-5794-4708-8812-8ee9604a3a21-1678440566c64de1a8-1": {
+          "type": "image",
+          "settings": {
+            "link": "",
+            "width": "50%",
+            "alignment": "center",
+            "block_custom_class": "",
+            "animations": "zoom-fade"
+          }
+        },
+        "5c5877d5-05b2-4a50-81e3-78c3f6d0d833": {
+          "type": "image_card",
+          "settings": {
+            "width": "50%",
+            "color_scheme": "",
+            "content_position": "top_center",
+            "content_alignment": "center",
+            "text_size": "medium",
+            "text_color": "black",
+            "link": "",
+            "title": "The ReLeather Beige Tennis Shoe",
+            "subtitle": "New collection",
+            "description": "",
+            "button_label": "Shop New Collection",
+            "button_style": "m-button--primary",
+            "button_size": "m-button--large",
+            "button_fixed": true,
+            "use_content_above": true,
+            "block_custom_class": "",
+            "animations": "inherit"
+          }
+        }
+      },
+      "block_order": [
+        "template--15977492021425__7ea56e8d-5794-4708-8812-8ee9604a3a21-1678440566c64de1a8-1",
+        "5c5877d5-05b2-4a50-81e3-78c3f6d0d833"
+      ],
+      "disabled": true,
+      "custom_css": [
+        ".container-full {padding-left: 0; padding-right: 0;}",
+        ".m-button--fixed {border-color: #e2e2e2; padding: 24px 0; margin-bottom: 24px;}",
+        "@media (min-width: 1280px) {.m-image-card__content {padding-top: 115px; }}",
+        "@media (max-width: 767px) {.m-button--fixed {border: none; margin-bottom: 0; justify-content: center; column-gap: 12px; } .m-image-card__content {padding-top: 30px; }}"
+      ],
+      "settings": {
+        "heading": "",
+        "heading_size": "h3",
+        "subheading": "",
+        "description": "",
+        "header_alignment": "center",
+        "container": "w-full",
+        "color_scheme": "",
+        "content_color_scheme": "",
+        "enable_parallax": false,
+        "parallax_direction": "vertical",
+        "gap": 0,
+        "gap_mobile": 0,
+        "use_scroll_mobile": false,
+        "padding_top": 90,
+        "padding_bottom": 0,
+        "custom_class": "sf-custom--collection-banner"
+      }
+    },
+    "collection_list_XfaXNc": {
+      "type": "collection-list",
+      "blocks": {
+        "collection_block_WFHPGd": {
+          "type": "collection_block",
+          "settings": {
+            "collection": "mens-fragrances",
+            "title": "Men's Fragrances",
+            "item_image": "shopify://shop_images/WhatsApp_Image_2024-11-09_at_14.03.51.jpg"
+          }
+        },
+        "collection_block_mpgaxC": {
+          "type": "collection_block",
+          "settings": {
+            "collection": "womens-fragrances",
+            "title": "",
+            "item_image": "shopify://shop_images/WhatsApp_Image_2024-11-09_at_14.03.57.jpg"
+          }
+        },
+        "collection_block_WGYUGb": {
+          "type": "collection_block",
+          "settings": {
+            "collection": "apparel",
+            "title": "Apparel",
+            "item_image": "shopify://shop_images/hi_res_s1ck_apparel_smaller_res.webp"
+          }
+        },
+        "collection_block_8MKRPf": {
+          "type": "collection_block",
+          "settings": {
+            "collection": "black-collection",
+            "title": "Black Collection",
+            "item_image": "shopify://shop_images/black.webp"
+          }
+        },
+        "collection_block_N6pVd7": {
+          "type": "collection_block",
+          "settings": {
+            "collection": "mens-bracelets",
+            "title": "Men's Bracelets",
+            "item_image": "shopify://shop_images/Screenshot_20190412-013425_Instagram.webp"
+          }
+        },
+        "collection_block_adfPeQ": {
+          "type": "collection_block",
+          "settings": {
+            "collection": "men-jacket",
+            "title": "Men's Jacket",
+            "item_image": "shopify://shop_images/FaceApp-1667365959715.webp"
+          }
+        },
+        "collection_block_7D3gew": {
+          "type": "collection_block",
+          "settings": {
+            "collection": "mens-necklace",
+            "title": "Men's Necklace",
+            "item_image": "shopify://shop_images/Screenshot_20190412-013237_Instagram.webp"
+          }
+        },
+        "collection_block_pydqNL": {
+          "type": "collection_block",
+          "settings": {
+            "collection": "mens-rings",
+            "title": "Men's Rings",
+            "item_image": "shopify://shop_images/Screenshot_20190412-013321_Instagram.webp"
+          }
+        }
+      },
+      "block_order": [
+        "collection_block_WFHPGd",
+        "collection_block_mpgaxC",
+        "collection_block_WGYUGb",
+        "collection_block_8MKRPf",
+        "collection_block_N6pVd7",
+        "collection_block_adfPeQ",
+        "collection_block_7D3gew",
+        "collection_block_pydqNL"
+      ],
+      "custom_css": [
+        "h3.m-collection-card__title {background-color: rgba(255, 255, 255, 0.75); padding: 10px;}"
+      ],
+      "settings": {
+        "heading": "Shop by collections",
+        "heading_size": "h3",
+        "subheading": "",
+        "description": "",
+        "header_alignment": "left",
+        "color_scheme": "",
+        "container": "container-fluid",
+        "layout": "grid",
+        "expanded": true,
+        "card_style": "inside",
+        "text_alignment": "left",
+        "hover_effect": "scaling-up",
+        "show_product_count": false,
+        "count_inline_title": false,
+        "image_rounded": false,
+        "items_per_row": 3,
+        "item_gap": 30,
+        "enable_slider": true,
+        "show_pagination": true,
+        "show_navigation": true,
+        "autorotate": false,
+        "autorotate_speed": 5,
+        "mobile_disable_slider": false,
+        "use_scroll_mobile": true,
+        "mobile_gap": 10,
+        "hidden_slide_control_mobile": false,
+        "padding_top": 50,
+        "padding_bottom": 50,
+        "custom_class": "",
+        "animations": "inherit"
+      }
+    },
+    "custom_content_xALaMf": {
+      "type": "custom-content",
+      "blocks": {
+        "html_gbT3c7": {
+          "type": "html",
+          "settings": {
+            "code": "<div class=\"m-divider\"></div>",
+            "width": "100%",
+            "block_custom_class": "",
+            "animations": "inherit"
+          }
+        }
+      },
+      "block_order": [
+        "html_gbT3c7"
+      ],
+      "disabled": true,
+      "custom_css": [
+        ".m-divider {height: 1px; width: 100%; background: rgb(var(--color-border));}"
+      ],
+      "settings": {
+        "heading": "",
+        "heading_size": "h3",
+        "subheading": "",
+        "description": "",
+        "header_alignment": "center",
+        "container": "container-fluid",
+        "color_scheme": "",
+        "content_color_scheme": "",
+        "enable_parallax": false,
+        "parallax_direction": "vertical",
+        "gap": 30,
+        "gap_mobile": 16,
+        "use_scroll_mobile": false,
+        "padding_top": 0,
+        "padding_bottom": 0,
+        "custom_class": ""
+      }
+    },
+    "11cfb44f-b725-4daf-8ee7-4bbf2c63914d": {
+      "type": "instagram",
+      "disabled": true,
+      "custom_css": [
+        ".container-full {padding-left: 0; padding-right: 0;}",
+        "@media (max-width: 767px) {br {display: none; }}"
+      ],
+      "settings": {
+        "heading": "Follow us Instagram",
+        "heading_size": "h3",
+        "subheading": "",
+        "description": "Tag <span class=\"text-black\">@minimog</span> in your Instagram photos for a chance to be featured here.<br>\nFind more inspiration on <a href=\"#\">our Instagram.</a>",
+        "header_alignment": "center",
+        "container": "w-full",
+        "color_scheme": "",
+        "color_scheme_content": "",
+        "layout": "grid",
+        "images_count": 5,
+        "grid_columns": 5,
+        "gap": 0,
+        "mobile_gap": 0,
+        "profile": "https://www.instagram.com/minimog.trendy/",
+        "button_label": "",
+        "button_style": "m-button--secondary",
+        "use_scroll_mobile": true,
+        "padding_top": 100,
+        "padding_bottom": 0,
+        "custom_class": ""
+      }
+    },
+    "image_with_text_WpkLCy": {
+      "type": "image-with-text",
+      "settings": {
+        "heading": "",
+        "heading_size": "h3",
+        "subheading": "",
+        "container": "container-fluid",
+        "color_scheme": "dark",
+        "item_gap": 100,
+        "item_gap_mobile": 30,
+        "layout": "left",
+        "image_column_size": "6",
+        "image_overlap": false,
+        "show_image_reverse": false,
+        "hover_effect": false,
+        "image_animation": "none",
+        "image": "shopify://shop_images/Collection_of_premium_pheromone_colognes_and_perfumes_Pheromone_Cologne_for_Men_Liquid_Silver_Holy_Grail_Edition_Truelove_For_Men_Casanova_For_Men_and_N_D_Mood_For_Women_designed_to_enhance_attraction_and_confidence_s1ckshop.jpg",
+        "link": "",
+        "link_2": "",
+        "second_image_offset_top": 10,
+        "title": "Refer a friend and get paid!",
+        "sub_title": "",
+        "text": "<p>Join Our Affiliate Program Free & Earn 10% Cash Back<br/></p>",
+        "text_size": "medium",
+        "content_alignment": "left",
+        "button_label": "join now",
+        "button_link": "https://af.uppromote.com/s1ck-jewelry/register",
+        "button_style": "m-button--secondary",
+        "button_size": "",
+        "padding_top": 0,
+        "padding_bottom": 0,
+        "custom_class": "",
+        "animations": "inherit"
+      }
+    },
+    "empty_space_TPhxbk": {
+      "type": "empty-space",
+      "name": "Empty space",
+      "settings": {
+        "container": "container-fluid",
+        "color_scheme": "",
+        "show_divider_line": true,
+        "divider_style": "solid",
+        "divider_height": 1,
+        "padding_top": 0,
+        "padding_bottom": 0,
+        "custom_class": ""
+      }
+    }
+  },
+  "order": [
+    "custom_liquid_XQCt9U",
+    "scrolling_promotion_jjrFyf",
+    "custom_liquid_A3HJxW",
+    "rich_text_regchg",
+    "162251092958fcda7c",
+    "custom_liquid_dkYwBp",
+    "1731141126136350c2",
+    "custom_liquid_6tJdJC",
+    "featured_collection_AyDddm",
+    "7ea56e8d-5794-4708-8812-8ee9604a3a21",
+    "collection_list_XfaXNc",
+    "custom_content_xALaMf",
+    "11cfb44f-b725-4daf-8ee7-4bbf2c63914d",
+    "image_with_text_WpkLCy",
+    "empty_space_TPhxbk"
+  ]
+}

@@ -4,7 +4,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import Navbar from "../components/Navbar";
 import FooterSection from "../sections/FooterSection";
-import heroImg from "../assets/menu-img/men-menu.webp";
+import { getImage } from "../utils/media";
 import { useScrollTriggerRefresh } from "../hooks/useScrollTriggerRefresh";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -134,18 +134,24 @@ const WholesalerPage = () => {
         });
     }, []);
 
+    const wholesaleDesktop = getImage("wholesale-desktop.jpg");
+    const wholesaleMobile = getImage("wholesale-mobile.jpg");
+
     return (
         <main ref={pageRef} className="wholesaler-page bg-cream min-h-dvh">
             <Navbar variant="light" />
 
             <section className="wholesaler-hero relative isolate min-h-[min(100dvh,920px)] w-full overflow-hidden">
                 <div className="wholesaler-hero-img-wrap absolute inset-0 z-0">
-                    <img
-                        ref={heroImgRef}
-                        src={heroImg}
-                        alt="S1CK Wholesale Program"
-                        className="h-full w-full object-cover"
-                    />
+                    <picture>
+                        <source media="(max-width: 768px)" srcSet={wholesaleMobile} />
+                        <img
+                            ref={heroImgRef}
+                            src={wholesaleDesktop}
+                            alt="S1CK Wholesale Agreement & Partnership"
+                            className="h-full w-full object-cover object-center"
+                        />
+                    </picture>
                     <div className="absolute inset-0 bg-black/55" />
                 </div>
 

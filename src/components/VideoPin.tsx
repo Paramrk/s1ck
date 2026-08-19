@@ -3,29 +3,81 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-gsap.registerPlugin(ScrollTrigger);
+import { getVideo } from "../utils/media";
 
-const pinVideo = "https://pub-14765fe2465f48c99a2845f3997a3cb2.r2.dev/pin-video.mp4";
+const pinVideo = getVideo("video-1.mp4") || "https://pub-14765fe2465f48c99a2845f3997a3cb2.r2.dev/pin-video.mp4";
 
-const CLIP_RADIUS_START = 6;
-const CLIP_RADIUS_END = 100;
-const RING_THICKNESS_PCT = 0.28;
+const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
 
-type CircleCenter = { x: string; y: string };
+// Deterministic random generator for reproducible particle distribution
+function createSeededRandom(seed: number) {
+    let s = seed;
+    return () => {
+        s = (s * 16807) % 2147483647;
+        return (s - 1) / 2147483646;
+    };
+}
 
-const circleClip = (radiusPct: number, center: CircleCenter = { x: "50%", y: "50%" }) =>
-    `circle(${radiusPct}% at ${center.x} ${center.y})`;
+interface SprayParticle {
+    angle: number;       // Cone dispersion angle in radians
+    speed: number;       // Velocity multiplier
+    distance: number;    // Normalized reach (0.35 to 1.35)
+    size: number;        // Particle radius (px)
+    alpha: number;       // Base opacity
+    wobbleFreq: number;  // Turbulence frequency
+    wobbleAmp: number;   // Turbulence amplitude
+    yDrift: number;      // Vertical gravity/drift bias
+    type: "droplet" | "mist" | "core" | "streak";
+}
 
-const circleRingGradient = (radiusPct: number, center: CircleCenter = { x: "50%", y: "50%" }) => {
-    const inner = Math.max(0, radiusPct - 0.02);
-    const outer = radiusPct + RING_THICKNESS_PCT;
-    return `radial-gradient(circle at ${center.x} ${center.y}, transparent ${inner}%, #111111 ${radiusPct}%, #111111 ${outer}%, transparent ${outer}%)`;
+// Generate rich particle set matching aerosol perfume spray nozzle
+const generateParticles = (count = 1600): SprayParticle[] => {
+    const rng = createSeededRandom(59281);
+    const particles: SprayParticle[] = [];
+
+    for (let i = 0; i < count; i++) {
+        const u = rng() + rng() - 1; // Triangular distribution near 0
+        const maxSpread = 0.66;      // ~38 degrees cone half-angle
+        const angle = u * maxSpread;
+
+        const dist = 0.35 + rng() * 0.95;
+        const speed = 0.8 + rng() * 0.6;
+        const pType = i < count * 0.2 ? "core" : i < count * 0.7 ? "droplet" : i < count * 0.9 ? "mist" : "streak";
+
+        let size = 1.4;
+        let alpha = 0.9;
+
+        if (pType === "core") {
+            size = 1.2 + rng() * 2.0;
+            alpha = 0.8 + rng() * 0.2;
+        } else if (pType === "droplet") {
+            size = 1.0 + rng() * 3.0;
+            alpha = 0.7 + rng() * 0.3;
+        } else if (pType === "mist") {
+            size = 3.0 + rng() * 8.0;
+            alpha = 0.15 + rng() * 0.25;
+        } else {
+            size = 1.2 + rng() * 2.0;
+            alpha = 0.6 + rng() * 0.4;
+        }
+
+        particles.push({
+            angle,
+            speed,
+            distance: dist,
+            size,
+            alpha,
+            wobbleFreq: 1.5 + rng() * 3.5,
+            wobbleAmp: (rng() - 0.5) * 16,
+            yDrift: (rng() - 0.5) * 0.25,
+            type: pType,
+        });
+    }
+
+    return particles;
 };
 
-const getClipRadiusPct = (radiusPx: number, width: number, height: number) => {
-    const ref = Math.hypot(width, height) / Math.SQRT2;
-    return (radiusPx / ref) * 100;
-};
+const PARTICLES = generateParticles(1600);
 
 const ClockIcon = () => (
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#DC2626" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
@@ -41,248 +93,319 @@ const ShieldIcon = () => (
 );
 
 const VideoPin = () => {
-    const desktopOverlayRef = useRef<HTMLDivElement>(null);
-    const leftCardRef = useRef<HTMLDivElement>(null);
-    const rightCardRef = useRef<HTMLDivElement>(null);
-    const circleGroupRef = useRef<HTMLDivElement>(null);
+    // Desktop refs
+    const desktopUiRef = useRef<HTMLDivElement>(null);
     const videoRef = useRef<HTMLVideoElement>(null);
-    const pinHoleRef = useRef<HTMLDivElement>(null);
-    const ringLayerRef = useRef<HTMLDivElement>(null);
+    const canvasRef = useRef<HTMLCanvasElement>(null);
 
-    const mobileOverlayRef = useRef<HTMLDivElement>(null);
-    const mobCircleAnchorRef = useRef<HTMLDivElement>(null);
-    const mobPinStageRef = useRef<HTMLDivElement>(null);
-    const mobPinHoleRef = useRef<HTMLDivElement>(null);
-    const mobRingLayerRef = useRef<HTMLDivElement>(null);
+    // Mobile refs
+    const mobileUiRef = useRef<HTMLDivElement>(null);
     const mobVideoRef = useRef<HTMLVideoElement>(null);
-
-    const mobileMetricsRef = useRef({ center: { x: "50%", y: "50%" }, startRadius: CLIP_RADIUS_START });
+    const mobCanvasRef = useRef<HTMLCanvasElement>(null);
 
     useEffect(() => {
-        const video = videoRef.current;
-        if (!video) return;
-        video.pause();
-        video.currentTime = 0;
+        const vid = videoRef.current;
+        const mobVid = mobVideoRef.current;
+        if (vid) {
+            vid.pause();
+            vid.currentTime = 0;
+        }
+        if (mobVid) {
+            mobVid.pause();
+            mobVid.currentTime = 0;
+        }
     }, []);
 
     useGSAP(() => {
-        const syncVideoToScroll = (video: HTMLVideoElement | null, progress: number) => {
+        // Canvas Spray Renderer with Transparent Droplets & Mist revealing background video
+        const renderTransparentSprayOnCanvas = (
+            canvas: HTMLCanvasElement | null,
+            sprayProgress: number,
+        ) => {
+            if (!canvas) return;
+            const ctx = canvas.getContext("2d");
+            if (!ctx) return;
+
+            const width = canvas.width;
+            const height = canvas.height;
+            ctx.clearRect(0, 0, width, height);
+
+            // Phase 1 (spray hasn't started): solid white background covers video
+            if (sprayProgress <= 0.001) {
+                ctx.fillStyle = "#ffffff";
+                ctx.fillRect(0, 0, width, height);
+                return;
+            }
+
+            // Phase 3 (spray fully complete): canvas is 100% transparent, full video visible
+            if (sprayProgress >= 0.985) {
+                return;
+            }
+
+            // 1. Draw solid white foreground layer
+            ctx.globalCompositeOperation = "source-over";
+            ctx.fillStyle = "#ffffff";
+            ctx.fillRect(0, 0, width, height);
+
+            // Nozzle origin on the left middle
+            const nozzleX = -width * 0.02;
+            const nozzleY = height * 0.5;
+
+            // 2. Erase holes through white layer (destination-out) so background video is seen inside droplets & mist!
+            ctx.globalCompositeOperation = "destination-out";
+
+            // A. Expanding mist plume apertures
+            const puffCount = 22;
+            for (let i = 0; i < puffCount; i++) {
+                const puffProgress = clamp(sprayProgress * (1.18 - (i / puffCount) * 0.28), 0, 1);
+                if (puffProgress <= 0) continue;
+
+                const angle = ((i - puffCount / 2) / (puffCount / 2)) * 0.62;
+                const d = puffProgress * width * (0.32 + (i % 5) * 0.16);
+                const px = nozzleX + Math.cos(angle) * d;
+                const py = nozzleY + Math.sin(angle) * d * (height / width * 1.25);
+                const radius = Math.max(30, puffProgress * width * (0.18 + (i % 4) * 0.08));
+
+                const grad = ctx.createRadialGradient(px, py, 0, px, py, radius);
+                const puffAlpha = clamp(sprayProgress * 1.3, 0, 1) * 0.85;
+                grad.addColorStop(0, `rgba(0, 0, 0, ${puffAlpha})`);
+                grad.addColorStop(0.55, `rgba(0, 0, 0, ${puffAlpha * 0.65})`);
+                grad.addColorStop(1, "rgba(0, 0, 0, 0)");
+
+                ctx.fillStyle = grad;
+                ctx.beginPath();
+                ctx.arc(px, py, radius, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // B. High-speed directional jet streaks (cut transparent slits through white)
+            const streakCount = 18;
+            ctx.save();
+            ctx.lineWidth = 3.5;
+            for (let j = 0; j < streakCount; j++) {
+                const angle = ((j - streakCount / 2) / (streakCount / 2)) * 0.44;
+                const len = clamp(sprayProgress * width * 0.6 * (0.8 + (j % 4) * 0.15), 0, width * 0.7);
+                const endX = nozzleX + Math.cos(angle) * len;
+                const endY = nozzleY + Math.sin(angle) * len * (height / width * 1.15);
+
+                const streakGrad = ctx.createLinearGradient(nozzleX, nozzleY, endX, endY);
+                const streakAlpha = clamp(sprayProgress * 1.4, 0, 1) * 0.9;
+                streakGrad.addColorStop(0, `rgba(0, 0, 0, ${streakAlpha})`);
+                streakGrad.addColorStop(0.4, `rgba(0, 0, 0, ${streakAlpha * 0.7})`);
+                streakGrad.addColorStop(1, "rgba(0, 0, 0, 0)");
+
+                ctx.strokeStyle = streakGrad;
+                ctx.beginPath();
+                ctx.moveTo(nozzleX, nozzleY);
+                ctx.lineTo(endX, endY);
+                ctx.stroke();
+            }
+            ctx.restore();
+
+            // C. Cut transparent droplet circles through the white layer (showing video inside every droplet!)
+            for (let i = 0; i < PARTICLES.length; i++) {
+                const p = PARTICLES[i];
+                const pTravel = clamp(sprayProgress * p.speed * 1.25, 0, 1.4);
+                if (pTravel <= 0) continue;
+
+                const distancePx = pTravel * width * p.distance;
+                const wobble = Math.sin(pTravel * p.wobbleFreq * Math.PI) * p.wobbleAmp;
+
+                const x = nozzleX + Math.cos(p.angle) * distancePx;
+                const y = nozzleY + Math.sin(p.angle) * distancePx * (height / width * 1.18) + wobble + p.yDrift * distancePx * 0.2;
+
+                if (x < -10 || x > width + 30 || y < -30 || y > height + 30) continue;
+
+                const distFade = clamp(1.2 - distancePx / (width * 1.3), 0, 1);
+                const alpha = p.alpha * distFade;
+
+                if (alpha <= 0.01) continue;
+
+                const dropletRadius = p.size * (1.2 + sprayProgress * 0.7);
+                ctx.fillStyle = `rgba(0, 0, 0, ${alpha})`;
+                ctx.beginPath();
+                ctx.arc(x, y, dropletRadius, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // D. Full-screen fill wash when spray reaches terminal coverage
+            if (sprayProgress > 0.6) {
+                const fillProgress = (sprayProgress - 0.6) / 0.4; // 0 to 1
+                const fillGrad = ctx.createLinearGradient(0, 0, width, 0);
+                const fillAlpha = fillProgress * 0.95;
+                fillGrad.addColorStop(0, `rgba(0, 0, 0, ${fillAlpha})`);
+                fillGrad.addColorStop(clamp(fillProgress * 1.1, 0, 1), `rgba(0, 0, 0, ${fillAlpha * 0.85})`);
+                fillGrad.addColorStop(1, `rgba(0, 0, 0, ${fillAlpha * 0.5})`);
+
+                ctx.fillStyle = fillGrad;
+                ctx.fillRect(0, 0, width, height);
+            }
+
+            // 3. Draw physical liquid droplet highlights & subtle mist borders on top
+            ctx.globalCompositeOperation = "source-over";
+
+            // Subtle liquid droplet specular glint & dark rim
+            for (let i = 0; i < PARTICLES.length; i += 2) {
+                const p = PARTICLES[i];
+                const pTravel = clamp(sprayProgress * p.speed * 1.25, 0, 1.4);
+                if (pTravel <= 0) continue;
+
+                const distancePx = pTravel * width * p.distance;
+                const wobble = Math.sin(pTravel * p.wobbleFreq * Math.PI) * p.wobbleAmp;
+
+                const x = nozzleX + Math.cos(p.angle) * distancePx;
+                const y = nozzleY + Math.sin(p.angle) * distancePx * (height / width * 1.18) + wobble + p.yDrift * distancePx * 0.2;
+
+                if (x < -10 || x > width + 30 || y < -30 || y > height + 30) continue;
+
+                const dropletRadius = p.size * (1.2 + sprayProgress * 0.7);
+
+                ctx.strokeStyle = `rgba(30, 35, 45, ${p.alpha * 0.35})`;
+                ctx.lineWidth = 0.75;
+                ctx.beginPath();
+                ctx.arc(x, y, dropletRadius, 0, Math.PI * 2);
+                ctx.stroke();
+
+                if (dropletRadius > 1.8) {
+                    ctx.fillStyle = `rgba(255, 255, 255, ${p.alpha * 0.6})`;
+                    ctx.beginPath();
+                    ctx.arc(x - dropletRadius * 0.3, y - dropletRadius * 0.3, dropletRadius * 0.28, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+        };
+
+        const setupCanvasSize = (canvas: HTMLCanvasElement | null) => {
+            if (!canvas) return;
+            const rect = canvas.getBoundingClientRect();
+            const dpr = Math.min(window.devicePixelRatio || 1, 2);
+            canvas.width = Math.round(rect.width * dpr);
+            canvas.height = Math.round(rect.height * dpr);
+        };
+
+        // Complete UI fade & removal strictly before spray starts
+        const updateUiFade = (uiContainer: HTMLDivElement | null, progress: number, fadeOutEnd = 0.08) => {
+            if (!uiContainer) return;
+
+            if (progress <= 0.001) {
+                uiContainer.style.opacity = "1";
+                uiContainer.style.visibility = "visible";
+                uiContainer.style.pointerEvents = "auto";
+                uiContainer.style.transform = "translateY(0px)";
+            } else if (progress < fadeOutEnd) {
+                const fade = clamp(1 - (progress / fadeOutEnd), 0, 1);
+                uiContainer.style.opacity = String(fade);
+                uiContainer.style.visibility = "visible";
+                uiContainer.style.pointerEvents = fade > 0.4 ? "auto" : "none";
+                uiContainer.style.transform = `translateY(${-progress * 150}px)`;
+            } else {
+                // 100% completely hidden & removed - NO ghosting or text showing
+                uiContainer.style.opacity = "0";
+                uiContainer.style.visibility = "hidden";
+                uiContainer.style.pointerEvents = "none";
+            }
+        };
+
+        // Handle continuous video playback strictly AFTER spray has completed (not scrubbed by scroll)
+        const handleVideoPlayback = (
+            video: HTMLVideoElement | null,
+            overallProgress: number,
+            sprayCompletionThreshold = 0.55,
+        ) => {
             if (!video) return;
 
-            if (progress > 0.01) {
-                if (video.paused) {
-                    video.play().catch(() => {});
+            // Before spray finishes: pause and reset to start
+            if (overallProgress < sprayCompletionThreshold) {
+                if (!video.paused) {
+                    video.pause();
                 }
-            } else {
-                video.pause();
                 video.currentTime = 0;
-            }
-        };
-
-        const computeMobileMetrics = () => {
-            const stage = mobPinStageRef.current;
-            const anchor = mobCircleAnchorRef.current;
-            if (!stage || !anchor) {
-                return { center: { x: "50%", y: "50%" }, startRadius: CLIP_RADIUS_START };
+                return;
             }
 
-            const stageRect = stage.getBoundingClientRect();
-            const anchorRect = anchor.getBoundingClientRect();
-            const cx = ((anchorRect.left + anchorRect.width / 2 - stageRect.left) / stageRect.width) * 100;
-            const cy = ((anchorRect.top + anchorRect.height / 2 - stageRect.top) / stageRect.height) * 100;
-            const radiusPx = anchorRect.width / 2;
-
-            return {
-                center: { x: `${cx}%`, y: `${cy}%` },
-                startRadius: getClipRadiusPct(radiusPx, stageRect.width, stageRect.height),
-            };
-        };
-
-        const applyPinCircle = (
-            hole: HTMLDivElement | null,
-            ring: HTMLDivElement | null,
-            radiusPct: number,
-            center: CircleCenter,
-        ) => {
-            const clip = circleClip(radiusPct, center);
-            if (hole) {
-                hole.style.clipPath = clip;
-                (hole.style as CSSStyleDeclaration & { webkitClipPath?: string }).webkitClipPath = clip;
+            // Once spray completes: continuously play video naturally
+            if (video.paused) {
+                video.play().catch(() => {});
             }
-            if (ring) {
-                ring.style.background = circleRingGradient(radiusPct, center);
-            }
-        };
-
-        const addCircleGrow = (
-            tl: gsap.core.Timeline,
-            hole: HTMLDivElement | null,
-            ring: HTMLDivElement | null,
-            center: CircleCenter,
-            startRadius: number,
-            endRadius = CLIP_RADIUS_END,
-        ) => {
-            if (!hole || !ring) return;
-
-            const radius = { value: startRadius };
-            applyPinCircle(hole, ring, startRadius, center);
-
-            tl.to(
-                radius,
-                {
-                    value: endRadius,
-                    ease: "power1.inOut",
-                    duration: 1,
-                    onUpdate: () => applyPinCircle(hole, ring, radius.value, center),
-                },
-                0,
-            );
-        };
-
-        const fadeIntroUi = (tl: gsap.core.Timeline, overlay: HTMLDivElement | null, hint?: HTMLDivElement | null) => {
-            const fadeTargets = hint
-                ? [overlay, hint].filter(Boolean)
-                : [overlay].filter(Boolean);
-            tl.to(fadeTargets, {
-                opacity: 0,
-                y: -25,
-                ease: "power1.inOut",
-                duration: 0.2,
-            }, 0);
-        };
-
-        const fadeMobileScrollUi = (tl: gsap.core.Timeline) => {
-            const hint = mobCircleAnchorRef.current;
-            tl.to(
-                [".benefit-mobile-top", ".benefit-mobile-bottom", hint].filter(Boolean),
-                {
-                    autoAlpha: 0,
-                    y: -20,
-                    ease: "power1.inOut",
-                    duration: 0.15,
-                },
-                0,
-            );
-        };
-
-        const syncMobileHintInvert = (progress: number) => {
-            const hint = mobCircleAnchorRef.current;
-            if (!hint) return;
-            hint.classList.toggle("is-inverting", progress > 0.001);
-        };
-
-        const fadeRingOnScroll = (ring: HTMLDivElement | null, started: { value: boolean }) => {
-            if (!ring) return;
-
-            return (progress: number) => {
-                if (progress > 0.001) {
-                    if (!started.value) {
-                        started.value = true;
-                        gsap.to(ring, {
-                            opacity: 0,
-                            duration: 0.1,
-                            ease: "power3.in",
-                            overwrite: true,
-                        });
-                    }
-                } else if (started.value) {
-                    started.value = false;
-                    gsap.killTweensOf(ring);
-                    gsap.set(ring, { opacity: 1 });
-                }
-            };
         };
 
         const mm = gsap.matchMedia();
 
+        // ─── DESKTOP (min-width: 1024px) ───
         mm.add("(min-width: 1024px)", () => {
-            const center = { x: "50%", y: "50%" };
-            applyPinCircle(pinHoleRef.current, ringLayerRef.current, CLIP_RADIUS_START, center);
+            setupCanvasSize(canvasRef.current);
+            renderTransparentSprayOnCanvas(canvasRef.current, 0);
+            updateUiFade(desktopUiRef.current, 0);
 
-            const desktopRingFade = { value: false };
-            const fadeDesktopRing = fadeRingOnScroll(ringLayerRef.current, desktopRingFade);
+            ScrollTrigger.create({
+                trigger: ".video-wrapper",
+                start: "0px top",
+                end: "2800px top",
+                scrub: 1.2,
+                pin: true,
+                invalidateOnRefresh: true,
+                onRefresh: () => {
+                    setupCanvasSize(canvasRef.current);
+                },
+                onUpdate: (self) => {
+                    const progress = self.progress;
 
-            const vpTl = gsap.timeline({
-                scrollTrigger: {
-                    trigger: ".video-wrapper",
-                    start: "0px top",
-                    end: "2500px top",
-                    scrub: 1.5,
-                    pin: true,
-                    invalidateOnRefresh: true,
-                    onUpdate: (self) => {
-                        syncVideoToScroll(videoRef.current, self.progress);
-                        fadeDesktopRing?.(self.progress);
-                    },
+                    // 1. First text disappears completely & smoothly: 0.00 -> 0.08
+                    updateUiFade(desktopUiRef.current, progress, 0.08);
+
+                    // 2. Then spray comes with transparent droplets showing background video: 0.12 -> 0.55
+                    const sprayP = clamp((progress - 0.12) / 0.43, 0, 1);
+                    renderTransparentSprayOnCanvas(canvasRef.current, sprayP);
+
+                    // 3. Then full video comes smoothly from the spray mist and plays: 0.55 -> 1.00
+                    handleVideoPlayback(videoRef.current, progress, 0.55);
                 },
             });
-
-            addCircleGrow(vpTl, pinHoleRef.current, ringLayerRef.current, center, CLIP_RADIUS_START);
-            fadeIntroUi(vpTl, desktopOverlayRef.current, circleGroupRef.current);
-
-            vpTl.to([leftCardRef.current, rightCardRef.current], {
-                opacity: 0,
-                y: -30,
-                ease: "power1.inOut",
-                duration: 0.15,
-            }, 0);
         });
 
+        // ─── MOBILE (max-width: 1023px) ───
         mm.add("(max-width: 1023px)", () => {
-            const refreshMobileCircle = () => {
-                mobileMetricsRef.current = computeMobileMetrics();
-                applyPinCircle(
-                    mobPinHoleRef.current,
-                    mobRingLayerRef.current,
-                    mobileMetricsRef.current.startRadius,
-                    mobileMetricsRef.current.center,
-                );
-            };
+            setupCanvasSize(mobCanvasRef.current);
+            renderTransparentSprayOnCanvas(mobCanvasRef.current, 0);
+            updateUiFade(mobileUiRef.current, 0);
 
-            refreshMobileCircle();
+            ScrollTrigger.create({
+                trigger: ".benefit-section .video-wrapper",
+                start: "0px top",
+                end: "2000px top",
+                scrub: 1.2,
+                pin: true,
+                invalidateOnRefresh: true,
+                onRefresh: () => {
+                    setupCanvasSize(mobCanvasRef.current);
+                },
+                onUpdate: (self) => {
+                    const progress = self.progress;
 
-            const overlay = mobileOverlayRef.current;
-            const hint = mobCircleAnchorRef.current;
-            if (overlay) gsap.set(overlay, { autoAlpha: 1, y: 0 });
-            if (hint) gsap.set(hint, { autoAlpha: 1, y: 0, clearProps: "transform" });
+                    // 1. First text disappears completely & smoothly: 0.00 -> 0.08
+                    updateUiFade(mobileUiRef.current, progress, 0.08);
 
-            const mobileRingFade = { value: false };
-            const fadeMobileRing = fadeRingOnScroll(mobRingLayerRef.current, mobileRingFade);
+                    // 2. Then spray comes with transparent droplets showing background video: 0.12 -> 0.55
+                    const sprayP = clamp((progress - 0.12) / 0.43, 0, 1);
+                    renderTransparentSprayOnCanvas(mobCanvasRef.current, sprayP);
 
-            const vpTlMob = gsap.timeline({
-                scrollTrigger: {
-                    trigger: ".benefit-section .video-wrapper",
-                    start: "0px top",
-                    end: "1400px top",
-                    scrub: 1.5,
-                    pin: true,
-                    invalidateOnRefresh: true,
-                    onRefresh: () => {
-                        refreshMobileCircle();
-                    },
-                    onUpdate: (self) => {
-                        syncVideoToScroll(mobVideoRef.current, self.progress);
-                        fadeMobileRing?.(self.progress);
-                        syncMobileHintInvert(self.progress);
-                    },
+                    // 3. Then full video comes smoothly from the spray mist and plays: 0.55 -> 1.00
+                    handleVideoPlayback(mobVideoRef.current, progress, 0.55);
                 },
             });
-
-            addCircleGrow(
-                vpTlMob,
-                mobPinHoleRef.current,
-                mobRingLayerRef.current,
-                mobileMetricsRef.current.center,
-                mobileMetricsRef.current.startRadius,
-            );
-            fadeMobileScrollUi(vpTlMob);
-
-            requestAnimationFrame(refreshMobileCircle);
         });
+
+        const handleResize = () => {
+            setupCanvasSize(canvasRef.current);
+            setupCanvasSize(mobCanvasRef.current);
+            ScrollTrigger.refresh();
+        };
+        window.addEventListener("resize", handleResize);
 
         const refreshId = window.setTimeout(() => ScrollTrigger.refresh(), 200);
 
         return () => {
+            window.removeEventListener("resize", handleResize);
             window.clearTimeout(refreshId);
             mm.revert();
         };
@@ -290,36 +413,35 @@ const VideoPin = () => {
 
     return (
         <>
-            {/* Mobile — scroll pin circle reveal aligned to Scroll to Discover */}
+            {/* ─── MOBILE ─── */}
             <div className="lg:hidden video-pin-root h-dvh overflow-hidden relative w-full bg-white">
-                <div ref={mobPinStageRef} className="benefit-pin-stage absolute inset-0 z-[100]">
-                    <div
-                        ref={mobPinHoleRef}
-                        className="benefit-pin-hole absolute inset-0"
-                    >
-                        <video
-                            ref={mobVideoRef}
-                            src={pinVideo}
-                            playsInline
-                            muted
-                            loop
-                            preload="metadata"
-                            className="benefit-pin-video"
-                        />
-                    </div>
-
-                    <div
-                        ref={mobRingLayerRef}
-                        className="benefit-pin-ring absolute inset-0 z-20 pointer-events-none opacity-100"
-                        aria-hidden
+                {/* 1. Underlying Background Video */}
+                <div className="benefit-video-layer absolute inset-0 z-[100] pointer-events-auto">
+                    <video
+                        key={pinVideo}
+                        src={pinVideo}
+                        ref={mobVideoRef}
+                        playsInline
+                        muted
+                        loop
+                        preload="auto"
+                        className="benefit-pin-video w-full h-full object-cover"
                     />
                 </div>
 
+                {/* 2. White Stage with Transparent Spray Droplets & Mist Cutout Layer */}
+                <canvas
+                    ref={mobCanvasRef}
+                    className="benefit-spray-canvas absolute inset-0 z-[110] pointer-events-none w-full h-full"
+                    aria-hidden
+                />
+
+                {/* 3. Master Mobile UI Container (Fades out and completely vanishes first) */}
                 <div
-                    ref={mobileOverlayRef}
-                    className="benefit-mobile-overlay absolute inset-0 z-[200] flex flex-col items-center justify-between pointer-events-none py-16 px-5"
+                    ref={mobileUiRef}
+                    className="benefit-mobile-ui-master absolute inset-0 z-[200] flex flex-col items-center justify-between py-16 px-5 transition-transform ease-out"
                 >
-                    <div className="benefit-mobile-top w-full flex flex-col items-center text-center shrink-0 bg-white">
+                    <div className="benefit-mobile-top w-full flex flex-col items-center text-center shrink-0">
                         <p
                             className="benefit-tagline text-stone text-[0.65rem] uppercase tracking-[0.2em] mb-6"
                             style={{ fontFamily: "Syne, sans-serif", fontWeight: 500 }}
@@ -371,7 +493,6 @@ const VideoPin = () => {
 
                     <div className="col-center shrink-0">
                         <div
-                            ref={mobCircleAnchorRef}
                             className="benefit-mobile-circle-anchor benefit-mobile-scroll-hint size-[5.5rem] rounded-full flex flex-col items-center justify-center pointer-events-none bg-white z-[210]"
                         >
                             <p
@@ -388,7 +509,7 @@ const VideoPin = () => {
                         </div>
                     </div>
 
-                    <div className="benefit-mobile-bottom w-full shrink-0 bg-white">
+                    <div className="benefit-mobile-bottom w-full shrink-0">
                         <div className="benefit-badges-row flex items-start justify-center gap-10">
                             <div className="benefit-badge flex flex-col items-center text-center max-w-[10rem]">
                                 <div className="size-8 rounded-full border border-sick-red flex items-center justify-center mb-3">
@@ -432,128 +553,133 @@ const VideoPin = () => {
                 </div>
             </div>
 
-            {/* Desktop — pinned circle reveal (unchanged) */}
+            {/* ─── DESKTOP ─── */}
             <div className="hidden lg:block video-pin-root h-dvh overflow-hidden relative w-full bg-white">
-                <div className="benefit-pin-stage absolute inset-0 z-[100]">
-                    <div
-                        ref={pinHoleRef}
-                        className="benefit-pin-hole absolute inset-0"
-                        style={{ clipPath: circleClip(CLIP_RADIUS_START) }}
-                    >
-                        <video
-                            ref={videoRef}
-                            src={pinVideo}
-                            playsInline
-                            muted
-                            loop
-                            preload="metadata"
-                            className="benefit-pin-video"
-                        />
-                        <div
-                            ref={circleGroupRef}
-                            className="benefit-scroll-hint-layer absolute inset-0 z-10 flex flex-col items-center justify-center pointer-events-none"
-                        >
-                            <p
-                                className="benefit-scroll-hint-stack text-[0.72rem] uppercase tracking-[0.16em] font-bold text-center"
-                                style={{ fontFamily: "Syne, sans-serif", fontWeight: 700 }}
-                            >
-                                <span>Scroll</span>
-                                <span>To</span>
-                                <span>Discover</span>
-                            </p>
-                            <span className="benefit-scroll-arrow mt-1 text-sm leading-none" aria-hidden>↓</span>
-                        </div>
-                    </div>
-
-                    <div
-                        ref={ringLayerRef}
-                        className="benefit-pin-ring absolute inset-0 z-20 pointer-events-none opacity-100"
-                        style={{ background: circleRingGradient(CLIP_RADIUS_START) }}
-                        aria-hidden
+                {/* 1. Underlying Background Video */}
+                <div className="benefit-video-layer absolute inset-0 z-[100] pointer-events-auto">
+                    <video
+                        key={pinVideo}
+                        src={pinVideo}
+                        ref={videoRef}
+                        playsInline
+                        muted
+                        loop
+                        preload="auto"
+                        className="benefit-pin-video w-full h-full object-cover"
                     />
                 </div>
 
-                <div ref={leftCardRef} className="hidden lg:flex absolute left-12 top-1/2 -translate-y-1/2 w-80 flex-col pointer-events-auto z-[250] benefit-card">
-                    <div className="group relative overflow-hidden rounded-2xl border border-charcoal/5 bg-gradient-to-br from-white/90 to-stone-50/90 backdrop-blur-md p-6 shadow-md hover:-translate-y-1 hover:shadow-xl hover:border-sick-red/20 transition-all duration-500">
-                        <div className="absolute -inset-px bg-gradient-to-r from-sick-red/10 to-orange-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl -z-10" />
-                        <div className="size-12 rounded-full border border-sick-red/20 bg-sick-red/5 flex items-center justify-center mb-4 shadow-sm group-hover:scale-110 group-hover:bg-sick-red/10 transition-all duration-500">
-                            <ClockIcon />
-                        </div>
-                        <h3 className="text-xs uppercase tracking-[0.15em] text-charcoal font-bold mb-2 leading-snug" style={{ fontFamily: "Syne, sans-serif" }}>
-                            Designed to Leave a Lasting Impression
-                        </h3>
-                        <p className="text-[0.65rem] text-stone leading-relaxed" style={{ fontFamily: "Syne, sans-serif", fontWeight: 400 }}>
-                            An olfactory masterpiece. Every note is precision-blended to linger in the air, ensuring your presence is felt long after you leave.
-                        </p>
-                    </div>
-                </div>
+                {/* 2. White Stage with Transparent Spray Droplets & Mist Cutout Layer */}
+                <canvas
+                    ref={canvasRef}
+                    className="benefit-spray-canvas absolute inset-0 z-[110] pointer-events-none w-full h-full"
+                    aria-hidden
+                />
 
-                <div ref={rightCardRef} className="hidden lg:flex absolute right-12 top-1/2 -translate-y-1/2 w-80 flex-col pointer-events-auto z-[250] benefit-card">
-                    <div className="group relative overflow-hidden rounded-2xl border border-charcoal/5 bg-gradient-to-br from-white/90 to-stone-50/90 backdrop-blur-md p-6 shadow-md hover:-translate-y-1 hover:shadow-xl hover:border-sick-red/20 transition-all duration-500">
-                        <div className="absolute -inset-px bg-gradient-to-r from-sick-red/10 to-orange-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl -z-10" />
-                        <div className="size-12 rounded-full border border-sick-red/20 bg-sick-red/5 flex items-center justify-center mb-4 shadow-sm group-hover:scale-110 group-hover:bg-sick-red/10 transition-all duration-500">
-                            <ShieldIcon />
-                        </div>
-                        <h3 className="text-xs uppercase tracking-[0.15em] text-charcoal font-bold mb-2 leading-snug" style={{ fontFamily: "Syne, sans-serif" }}>
-                            Backed by Science, Made to Be Noticed
-                        </h3>
-                        <p className="text-[0.65rem] text-stone leading-relaxed" style={{ fontFamily: "Syne, sans-serif", fontWeight: 400 }}>
-                            Formulated with high-concentration, clinical-grade pheromones that interface naturally with olfactory receptors to amplify subconscious attraction.
-                        </p>
-                    </div>
-                </div>
-
+                {/* 3. Master Desktop UI Container (Fades out and completely vanishes first) */}
                 <div
-                    ref={desktopOverlayRef}
-                    className="benefit-text-overlay hidden lg:flex absolute inset-0 flex-col items-center justify-between pointer-events-none z-[200] pt-24 pb-8 px-5"
+                    ref={desktopUiRef}
+                    className="benefit-desktop-ui-master absolute inset-0 z-[200] pointer-events-none transition-transform ease-out"
                 >
-                    <div className="flex flex-col items-center w-full">
-                        <p className="benefit-tagline text-stone text-center text-[0.65rem] uppercase tracking-[0.2em] mb-5" style={{ fontFamily: "Syne, sans-serif", fontWeight: 500 }}>
-                            Premium Quality. Maximum Impact
+                    {/* Hint Layer (Scroll to discover) */}
+                    <div
+                        className="benefit-scroll-hint-layer absolute inset-0 z-[210] flex flex-col items-center justify-center pointer-events-none"
+                    >
+                        <p
+                            className="benefit-scroll-hint-stack text-[0.72rem] uppercase tracking-[0.16em] font-bold text-center"
+                            style={{ fontFamily: "Syne, sans-serif", fontWeight: 700 }}
+                        >
+                            <span>Scroll</span>
+                            <span>To</span>
+                            <span>Discover</span>
                         </p>
+                        <span className="benefit-scroll-arrow mt-1 text-sm leading-none" aria-hidden>↓</span>
+                    </div>
 
-                        <div className="col-center overflow-hidden mb-32">
-                            <h1 className="benefit-headline general-title text-center text-charcoal">
-                                Long-Lasting Formula
-                            </h1>
-                        </div>
-
-                        <div className="col-center mt-32">
-                            <div className="benefit-banner inline-block bg-sick-red px-8 py-3" style={{ clipPath: "polygon(50% 0%,50% 0%,50% 100%,50% 100%)" }}>
-                                <h2 className="text-white text-[clamp(1rem,3vw,2rem)] font-bold uppercase tracking-[0.04em]" style={{ fontFamily: "Syne, sans-serif" }}>
-                                    48mg Pheromone-Infused Blend
-                                </h2>
+                    {/* Left Benefit Card */}
+                    <div className="hidden lg:flex absolute left-12 top-1/2 -translate-y-1/2 w-80 flex-col pointer-events-auto z-[250] benefit-card">
+                        <div className="group relative overflow-hidden rounded-2xl border border-charcoal/5 bg-gradient-to-br from-white/90 to-stone-50/90 backdrop-blur-md p-6 shadow-md hover:-translate-y-1 hover:shadow-xl hover:border-sick-red/20 transition-all duration-500">
+                            <div className="absolute -inset-px bg-gradient-to-r from-sick-red/10 to-orange-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl -z-10" />
+                            <div className="size-12 rounded-full border border-sick-red/20 bg-sick-red/5 flex items-center justify-center mb-4 shadow-sm group-hover:scale-110 group-hover:bg-sick-red/10 transition-all duration-500">
+                                <ClockIcon />
                             </div>
+                            <h3 className="text-xs uppercase tracking-[0.15em] text-charcoal font-bold mb-2 leading-snug" style={{ fontFamily: "Syne, sans-serif" }}>
+                                Designed to Leave a Lasting Impression
+                            </h3>
+                            <p className="text-[0.65rem] text-stone leading-relaxed" style={{ fontFamily: "Syne, sans-serif", fontWeight: 400 }}>
+                                An olfactory masterpiece. Every note is precision-blended to linger in the air, ensuring your presence is felt long after you leave.
+                            </p>
                         </div>
                     </div>
 
-                    <div className="flex flex-col items-center w-full">
-                        <div className="benefit-labels-row flex flex-wrap items-center justify-center gap-16 mb-6">
-                            <div className="benefit-label flex items-center gap-3">
-                                <span className="block w-10 h-px bg-charcoal benefit-line" />
-                                <span className="text-[0.6rem] uppercase tracking-[0.15em] text-stone benefit-label-text" style={{ fontFamily: "Syne, sans-serif", fontWeight: 500 }}>93% Raw Materials</span>
+                    {/* Right Benefit Card */}
+                    <div className="hidden lg:flex absolute right-12 top-1/2 -translate-y-1/2 w-80 flex-col pointer-events-auto z-[250] benefit-card">
+                        <div className="group relative overflow-hidden rounded-2xl border border-charcoal/5 bg-gradient-to-br from-white/90 to-stone-50/90 backdrop-blur-md p-6 shadow-md hover:-translate-y-1 hover:shadow-xl hover:border-sick-red/20 transition-all duration-500">
+                            <div className="absolute -inset-px bg-gradient-to-r from-sick-red/10 to-orange-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl -z-10" />
+                            <div className="size-12 rounded-full border border-sick-red/20 bg-sick-red/5 flex items-center justify-center mb-4 shadow-sm group-hover:scale-110 group-hover:bg-sick-red/10 transition-all duration-500">
+                                <ShieldIcon />
                             </div>
-                            <div className="benefit-label flex items-center gap-3">
-                                <span className="text-[0.6rem] uppercase tracking-[0.15em] text-stone benefit-label-text" style={{ fontFamily: "Syne, sans-serif", fontWeight: 500 }}>Luxury Grade Fragrance Oils</span>
-                                <span className="block w-10 h-px bg-charcoal benefit-line" />
+                            <h3 className="text-xs uppercase tracking-[0.15em] text-charcoal font-bold mb-2 leading-snug" style={{ fontFamily: "Syne, sans-serif" }}>
+                                Backed by Science, Made to Be Noticed
+                            </h3>
+                            <p className="text-[0.65rem] text-stone leading-relaxed" style={{ fontFamily: "Syne, sans-serif", fontWeight: 400 }}>
+                                Formulated with high-concentration, clinical-grade pheromones that interface naturally with olfactory receptors to amplify subconscious attraction.
+                            </p>
+                        </div>
+                    </div>
+
+                    {/* Desktop Text Overlay */}
+                    <div
+                        className="benefit-text-overlay hidden lg:flex absolute inset-0 flex-col items-center justify-between pointer-events-none z-[200] pt-24 pb-8 px-5"
+                    >
+                        <div className="flex flex-col items-center w-full">
+                            <p className="benefit-tagline text-stone text-center text-[0.65rem] uppercase tracking-[0.2em] mb-5" style={{ fontFamily: "Syne, sans-serif", fontWeight: 500 }}>
+                                Premium Quality. Maximum Impact
+                            </p>
+
+                            <div className="col-center overflow-hidden mb-32">
+                                <h1 className="benefit-headline general-title text-center text-charcoal">
+                                    Long-Lasting Formula
+                                </h1>
+                            </div>
+
+                            <div className="col-center mt-32">
+                                <div className="benefit-banner inline-block bg-sick-red px-8 py-3" style={{ clipPath: "polygon(50% 0%,50% 0%,50% 100%,50% 100%)" }}>
+                                    <h2 className="text-white text-[clamp(1rem,3vw,2rem)] font-bold uppercase tracking-[0.04em]" style={{ fontFamily: "Syne, sans-serif" }}>
+                                        48mg Pheromone-Infused Blend
+                                    </h2>
+                                </div>
                             </div>
                         </div>
 
-                        <div className="flex flex-col items-center benefit-bottom text-center">
-                            <div className="flex items-center gap-1.5 mb-2 bg-charcoal/5 px-3 py-1 rounded-full border border-charcoal/10 backdrop-blur-sm benefit-rating-stars-bg">
-                                {[...Array(5)].map((_, i) => (
-                                    <svg key={i} width="10" height="10" viewBox="0 0 24 24" fill="#DC2626" aria-hidden>
-                                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                                    </svg>
-                                ))}
-                                <span className="text-[0.45rem] font-bold text-charcoal uppercase tracking-wider ml-1 benefit-rating-badge" style={{ fontFamily: "Syne, sans-serif" }}>5.0 Rating</span>
+                        <div className="flex flex-col items-center w-full">
+                            <div className="benefit-labels-row flex flex-wrap items-center justify-center gap-16 mb-6">
+                                <div className="benefit-label flex items-center gap-3">
+                                    <span className="block w-10 h-px bg-charcoal benefit-line" />
+                                    <span className="text-[0.6rem] uppercase tracking-[0.15em] text-stone benefit-label-text" style={{ fontFamily: "Syne, sans-serif", fontWeight: 500 }}>93% Raw Materials</span>
+                                </div>
+                                <div className="benefit-label flex items-center gap-3">
+                                    <span className="text-[0.6rem] uppercase tracking-[0.15em] text-stone benefit-label-text" style={{ fontFamily: "Syne, sans-serif", fontWeight: 500 }}>Luxury Grade Fragrance Oils</span>
+                                    <span className="block w-10 h-px bg-charcoal benefit-line" />
+                                </div>
                             </div>
-                            <p className="text-stone text-[0.55rem] uppercase tracking-[0.15em] mb-1 benefit-rating-text" style={{ fontFamily: "Syne, sans-serif", fontWeight: 500 }}>
-                                100,000+ Happy Customers and Counting
-                            </p>
-                            <p className="text-charcoal text-[0.65rem] uppercase tracking-[0.2em] font-bold benefit-rating-title" style={{ fontFamily: "Syne, sans-serif" }}>
-                                Powered by <span className="text-sick-red font-black">Science</span>. Driven by <span className="text-sick-red font-black">Attraction</span>.
-                            </p>
+
+                            <div className="flex flex-col items-center benefit-bottom text-center">
+                                <div className="flex items-center gap-1.5 mb-2 bg-charcoal/5 px-3 py-1 rounded-full border border-charcoal/10 backdrop-blur-sm benefit-rating-stars-bg">
+                                    {[...Array(5)].map((_, i) => (
+                                        <svg key={i} width="10" height="10" viewBox="0 0 24 24" fill="#DC2626" aria-hidden>
+                                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                                        </svg>
+                                    ))}
+                                    <span className="text-[0.45rem] font-bold text-charcoal uppercase tracking-wider ml-1 benefit-rating-badge" style={{ fontFamily: "Syne, sans-serif" }}>5.0 Rating</span>
+                                </div>
+                                <p className="text-stone text-[0.55rem] uppercase tracking-[0.15em] mb-1 benefit-rating-text" style={{ fontFamily: "Syne, sans-serif", fontWeight: 500 }}>
+                                    100,000+ Happy Customers and Counting
+                                </p>
+                                <p className="text-charcoal text-[0.65rem] uppercase tracking-[0.2em] font-bold benefit-rating-title" style={{ fontFamily: "Syne, sans-serif" }}>
+                                    Powered by <span className="text-sick-red font-black">Science</span>. Driven by <span className="text-sick-red font-black">Attraction</span>.
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>

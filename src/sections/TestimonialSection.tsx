@@ -1,102 +1,58 @@
-import { cards } from "../constants/details";
-import { useRef, useState, useCallback, useEffect } from "react";
-import { useGSAP } from "@gsap/react";
-import gsap from "gsap/all";
+import { useRef, useEffect, useState } from "react";
 import { useMediaQuery } from "react-responsive";
+import { getVideo } from "../utils/media";
+
+interface Card {
+    src: string;
+    name: string;
+}
+
+const cards: Card[] = [
+    { src: getVideo("f1.mp4"), name: "Marcus V. — Verified Buyer" },
+    { src: getVideo("f2.mp4"), name: "Daniel K. — Verified Buyer" },
+    { src: getVideo("f3.mp4"), name: "Alexander P. — Verified Buyer" },
+    { src: getVideo("f5.mp4"), name: "Leo R. — Verified Buyer" },
+    { src: getVideo("f6.mp4"), name: "Julian M. — Verified Buyer" },
+    { src: getVideo("f7.mp4"), name: "Ethan S. — Verified Buyer" },
+];
 
 const TestimonialSection = () => {
-    const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
-
-    // Refs to multiple video elements
-    const vdRf = useRef<HTMLVideoElement[]>([]);
+    const isMobile = useMediaQuery({ query: "(max-width: 1024px)" });
     const scrollRef = useRef<HTMLDivElement>(null);
-    const [activeCard, setActiveCard] = useState(0);
+    const vdRf = useRef<(HTMLVideoElement | null)[]>([]);
+    const [activeCard, setActiveCard] = useState<number>(0);
 
-    // ── Desktop GSAP scroll animation ──
-    useGSAP(() => {
-        const mm = gsap.matchMedia();
-
-        mm.add("(min-width: 769px)", () => {
-            gsap.set(".testimonials-section", { marginTop: "-100vh" });
-
-            const tesTl = gsap.timeline({
-                scrollTrigger: {
-                    trigger: ".testimonials-section",
-                    start: "top bottom",
-                    end: "500% top",
-                    scrub: 1.5,
-                    pinSpacing: false,
-                }
-            });
-
-            const pinTl = gsap.timeline({
-                scrollTrigger: {
-                    trigger: ".testimonials-section",
-                    start: "10% top",
-                    end: "200% top",
-                    scrub: 1.5,
-                    pin: true,
-                }
-            });
-
-            pinTl.from(".vd-card", {
-                yPercent: 300,
-                stagger: 0.3,
-                ease: "power1.inOut"
-            }, "<");
-
-            tesTl.to(".testimonials-section .ft-anim", {
-                xPercent: 100, yPercent: -100
-            }).to(".testimonials-section .st-anim", {
-                xPercent: 55, yPercent: -100
-            }, "<").to(".testimonials-section .tt-anim", {
-                xPercent: -80, yPercent: -100
-            }, "<");
-        });
-
-        // Mobile: simple entrance animation (no pin, no heavy scrub)
-        mm.add("(max-width: 768px)", () => {
-            gsap.set(".testimonials-section", { marginTop: "-50vh" });
-
-            // Title text animation
-            gsap.from(".testimonials-section .all-title h1", {
-                yPercent: 60,
-                opacity: 0,
-                stagger: 0.15,
-                ease: "power2.out",
-                duration: 0.8,
-                scrollTrigger: {
-                    trigger: ".testimonials-section",
-                    start: "top 80%",
-                },
-            });
-
-            // Cards container entrance
-            gsap.from(".mob-carousel-container", {
-                opacity: 0,
-                y: 60,
-                ease: "power2.out",
-                duration: 0.9,
-                scrollTrigger: {
-                    trigger: ".mob-carousel-container",
-                    start: "top 90%",
-                },
-            });
-        });
-
-        return () => mm.revert();
-    }, []);
-
-    // ── Mobile scroll-snap detection ──
-    const handleScroll = useCallback(() => {
+    // Track active card on mobile scroll
+    useEffect(() => {
+        if (!isMobile) return;
         const container = scrollRef.current;
         if (!container) return;
-        const cardWidth = container.children[0]?.clientWidth ?? 0;
-        if (cardWidth === 0) return;
-        const gap = 16;
-        const idx = Math.round(container.scrollLeft / (cardWidth + gap));
-        setActiveCard(Math.min(idx, cards.length - 1));
-    }, []);
+
+        const handleScroll = () => {
+            const children = Array.from(container.children) as HTMLElement[];
+            if (!children.length) return;
+            const containerLeft = container.scrollLeft;
+            const containerWidth = container.clientWidth;
+            const center = containerLeft + containerWidth / 2;
+
+            let closestIdx = 0;
+            let minDistance = Infinity;
+
+            children.forEach((child, idx) => {
+                const childCenter = child.offsetLeft + child.clientWidth / 2;
+                const distance = Math.abs(center - childCenter);
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    closestIdx = idx;
+                }
+            });
+
+            setActiveCard(closestIdx);
+        };
+
+        container.addEventListener("scroll", handleScroll, { passive: true });
+        return () => container.removeEventListener("scroll", handleScroll);
+    }, [isMobile]);
 
     // Auto-play visible card on mobile
     useEffect(() => {
@@ -107,7 +63,6 @@ const TestimonialSection = () => {
                 video.play().catch(() => {});
             } else {
                 video.pause();
-                video.currentTime = 0;
             }
         });
     }, [activeCard, isMobile]);
@@ -116,7 +71,10 @@ const TestimonialSection = () => {
     useEffect(() => {
         if (isMobile) return;
         vdRf.current.forEach((video) => {
-            if (video) video.play().catch(() => {});
+            if (video) {
+                video.muted = true;
+                video.play().catch(() => {});
+            }
         });
     }, [isMobile]);
 
@@ -130,44 +88,35 @@ const TestimonialSection = () => {
     };
 
     const setVideoRef = (el: HTMLVideoElement | null, index: number): void => {
-        if (el) vdRf.current[index] = el;
+        if (el) {
+            el.muted = true;
+            el.defaultMuted = true;
+            vdRf.current[index] = el;
+            el.play().catch(() => {});
+        }
     };
 
     return (
-        <section className="testimonials-section">
-            <div className="relative w-full lg:h-[130vh] h-auto min-h-[90vh]">
+        <section className="testimonials-section bg-black py-16 px-4 md:px-8">
+            <div className="max-w-7xl mx-auto flex flex-col items-center">
                 {/* Title text */}
-                <div className="all-title lg:h-[150vh] lg:absolute lg:size-full flex flex-col items-center lg:pt-[5vw] pt-[12vw] pb-6 lg:pb-0">
-                    <h1 className="text-charcoal first-title ft-anim">They're</h1>
-                    <h1 className="text-sick-gold sec-title st-anim">All</h1>
-                    <h1 className="text-charcoal third-title tt-anim">Simping</h1>
+                <div className="text-center mb-12">
+                    <span className="text-[0.65rem] md:text-xs uppercase tracking-[0.35em] text-sick-red font-bold block mb-2">
+                        Real Reaction Videos
+                    </span>
+                    <h2
+                        className="text-2xl sm:text-3xl md:text-5xl uppercase tracking-tight text-white font-black"
+                        style={{ fontFamily: "Syne, sans-serif" }}
+                    >
+                        They're All Simping
+                    </h2>
                 </div>
 
-                {/* ═══ DESKTOP: Original fan-out card layout ═══ */}
-                <div className="pin-box hidden md:flex">
-                    {cards.map((card, index) => (
-                        <div
-                            key={index}
-                            className={`vd-card ${card.translation} ${card.rotation}`}
-                        >
-                            <video
-                                ref={(el) => setVideoRef(el, index)}
-                                src={card.src}
-                                playsInline muted loop autoPlay
-                                preload="auto"
-                                className="size-full object-cover"
-                            />
-                        </div>
-                    ))}
-                </div>
-
-                {/* ═══ MOBILE: Horizontal swipe carousel ═══ */}
-                <div className="mob-carousel-container md:hidden flex flex-col items-center gap-5 px-0 pb-6">
-                    {/* Scrollable card track */}
+                {/* Video Cards Grid / Carousel */}
+                <div className="w-full flex flex-col items-center gap-6">
                     <div
                         ref={scrollRef}
-                        onScroll={handleScroll}
-                        className="mob-card-track flex gap-4 overflow-x-auto snap-x snap-mandatory w-full px-6 pb-4"
+                        className="w-full flex items-center gap-4 md:gap-6 overflow-x-auto snap-x snap-mandatory py-4 px-2 no-scrollbar"
                         style={{
                             scrollbarWidth: "none",
                             msOverflowStyle: "none",
@@ -177,25 +126,31 @@ const TestimonialSection = () => {
                         {cards.map((card, index) => (
                             <div
                                 key={index}
-                                className="snap-center shrink-0 rounded-2xl overflow-hidden border border-ivory shadow-lg relative"
+                                className="snap-center shrink-0 rounded-2xl overflow-hidden border border-white/10 shadow-2xl relative bg-zinc-900"
                                 style={{
-                                    width: "75vw",
+                                    width: isMobile ? "75vw" : "280px",
                                     maxWidth: "320px",
                                     aspectRatio: "9/16",
                                 }}
                             >
                                 <video
-                                    ref={(el) => setVideoRef(el, index)}
+                                    key={card.src}
                                     src={card.src}
-                                    playsInline muted loop autoPlay
-                                    preload="metadata"
+                                    ref={(el) => setVideoRef(el, index)}
+                                    playsInline
+                                    muted
+                                    loop
+                                    autoPlay
+                                    preload="auto"
                                     className="w-full h-full object-cover"
-                                />
+                                >
+                                    <source src={card.src} type="video/mp4" />
+                                </video>
                                 {/* Name overlay */}
                                 <div
                                     className="absolute bottom-0 left-0 right-0 p-4"
                                     style={{
-                                        background: "linear-gradient(transparent, rgba(0,0,0,0.6))",
+                                        background: "linear-gradient(transparent, rgba(0,0,0,0.75))",
                                     }}
                                 >
                                     <p
@@ -209,41 +164,30 @@ const TestimonialSection = () => {
                         ))}
                     </div>
 
-                    {/* Dot indicators */}
-                    <div className="flex items-center gap-2">
-                        {cards.map((_, i) => (
-                            <button
-                                key={i}
-                                type="button"
-                                aria-label={`Go to card ${i + 1}`}
-                                onClick={() => scrollToCard(i)}
-                                className="transition-all duration-300"
-                                style={{
-                                    width: i === activeCard ? "24px" : "6px",
-                                    height: "6px",
-                                    borderRadius: "3px",
-                                    backgroundColor: i === activeCard ? "#DC2626" : "rgba(17,17,17,0.15)",
-                                    border: "none",
-                                    padding: 0,
-                                    cursor: "pointer",
-                                }}
-                            />
-                        ))}
-                    </div>
-
-                    {/* Counter */}
-                    <p
-                        className="text-stone text-[0.6rem] uppercase tracking-[0.25em]"
-                        style={{ fontFamily: "Syne, sans-serif", fontWeight: 500 }}
-                    >
-                        {String(activeCard + 1).padStart(2, "0")} / {String(cards.length).padStart(2, "0")}
-                    </p>
+                    {/* Dot indicators for mobile */}
+                    {isMobile && (
+                        <div className="flex items-center gap-2 mt-2">
+                            {cards.map((_, i) => (
+                                <button
+                                    key={i}
+                                    type="button"
+                                    aria-label={`Go to card ${i + 1}`}
+                                    onClick={() => scrollToCard(i)}
+                                    className="transition-all duration-300"
+                                    style={{
+                                        width: i === activeCard ? "24px" : "6px",
+                                        height: "6px",
+                                        borderRadius: "3px",
+                                        backgroundColor: i === activeCard ? "#DC2626" : "rgba(255,255,255,0.2)",
+                                        border: "none",
+                                        padding: 0,
+                                        cursor: "pointer",
+                                    }}
+                                />
+                            ))}
+                        </div>
+                    )}
                 </div>
-            </div>
-
-            {/* CTA button */}
-            <div className="md:absolute md:bottom-20 w-full h-auto py-6 md:py-2 flex justify-center items-center z-100">
-                <button type="button" className="sick-btn-filled px-10 py-4 rounded-4xl">SEE MORE REACTIONS</button>
             </div>
         </section>
     );

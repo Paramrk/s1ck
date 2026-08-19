@@ -4,6 +4,24 @@ import { getImage } from "./media";
 const SHOPIFY_DOMAIN = import.meta.env.VITE_SHOPIFY_STORE_DOMAIN || "";
 const SHOPIFY_TOKEN = import.meta.env.VITE_SHOPIFY_STOREFRONT_ACCESS_TOKEN || "";
 
+/**
+ * Get product URL: returns /products/:handle when running on Shopify live theme, or /product/:handle locally
+ */
+export function getProductUrl(handleOrName: string): string {
+    if (!handleOrName) return "/collections/all";
+    const handle = handleOrName
+        .toLowerCase()
+        .replace(/[èéêë]/g, "e")
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/(^-|-$)/g, "");
+
+    if (typeof window !== 'undefined' && ((window as any).__SHOPIFY_ASSET_BASE_URL__ || (window as any).__SHOPIFY_FILE_BASE_URL__)) {
+        return `/products/${handle}`;
+    }
+
+    return `/product/${handle}`;
+}
+
 export async function shopifyQuery(query: string, variables = {}) {
     if (!SHOPIFY_DOMAIN || !SHOPIFY_TOKEN) {
         console.error("Shopify domain or token is missing from environment variables.");
@@ -38,7 +56,7 @@ export async function shopifyQuery(query: string, variables = {}) {
 export async function getProducts() {
     const query = `
       query getProducts {
-        products(first: 20) {
+        products(first: 50) {
           nodes {
             id
             title
@@ -55,6 +73,18 @@ export async function getProducts() {
                 amount
                 currencyCode
               }
+            }
+            metafields(identifiers: [
+              {namespace: "reviews", key: "rating"},
+              {namespace: "reviews", key: "rating_count"},
+              {namespace: "reviews", key: "list"},
+              {namespace: "custom", key: "reviews"},
+              {namespace: "custom", key: "units_sold"}
+            ]) {
+              namespace
+              key
+              value
+              type
             }
           }
         }
@@ -89,11 +119,98 @@ export async function getProductByHandle(handle: string) {
               availableForSale
             }
           }
+          metafields(identifiers: [
+            {namespace: "reviews", key: "rating"},
+            {namespace: "reviews", key: "rating_count"},
+            {namespace: "reviews", key: "list"},
+            {namespace: "custom", key: "reviews"}
+          ]) {
+            namespace
+            key
+            value
+            type
+          }
         }
       }
     `;
     const data = await shopifyQuery(query, { handle });
-    return data?.product || null;
+    if (data?.product) {
+        return data.product;
+    }
+
+    // Attempt matching handle from all Shopify products list if handle is truncated (e.g. 'arcane' vs 'arcane-pheromone-cologne-for-men')
+    const normalizedHandle = handle.toLowerCase();
+    const allShopifyProducts = await getProducts();
+    const matchedShopify = allShopifyProducts.find((p: any) => {
+        const h = (p.handle || "").toLowerCase();
+        return h === normalizedHandle || h.includes(normalizedHandle) || normalizedHandle.includes(h);
+    });
+
+    if (matchedShopify) {
+        // Fetch full product by matched handle
+        if (matchedShopify.handle !== handle) {
+            const matchedData = await shopifyQuery(query, { handle: matchedShopify.handle });
+            if (matchedData?.product) return matchedData.product;
+        }
+        return matchedShopify;
+    }
+
+    // Local fallback for static/offline data or unlinked handles
+    const localProduct = flavorlists.find((f) => {
+        const norm = f.name
+            .toLowerCase()
+            .replace(/[èéêë]/g, "e")
+            .replace(/[^a-z0-9]/g, "-")
+            .replace(/-+/g, "-");
+        return norm === normalizedHandle || normalizedHandle.includes(norm) || norm.includes(normalizedHandle);
+    });
+
+    if (localProduct) {
+        const isArcane = localProduct.name.toLowerCase() === "arcane";
+        const displayTitle = isArcane ? "ARCANE — Pheromone Eau de Parfum" : localProduct.name;
+        const mainImg = localProduct.drinkImage ? getImage(localProduct.drinkImage) : "";
+        const elementsImg = localProduct.elementsImage ? getImage(localProduct.elementsImage) : "";
+        const bgImg = localProduct.bgImage ? getImage(localProduct.bgImage) : "";
+
+        return {
+            id: `local-${localProduct.name.toLowerCase()}`,
+            title: displayTitle,
+            handle: handle,
+            description: localProduct.description,
+            tagline: localProduct.tagline,
+            topNotes: localProduct.topNotes,
+            midNotes: localProduct.midNotes,
+            baseNotes: localProduct.baseNotes,
+            tone: localProduct.tone,
+            accentColor: localProduct.accentColor,
+            accentGlow: localProduct.accentGlow,
+            images: {
+                nodes: [
+                    ...(mainImg ? [{ url: mainImg, altText: displayTitle }] : []),
+                    ...(elementsImg ? [{ url: elementsImg, altText: `${displayTitle} Notes` }] : []),
+                    ...(bgImg ? [{ url: bgImg, altText: `${displayTitle} Mood` }] : []),
+                ]
+            },
+            variants: {
+                nodes: [
+                    {
+                        id: `var-${localProduct.name.toLowerCase()}-60ml`,
+                        title: "60ml — Full Bottle",
+                        price: { amount: "100.00", currencyCode: "USD" },
+                        availableForSale: true
+                    },
+                    {
+                        id: `var-${localProduct.name.toLowerCase()}-10ml`,
+                        title: "10ml — Trial Size (310+ sprays)",
+                        price: { amount: "35.00", currencyCode: "USD" },
+                        availableForSale: true
+                    }
+                ]
+            }
+        };
+    }
+
+    return null;
 }
 export async function getProductsByCollection(handle: string) {
     const query = `

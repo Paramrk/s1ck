@@ -5,8 +5,8 @@ import { ScrollTrigger, SplitText } from "gsap/all";
 import { getImage } from "../utils/media";
 import { useRef } from "react";
 
-const poweredByPheromoneMobile = getImage("powered by pheromone image - Mobile.png");
-const poweredByPheromonePc = getImage("powered by pheromone image - PC.png");
+const poweredByPheromoneMobile = getImage("powered-by-pheromone-mobile.webp");
+const poweredByPheromonePc = getImage("powered-by-pheromone-desktop.webp");
 
 gsap.registerPlugin(ScrollTrigger, SplitText);
 
@@ -71,14 +71,14 @@ const SplashSVG = ({ className = "" }: { className?: string }) => (
         <ellipse cx="300" cy="230" rx="240" ry="120" fill="url(#splash-core)" />
         {/* radiating droplets */}
         <g fill="url(#splash-droplet)">
-            <ellipse cx="80"  cy="180" rx="22" ry="14" />
-            <ellipse cx="120" cy="120" rx="14" ry="9"  />
-            <ellipse cx="200" cy="60"  rx="18" ry="11" />
-            <ellipse cx="300" cy="40"  rx="12" ry="8"  />
-            <ellipse cx="400" cy="70"  rx="20" ry="13" />
+            <ellipse cx="80" cy="180" rx="22" ry="14" />
+            <ellipse cx="120" cy="120" rx="14" ry="9" />
+            <ellipse cx="200" cy="60" rx="18" ry="11" />
+            <ellipse cx="300" cy="40" rx="12" ry="8" />
+            <ellipse cx="400" cy="70" rx="20" ry="13" />
             <ellipse cx="490" cy="130" rx="15" ry="10" />
             <ellipse cx="540" cy="190" rx="24" ry="15" />
-            <ellipse cx="60"  cy="260" rx="16" ry="10" />
+            <ellipse cx="60" cy="260" rx="16" ry="10" />
             <ellipse cx="540" cy="280" rx="18" ry="11" />
         </g>
         {/* fine spray dots */}
@@ -126,7 +126,6 @@ const NutritionSection = ({ showMockup = false }: { showMockup?: boolean }) => {
                 });
 
                 // Subtle parallax on the headline CLIP wrappers — desktop only
-                // (scrub-based parallax on mobile adds per-frame overhead)
                 if (!mobile) {
                     gsap.utils.toArray<HTMLElement>(".nut-headline-clip").forEach((clip, idx) => {
                         gsap.to(clip, {
@@ -157,7 +156,8 @@ const NutritionSection = ({ showMockup = false }: { showMockup?: boolean }) => {
                 });
 
                 gsap.to(".nut-shop", {
-                    opacity: 1, y: 0,
+                    opacity: 1,
+                    y: 0,
                     duration: 0.7,
                     ease: "power2.out",
                     scrollTrigger: {
@@ -168,7 +168,10 @@ const NutritionSection = ({ showMockup = false }: { showMockup?: boolean }) => {
 
                 // ── 2. Red ribbon ────────────────────────────────────────────
                 gsap.to(".nut-ribbon", {
-                    x: 0, rotate: -2, opacity: 1, scale: 1,
+                    x: 0,
+                    rotate: -2,
+                    opacity: 1,
+                    scale: 1,
                     duration: 0.9,
                     ease: "back.out(1.6)",
                     scrollTrigger: {
@@ -179,7 +182,8 @@ const NutritionSection = ({ showMockup = false }: { showMockup?: boolean }) => {
 
                 // ── 3. Feature icons stagger left-to-right ───────────────────
                 gsap.to(".nut-feature", {
-                    opacity: 1, y: 0,
+                    opacity: 1,
+                    y: 0,
                     stagger: 0.12,
                     duration: 0.7,
                     ease: "power3.out",
@@ -191,7 +195,9 @@ const NutritionSection = ({ showMockup = false }: { showMockup?: boolean }) => {
 
                 // ── 4. Bottle entrance ───────────────────────────────────────
                 gsap.to(".nut-bottle", {
-                    opacity: 1, yPercent: 0, scale: 1,
+                    opacity: 1,
+                    yPercent: 0,
+                    scale: 1,
                     stagger: 0.08,
                     duration: 0.9,
                     ease: "power3.out",
@@ -202,7 +208,8 @@ const NutritionSection = ({ showMockup = false }: { showMockup?: boolean }) => {
                 });
 
                 gsap.to(".nut-splash", {
-                    opacity: 1, scale: 1,
+                    opacity: 1,
+                    scale: 1,
                     stagger: 0.06,
                     duration: 1.1,
                     ease: "power2.out",
@@ -214,7 +221,9 @@ const NutritionSection = ({ showMockup = false }: { showMockup?: boolean }) => {
 
                 // ── 4b. Mockup entrance ──────────────────────────────────────
                 gsap.to(".nut-mockup-img", {
-                    opacity: 1, yPercent: 0, scale: 1,
+                    opacity: 1,
+                    yPercent: 0,
+                    scale: 1,
                     duration: 1.1,
                     ease: "power3.out",
                     scrollTrigger: {
@@ -224,8 +233,6 @@ const NutritionSection = ({ showMockup = false }: { showMockup?: boolean }) => {
                 });
 
                 // ── Desktop-only continuous animations ───────────────────────
-                // These run infinitely (repeat: -1) and eat GPU even when
-                // off-screen. Skip entirely on mobile.
                 if (!mobile) {
                     // 4c. Continuous float on mockup image
                     gsap.to(".nut-mockup-img", {
@@ -294,7 +301,8 @@ const NutritionSection = ({ showMockup = false }: { showMockup?: boolean }) => {
 
                 // ── 9. Compound bar slide-up ─────────────────────────────────
                 gsap.to(".nut-compound", {
-                    opacity: 1, y: 0,
+                    opacity: 1,
+                    y: 0,
                     stagger: 0.06,
                     duration: 0.7,
                     ease: "power3.out",
@@ -382,38 +390,45 @@ const NutritionSection = ({ showMockup = false }: { showMockup?: boolean }) => {
                     </div>
 
                     <div className="lg:max-w-xs flex flex-col gap-5 lg:items-end lg:text-right">
-                         <p
-                             className="nut-para text-stone text-sm md:text-[0.95rem] leading-relaxed tracking-[0.02em]"
-                             style={{ fontFamily: "Syne, sans-serif" }}
-                         >
-                             S1CK blends luxury fragrance with advanced pheromone compounds designed to enhance presence, confidence, and attraction.
-                         </p>
-                         <button
-                             type="button"
-                             className="nut-shop self-start lg:self-end hidden md:inline-flex items-center gap-2 border border-charcoal/20 text-charcoal bg-transparent uppercase tracking-[0.25em] text-[0.7rem] md:text-xs font-semibold px-7 md:px-8 py-3 md:py-3.5 rounded-full hover:bg-charcoal hover:text-white transition-colors duration-300"
-                             style={{ fontFamily: "Syne, sans-serif" }}
-                         >
-                             Shop Now
-                         </button>
+                        <p
+                            className="nut-para text-stone text-sm md:text-[0.95rem] leading-relaxed tracking-[0.02em]"
+                            style={{ fontFamily: "Syne, sans-serif" }}
+                        >
+                            S1CK blends luxury fragrance with advanced pheromone compounds designed to enhance presence, confidence, and attraction.
+                        </p>
+                        <button
+                            type="button"
+                            className="nut-shop self-start lg:self-end hidden md:inline-flex items-center gap-2 border border-charcoal/20 text-charcoal bg-transparent uppercase tracking-[0.25em] text-[0.7rem] md:text-xs font-semibold px-7 md:px-8 py-3 md:py-3.5 rounded-full hover:bg-charcoal hover:text-white transition-colors duration-300"
+                            style={{ fontFamily: "Syne, sans-serif" }}
+                        >
+                            Shop Now
+                        </button>
                     </div>
                 </div>
 
-                {/* ── Feature row (4 columns) ───────────────────────────── */}
-                <div className="nut-feature-row mt-10 md:mt-14 grid grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-8 md:gap-x-10">
+                {/* ── Feature row (4 columns with 3D highlight background) ───────────────────── */}
+                <div className="nut-feature-row mt-10 md:mt-14 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
                     {features.map((f) => (
-                        <div key={f.title} className="nut-feature flex items-start gap-3">
-                            <span className="shrink-0 inline-flex items-center justify-center text-sick-red pt-0.5">
-                                <i className={`${f.icon} text-[1.35rem] md:text-[1.5rem]`} aria-hidden="true" />
+                        <div
+                            key={f.title}
+                            className="nut-feature relative flex items-start gap-3.5 p-4 md:p-5 rounded-2xl border border-[#e8e2d8] transition-all duration-300 hover:-translate-y-1"
+                            style={{
+                                background: "linear-gradient(145deg, #ffffff 0%, #faf8f5 55%, #f4efe6 100%)",
+                                boxShadow: "0 12px 28px -6px rgba(35, 25, 15, 0.07), 0 3px 8px rgba(0, 0, 0, 0.03), inset 0 1.5px 0 rgba(255, 255, 255, 1), inset 0 -1px 2px rgba(0, 0, 0, 0.02)",
+                            }}
+                        >
+                            <span className="shrink-0 w-10 h-10 rounded-xl bg-sick-red/10 border border-sick-red/20 inline-flex items-center justify-center text-sick-red shadow-[0_2px_8px_rgba(220,38,38,0.15)]">
+                                <i className={`${f.icon} text-lg md:text-xl`} aria-hidden="true" />
                             </span>
-                            <div>
+                            <div className="flex-1 min-w-0">
                                 <p
-                                    className="text-charcoal text-[0.7rem] md:text-[0.78rem] uppercase tracking-[0.16em] mb-1"
+                                    className="text-charcoal text-[0.72rem] md:text-[0.78rem] uppercase tracking-[0.14em] mb-1"
                                     style={{ fontFamily: "Syne, sans-serif", fontWeight: 700 }}
                                 >
                                     {f.title}
                                 </p>
                                 <p
-                                    className="text-stone text-[0.7rem] md:text-[0.78rem] leading-snug"
+                                    className="text-stone text-[0.7rem] md:text-[0.76rem] leading-snug"
                                     style={{ fontFamily: "Syne, sans-serif" }}
                                 >
                                     {f.body}
@@ -428,6 +443,8 @@ const NutritionSection = ({ showMockup = false }: { showMockup?: boolean }) => {
                     <img
                         src={poweredByPheromoneMobile}
                         alt="Powered by real pheromone science"
+                        width={1440}
+                        height={1800}
                         loading="lazy"
                         decoding="async"
                         draggable={false}
@@ -436,6 +453,8 @@ const NutritionSection = ({ showMockup = false }: { showMockup?: boolean }) => {
                     <img
                         src={poweredByPheromonePc}
                         alt="Powered by real pheromone science"
+                        width={2400}
+                        height={1920}
                         loading="lazy"
                         decoding="async"
                         draggable={false}
@@ -520,7 +539,7 @@ const NutritionSection = ({ showMockup = false }: { showMockup?: boolean }) => {
                     )}
                 </div>
 
-                {/* ── Compound bar ──────────────────────────────────────── */}
+                {/* ── Compound bar (3D Floating Capsule) ────────────────── */}
                 <CompoundBar />
             </div>
         </section>
@@ -534,33 +553,38 @@ const compoundItems: { icon: string; label: string }[] = [
 ];
 
 const CompoundBar = () => (
-    <div className="nut-compound-bar relative mt-2 md:mt-6">
+    <div className="nut-compound-bar relative mt-4 md:mt-8">
         <div
-            className="bg-warm-white border border-ivory rounded-2xl md:rounded-full px-3 md:px-6 py-4 md:py-5 flex flex-wrap md:flex-nowrap items-center justify-center md:justify-between gap-x-4 gap-y-3"
-            style={{ boxShadow: "0 8px 30px rgba(28,26,24,0.06)" }}
+            className="border border-[#e8e2d8] rounded-3xl md:rounded-full px-4 md:px-7 py-4 md:py-5 flex flex-wrap md:flex-nowrap items-center justify-center md:justify-between gap-x-4 gap-y-3.5 transition-all duration-300"
+            style={{
+                background: "linear-gradient(180deg, #ffffff 0%, #faf8f5 55%, #f3eee4 100%)",
+                boxShadow: "0 18px 42px -8px rgba(35, 25, 15, 0.1), 0 4px 12px rgba(0, 0, 0, 0.04), inset 0 1.5px 0 rgba(255, 255, 255, 1), inset 0 -2px 4px rgba(0, 0, 0, 0.02)",
+            }}
         >
             {compoundItems.map((c, i) => (
-                <div key={c.label} className="flex items-center justify-center w-[45%] md:w-auto md:flex-1">
+                <div key={c.label} className="flex items-center justify-center w-[46%] sm:w-[30%] md:w-auto md:flex-1">
                     <div className="nut-compound flex items-center gap-2 md:gap-2.5 justify-center md:px-2">
-                        <i
-                            className={`${c.icon} text-sick-red text-base md:text-lg shrink-0`}
-                            aria-hidden="true"
-                        />
+                        <span className="shrink-0 w-7 h-7 rounded-full bg-sick-red/10 border border-sick-red/20 inline-flex items-center justify-center text-sick-red shadow-[0_1px_4px_rgba(220,38,38,0.12)]">
+                            <i
+                                className={`${c.icon} text-xs md:text-sm shrink-0`}
+                                aria-hidden="true"
+                            />
+                        </span>
                         <p
-                            className="text-charcoal text-[0.55rem] md:text-[0.62rem] uppercase tracking-[0.18em] text-center"
+                            className="text-charcoal text-[0.56rem] md:text-[0.62rem] uppercase tracking-[0.16em] text-center"
                             style={{ fontFamily: "Syne, sans-serif", fontWeight: 700 }}
                         >
                             {c.label}
                         </p>
                     </div>
                     {i < compoundItems.length - 1 && (
-                        <span className="hidden md:block w-px h-6 bg-ivory" />
+                        <span className="hidden md:block w-px h-6 bg-[#ded7cb] ml-auto" />
                     )}
                 </div>
             ))}
         </div>
         <p
-            className="text-center text-stone text-[0.65rem] md:text-[0.75rem] mt-3 md:mt-4 tracking-[0.04em]"
+            className="text-center text-stone text-[0.66rem] md:text-[0.76rem] mt-3 md:mt-4 tracking-[0.04em]"
             style={{ fontFamily: "Syne, sans-serif" }}
         >
             Advanced pheromone compounds selected for presence, attraction, and confidence.

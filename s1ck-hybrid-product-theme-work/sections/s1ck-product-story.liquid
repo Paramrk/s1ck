@@ -1,0 +1,80 @@
+{{ 's1ck-product-mockup.css' | asset_url | stylesheet_tag }}
+
+{% assign product_name = product.title | default: 'Liquid Silver' %}
+
+<div class="s1ck-product-story" data-s1ck-product-story>
+  <section class="s1ck-product-section s1ck-product-problem" aria-labelledby="s1ck-problem-title-{{ section.id }}">
+    <div class="s1ck-product-section__content">
+      <header class="s1ck-product-section__heading">
+        <p>Most colognes fail you.</p>
+        <h2 id="s1ck-problem-title-{{ section.id }}">{{ product_name }} doesn't.</h2>
+      </header>
+      <div class="s1ck-problem-grid">
+        <div class="s1ck-problem-list" role="list" aria-label="Common fragrance problems">
+          <div role="listitem"><span class="s1ck-bottle-icon">×</span><b>Smells good</b><small>for an hour</small></div>
+          <div role="listitem"><span class="s1ck-bottle-icon">×</span><b>Fades &amp; disappears</b><small>before the night starts</small></div>
+          <div role="listitem"><span class="s1ck-bottle-icon">×</span><b>Blends into</b><small>the crowd</small></div>
+          <div role="listitem"><span class="s1ck-bottle-icon">×</span><b>Gets forgotten</b><small>too quickly</small></div>
+        </div>
+        <div class="s1ck-vs-badge" aria-hidden="true">VS</div>
+        <div class="s1ck-problem-answer">
+          {% if product.featured_image != blank %}
+            {{ product.featured_image | image_url: width: 520 | image_tag: loading: 'lazy', widths: '220, 320, 420, 520', alt: product_name }}
+          {% endif %}
+          <ul>
+            <li>Signature scent</li>
+            <li>Memorable</li>
+            <li>Gets compliments</li>
+            <li>Stands out</li>
+            <li>Unforgettable</li>
+            <li>Wherever you go</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="s1ck-product-section s1ck-product-benefits" aria-labelledby="s1ck-benefits-title-{{ section.id }}">
+    <div class="s1ck-product-section__content">
+      <h2 id="s1ck-benefits-title-{{ section.id }}">Why men choose {{ product_name }}</h2>
+      <div class="s1ck-benefit-grid">
+        <article><span>01</span><b>48mg premium pheromone blend</b><p>Engineered for real human attraction.</p></article>
+        <article><span>02</span><b>92% premium raw materials</b><p>Higher quality. Better performance.</p></article>
+        <article><span>03</span><b>8+ hour performance</b><p>Long-lasting on skin and clothes.</p></article>
+        <article><span>04</span><b>310+ sprays per bottle</b><p>More sprays. More value.</p></article>
+        <article><span>05</span><b>Inspired by legendary scents</b><p>Modern performance with iconic DNA.</p></article>
+        <article><span>06</span><b>Proudly made in USA</b><p>Crafted with premium standards.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="s1ck-product-section s1ck-scent-journey" aria-labelledby="s1ck-scent-title-{{ section.id }}">
+    <div class="s1ck-product-section__content">
+      <h2 id="s1ck-scent-title-{{ section.id }}" class="s1ck-visually-hidden">Scent journey</h2>
+      <div class="s1ck-scent-stages">
+        <article>
+          <header><b>First impression</b><small>0–10 minutes</small></header>
+          <div><span><i style="--note-color:#d7a72d"></i><small>Pineapple</small></span><span><i style="--note-color:#80a85a"></i><small>Apple</small></span><span><i style="--note-color:#dccd57"></i><small>Bergamot</small></span><span><i style="--note-color:#526b45"></i><small>Juniper berries</small></span></div>
+        </article>
+        <article>
+          <header><b>Heart notes</b><small>10–60 minutes</small></header>
+          <div><span><i style="--note-color:#f0e7c2"></i><small>Jasmine</small></span><span><i style="--note-color:#55704f"></i><small>Patchouli</small></span><span><i style="--note-color:#c8c1b2"></i><small>Molecule 01</small></span></div>
+        </article>
+        <article>
+          <header><b>The drydown</b><small>60 minutes+</small></header>
+          <div><span><i style="--note-color:#e8e5dc"></i><small>Musk</small></span><span><i style="--note-color:#c99748"></i><small>Ambergris</small></span><span><i style="--note-color:#d9bd84"></i><small>Vanilla</small></span><span><i style="--note-color:#71523d"></i><small>Woody notes</small></span></div>
+        </article>
+      </div>
+    </div>
+  </section>
+</div>
+
+{% schema %}
+{
+  "name": "S1CK product story",
+  "tag": "section",
+  "class": "s1ck-product-story-section",
+  "settings": [],
+  "presets": [{ "name": "S1CK product story" }]
+}
+{% endschema %}

@@ -1,10 +1,4 @@
-//Video Path
-import f1 from "../assets/videos/f1.mp4"
-import f2 from "../assets/videos/f2.mp4"
-import f3 from "../assets/videos/f3.mp4"
-import f5 from "../assets/videos/f5.mp4"
-import f6 from "../assets/videos/f6.mp4"
-import f7 from "../assets/videos/f7.mp4"
+import { getVideo } from "../utils/media";
 
 // Define types
 interface Flavor {
@@ -130,12 +124,12 @@ const flavorlists: Flavor[] = [
         bgImage: "arc-bg.webp",
         drinkImage: "arc.webp",
         elementsImage: "arc-elements.webp",
-        tagline: "Into The Darkness",
-        description: "Mysterious. Magnetic. Midnight incarnate. A scent that speaks in whispers.",
-        topNotes: ["Black Truffle", "Incense", "Absinthe"],
-        midNotes: ["Dark Rose", "Labdanum", "Myrrh"],
-        baseNotes: ["Black Amber", "Oud Noir", "Suede"],
-        tone: "Dark & Mysterious",
+        tagline: "Dark. Luxurious. Addictive.",
+        description: "A dark gourmand pheromone blend — sweet seduction cut with magnetic freshness. Infused with 48mg of human-grade pheromones, it pulls people closer before you've said a word. Sweet yet dark. Fresh yet dangerously smooth. Arcane doesn't ask for attention — it commands it.",
+        topNotes: ["Sparkling Peach", "Tea", "Coconut", "Bergamot", "Saffron"],
+        midNotes: ["Ambergris", "Jasmine", "Iris", "Hedione"],
+        baseNotes: ["Caramel", "Vanilla", "Cedar", "Ambroxan", "Tonka Bean", "Musk", "Iso E Super"],
+        tone: "Dark Gourmand Pheromone",
         accentColor: "#8B7AE8",
         accentGlow: "rgba(139,122,232,0.35)",
     },
@@ -153,40 +147,40 @@ const nutrientLists: Nutrient[] = [
 // Cards list
 const cards: Card[] = [
     {
-        src: f1,
+        src: getVideo("f1.mp4"),
         rotation: "rotate-z-[-10deg]",
         name: "Madison",
         img: "../assets/images/p1.png",
         translation: "translate-y-[-5%]",
     },
     {
-        src: f2,
+        src: getVideo("f2.mp4"),
         rotation: "rotate-z-[4deg]",
         name: "Alexander",
         img: "../assets/images/p2.png",
     },
     {
-        src: f3,
+        src: getVideo("f3.mp4"),
         rotation: "rotate-z-[-4deg]",
         name: "Andrew",
         img: "../assets/images/p3.png",
         translation: "translate-y-[-5%]",
     },
     {
-        src: f5,
+        src: getVideo("f5.mp4"),
         rotation: "rotate-z-[-10deg]",
         name: "Chris",
         img: "../assets/images/p5.png",
     },
     {
-        src: f6,
+        src: getVideo("f6.mp4"),
         rotation: "rotate-z-[4deg]",
         name: "Devante",
         img: "../assets/images/p6.png",
         translation: "translate-y-[5%]",
     },
     {
-        src: f7,
+        src: getVideo("f7.mp4"),
         rotation: "rotate-z-[-3deg]",
         name: "Melisa",
         img: "../assets/images/p7.png",

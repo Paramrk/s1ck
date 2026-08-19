@@ -3,14 +3,14 @@ import gsap from "gsap";
 import { useMediaQuery } from "react-responsive";
 import { getImage, getVideo } from "../utils/media";
 
-const heroBgVid = getVideo("hero-bg-3.mp4");
-const heroMobileVid = getVideo("hero-mobile.mp4");
-const heroPoster = getImage("herobg.webp");
-
 const HeroSection = () => {
     const isTabHero = useMediaQuery({
         query: "(max-width:1024px)",
     });
+
+    const heroBgVid = getVideo("hero-bg-3.mp4");
+    const heroMobileVid = getVideo("hero-mobile.mp4");
+    const heroPoster = getImage("herobg.webp");
 
     useGSAP(() => {
         const mm = gsap.matchMedia();
@@ -18,14 +18,21 @@ const HeroSection = () => {
         const buildIntro = (isMobile: boolean) => {
             const tl = gsap.timeline({ delay: 0.12 });
 
-            tl.to(".hero-content", {
-                opacity: 1,
+            // Keep the hero readable in the base render. Animation can enhance
+            // it, but interrupted hydration/StrictMode cleanup must never leave
+            // the headline at opacity: 0.
+            tl.fromTo(".hero-content", {
+                y: 12,
+            }, {
                 y: 0,
                 duration: 0.55,
                 ease: "power2.out",
             })
-                .to(
+                .fromTo(
                     ".hero-text-scroll",
+                    {
+                        clipPath: "polygon(50% 0%,50% 0%,50% 100%,50% 100%)",
+                    },
                     {
                         duration: isMobile ? 0.55 : 0.75,
                         clipPath: "polygon(0% 0%,100% 0%,100% 100%, 0% 100%)",
@@ -37,7 +44,6 @@ const HeroSection = () => {
                     ".hero-title",
                     {
                         y: 20,
-                        opacity: 0,
                         duration: 0.6,
                         ease: "power2.out",
                     },
@@ -49,11 +55,11 @@ const HeroSection = () => {
                     ".hero-button",
                     {
                         opacity: 0,
-                        y: 12,
+                        scale: 0.9,
                         duration: 0.45,
-                        ease: "power2.out",
+                        ease: "back.out(1.5)",
                     },
-                    "-=0.25",
+                    "-=0.3",
                 );
             }
 
@@ -93,34 +99,75 @@ const HeroSection = () => {
             <div className="hero-container max-md:bg-parchment">
                 <div className="hero-media-layer" aria-hidden>
                     {isTabHero ? (
-                        <video
-                            src={heroMobileVid}
-                            autoPlay
-                            loop
-                            playsInline
-                            muted
-                            preload="metadata"
-                            className="absolute inset-0 h-full w-full object-cover object-bottom"
-                        />
-                    ) : (
                         <>
+                            <img
+                                src={heroPoster}
+                                alt=""
+                                className="absolute inset-0 h-full w-full object-cover object-bottom"
+                                decoding="async"
+                            />
                             <video
-                                src={heroBgVid}
+                                key={heroMobileVid}
+                                src={heroMobileVid}
+                                ref={(el) => {
+                                    if (el) {
+                                        el.muted = true;
+                                        el.defaultMuted = true;
+                                        el.play().catch(() => {});
+                                    }
+                                }}
+                                onError={(event) => {
+                                    event.currentTarget.style.display = "none";
+                                }}
                                 poster={heroPoster}
                                 autoPlay
                                 loop
                                 playsInline
                                 muted
-                                preload="metadata"
+                                preload="auto"
+                                className="absolute inset-0 h-full w-full object-cover object-bottom"
+                            >
+                                <source src={heroMobileVid} type="video/mp4" />
+                            </video>
+                        </>
+                    ) : (
+                        <>
+                            <img
+                                src={heroPoster}
+                                alt=""
                                 className="absolute inset-0 w-full h-full object-cover"
+                                decoding="async"
                             />
+                            <video
+                                key={heroBgVid}
+                                src={heroBgVid}
+                                ref={(el) => {
+                                    if (el) {
+                                        el.muted = true;
+                                        el.defaultMuted = true;
+                                        el.play().catch(() => {});
+                                    }
+                                }}
+                                onError={(event) => {
+                                    event.currentTarget.style.display = "none";
+                                }}
+                                poster={heroPoster}
+                                autoPlay
+                                loop
+                                playsInline
+                                muted
+                                preload="auto"
+                                className="absolute inset-0 w-full h-full object-cover"
+                            >
+                                <source src={heroBgVid} type="video/mp4" />
+                            </video>
                             <div className="absolute inset-0 bg-black/45" />
                         </>
                     )}
                 </div>
 
                 <div className="hero-scroll-layer">
-                    <div className="hero-content opacity-0">
+                    <div className="hero-content">
                         <div className="hero-emblem flex items-center justify-center gap-4 md:gap-8 mb-4 md:mb-8 w-full max-w-[17rem] sm:max-w-[22rem] md:max-w-[44rem] lg:max-w-[52rem] px-4 mx-auto">
                             <span className={`h-px flex-1 ${lineTheme}`} />
                             <img

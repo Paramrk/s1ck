@@ -1,397 +1,537 @@
+import { useEffect, useRef, useState } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { ScrollSmoother } from "gsap/all";
+import { ScrollSmoother } from "gsap/ScrollSmoother";
 import { useMediaQuery } from "react-responsive";
-import { useRef, Fragment } from "react";
-import { visibleFlavorlists } from "../constants/visibleFlavors";
-import { asSeenOnLogos } from "../constants/asSeenOn";
-import FlavorTitle from "../components/FlavorTitle";
-import FlavorSlider from "../components/FlavorSlider";
 import { getProductCarouselTiming } from "../utils/productCarouselScroll";
+import { getProductUrl, getProducts } from "../utils/shopify";
+import BestsellerFrameSequence, {
+    type BestsellerFrameSequenceHandle,
+} from "../components/BestsellerFrameSequence";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const FlavorSection = () => {
-    const sectionRef = useRef<HTMLElement | null>(null);
+/**
+ * Product landing frames in the original bestseller motion, expressed as
+ * seconds. The generated image sequence preserves these exact transitions.
+ */
+const PRODUCT_VIDEO_CUES = [
+    {
+        name: "Le Toxique",
+        time: 1.523,
+        handle: "le-toxique",
+        fallbackPrice: "$164.00",
+        badge: "Iconic bestseller",
+        type: "Masculine pheromone cologne",
+        concentration: "Eau de Parfum · 48mg blend",
+        profile: "Warm · Seductive · Powerful",
+        notes: ["Mandarin", "Bergamot", "Ambergris"],
+        accent: "#dc2626",
+    },
+    {
+        name: "Liquid Silver",
+        time: 3.835,
+        handle: "liquid-silver",
+        fallbackPrice: "$128.00",
+        badge: "Signature bestseller",
+        type: "Premium pheromone fragrance",
+        concentration: "Eau de Parfum · 8hr wear",
+        profile: "Fresh · Fruity · Woody",
+        notes: ["Pineapple", "Bergamot", "Musk"],
+        accent: "#64748b",
+    },
+    {
+        name: "Alpha Q",
+        time: 5.960,
+        handle: "pheromone-cologne",
+        fallbackPrice: "$52.98",
+        badge: "High-status formula",
+        type: "Men's pheromone cologne spray",
+        concentration: "Scented or unscented",
+        profile: "Citrusy · Woody · Bold",
+        notes: ["Citrus", "Woods", "Musk"],
+        accent: "#2563eb",
+    },
+    {
+        name: "Avant Garde",
+        time: 7.148,
+        handle: "new-pre-order-avant-garde-for-men-regular-size-2oz-release-date-6-12",
+        fallbackPrice: "$54.98",
+        badge: "Cutting-edge attraction",
+        type: "Premium pheromone cologne",
+        concentration: "Scented or unscented",
+        profile: "Fresh · Citrusy · Magnetic",
+        notes: ["Grapefruit", "Lemon", "Vetiver"],
+        accent: "#d97706",
+    },
+    {
+        name: "Le Toxique For Her",
+        time: 10.751,
+        handle: "le-toxique-w",
+        fallbackPrice: "$158.00",
+        badge: "For her",
+        type: "Feminine pheromone perfume",
+        concentration: "Eau de Parfum",
+        profile: "Floral · Magnetic · Sensual",
+        notes: ["Rose", "Jasmine", "Warm Musk"],
+        accent: "#db2777",
+    },
+] as const;
 
-    const isMob = useMediaQuery({ query: "(max-width: 768px)" });
+const PRODUCT_COUNT = PRODUCT_VIDEO_CUES.length;
+const VIDEO_START_TIME = 0;
+const PRODUCT_VIDEO_CUE_TIMES = PRODUCT_VIDEO_CUES.map((cue) => cue.time);
+const MOBILE_PRODUCT_VIDEO_CUE_TIMES = PRODUCT_VIDEO_CUES.map((cue) =>
+    cue.name === "Avant Garde" ? 8.087 : cue.time,
+);
+
+type ProductCue = (typeof PRODUCT_VIDEO_CUES)[number];
+
+type ShopifyProductSummary = {
+    id?: string;
+    title?: string;
+    handle?: string;
+    priceRange?: {
+        minVariantPrice?: {
+            amount?: string;
+            currencyCode?: string;
+        };
+    };
+    metafields?: Array<{
+        namespace?: string;
+        key?: string;
+        value?: string;
+    } | null>;
+};
+
+const getMetafieldValue = (product: ShopifyProductSummary | undefined, key: string) =>
+    product?.metafields?.find((field) => field?.key === key)?.value;
+
+const formatShopifyPrice = (product: ShopifyProductSummary | undefined, fallback: string) => {
+    const money = product?.priceRange?.minVariantPrice;
+    const amount = Number(money?.amount);
+    if (!money?.currencyCode || !Number.isFinite(amount)) return fallback;
+
+    try {
+        return new Intl.NumberFormat("en-US", {
+            style: "currency",
+            currency: money.currencyCode,
+            minimumFractionDigits: 2,
+        }).format(amount);
+    } catch {
+        return `${money.currencyCode} ${amount.toFixed(2)}`;
+    }
+};
+
+const getRating = (product: ShopifyProductSummary | undefined) => {
+    const raw = getMetafieldValue(product, "rating");
+    if (!raw) return null;
+
+    try {
+        const parsed = JSON.parse(raw);
+        const value = Number(parsed?.value ?? parsed?.rating);
+        return Number.isFinite(value) ? value : null;
+    } catch {
+        const value = Number(raw);
+        return Number.isFinite(value) ? value : null;
+    }
+};
+
+const ProductSpotlightCard = ({
+    cue,
+    index,
+    product,
+}: {
+    cue: ProductCue;
+    index: number;
+    product?: ShopifyProductSummary;
+}) => {
+    const rating = getRating(product);
+    const ratingCount = Number(getMetafieldValue(product, "rating_count"));
+    const unitsSold = Number(getMetafieldValue(product, "units_sold"));
+    const price = formatShopifyPrice(product, cue.fallbackPrice);
+    const productHandle = product?.handle || cue.handle;
+
+    const proof = Number.isFinite(unitsSold) && unitsSold > 0
+        ? `${unitsSold.toLocaleString("en-US")}+ sold`
+        : Number.isFinite(ratingCount) && ratingCount > 0
+            ? `${ratingCount.toLocaleString("en-US")} verified customers`
+            : "Customer favorite";
+
+    return (
+        <article
+            className={`bestseller-product-card bestseller-product-card-${index} invisible absolute inset-0 z-40 text-charcoal opacity-0`}
+        >
+            <div
+                className="hidden"
+                style={{ borderTop: `3px solid ${cue.accent}` }}
+            >
+                <div className="mb-1.5 flex items-center gap-2">
+                    <span
+                        className="h-2 w-2 shrink-0 rounded-full shadow-[0_0_12px_currentColor]"
+                        style={{ backgroundColor: cue.accent, color: cue.accent }}
+                    />
+                    <span className="text-[0.48rem] font-bold uppercase tracking-[0.2em] text-charcoal/55 md:text-[0.58rem]">
+                        {cue.badge}
+                    </span>
+                </div>
+                <h3 className="text-base font-black uppercase leading-none tracking-[-0.02em] md:text-2xl">
+                    {cue.name}
+                </h3>
+            </div>
+
+            <div className="hidden">
+                <p className="text-[0.42rem] uppercase tracking-[0.2em] text-charcoal/45 md:text-[0.52rem]">From</p>
+                <p className="text-base font-black leading-tight md:text-2xl" style={{ color: cue.accent }}>
+                    {price}
+                </p>
+            </div>
+
+            <div className="hidden">
+                <p className="mb-1 text-[0.42rem] uppercase tracking-[0.18em] text-charcoal/40 md:text-[0.52rem]">Fragrance</p>
+                <p className="text-[0.58rem] font-semibold leading-snug md:text-xs">{cue.type}</p>
+            </div>
+
+            <div className="hidden">
+                <p className="mb-1 text-[0.42rem] uppercase tracking-[0.18em] text-charcoal/40 md:text-[0.52rem]">Profile</p>
+                <p className="text-[0.58rem] font-semibold leading-snug md:text-xs">{cue.profile}</p>
+            </div>
+
+            <div className="hidden">
+                {cue.notes.map((note) => (
+                    <span
+                        key={note}
+                        className="rounded-full border border-white/70 bg-white/90 px-2.5 py-1.5 text-[0.45rem] font-bold uppercase tracking-[0.12em] shadow-[0_8px_24px_rgba(0,0,0,0.16)] backdrop-blur-xl md:px-4 md:py-2 md:text-[0.58rem]"
+                    >
+                        {note}
+                    </span>
+                ))}
+            </div>
+
+            <div className="hidden">
+                <p className="text-[0.5rem] font-bold uppercase tracking-[0.13em] text-charcoal/70 md:text-[0.62rem]">
+                    {proof}
+                </p>
+                <p className="mt-0.5 text-[0.46rem] text-charcoal/45 md:text-[0.56rem]">
+                    {rating ? `${rating.toFixed(1)} ★ verified rating` : cue.concentration}
+                </p>
+            </div>
+
+            <a
+                href={getProductUrl(productHandle)}
+                className="hidden"
+            >
+                Shop now →
+            </a>
+
+            <div
+                className="bestseller-product-panel pointer-events-auto absolute bottom-4 left-4 w-[calc(100%_-_2rem)] max-w-[25rem] rounded-2xl border border-white/65 bg-white/90 p-4 shadow-[0_18px_52px_rgba(0,0,0,0.24)] backdrop-blur-xl sm:bottom-6 sm:left-6 sm:p-5 md:bottom-8 md:left-8"
+                style={{ borderTop: `3px solid ${cue.accent}` }}
+            >
+            <div className="flex items-start justify-between gap-4">
+                <div>
+                    <div className="mb-2 flex items-center gap-2">
+                        <span
+                            className="h-2 w-2 rounded-full shadow-[0_0_12px_currentColor]"
+                            style={{ backgroundColor: cue.accent, color: cue.accent }}
+                        />
+                        <span className="text-[0.55rem] font-bold uppercase tracking-[0.22em] text-charcoal/55">
+                            {cue.badge}
+                        </span>
+                    </div>
+                    <h3 className="text-xl font-black uppercase leading-none tracking-[-0.02em] md:text-2xl">
+                        {cue.name}
+                    </h3>
+                </div>
+                <div className="shrink-0 text-right">
+                    <p className="text-[0.5rem] uppercase tracking-[0.2em] text-charcoal/45">From</p>
+                    <p className="text-lg font-black leading-tight" style={{ color: cue.accent }}>
+                        {price}
+                    </p>
+                </div>
+            </div>
+
+            <div className="mt-3 grid grid-cols-2 gap-2 border-y border-charcoal/10 py-3 text-[0.62rem]">
+                <div>
+                    <p className="mb-0.5 uppercase tracking-[0.18em] text-charcoal/40">Fragrance</p>
+                    <p className="font-semibold leading-snug">{cue.type}</p>
+                </div>
+                <div>
+                    <p className="mb-0.5 uppercase tracking-[0.18em] text-charcoal/40">Profile</p>
+                    <p className="font-semibold leading-snug">{cue.profile}</p>
+                </div>
+            </div>
+
+            <div className="mt-3 flex flex-wrap items-center gap-1.5">
+                {cue.notes.map((note) => (
+                    <span
+                        key={note}
+                        className="rounded-full border border-charcoal/10 bg-white/70 px-2.5 py-1 text-[0.52rem] font-semibold uppercase tracking-[0.12em]"
+                    >
+                        {note}
+                    </span>
+                ))}
+            </div>
+
+            <div className="mt-3 flex items-center justify-between gap-3">
+                <div>
+                    <p className="text-[0.58rem] font-bold uppercase tracking-[0.14em] text-charcoal/65">
+                        {proof}
+                    </p>
+                    <p className="mt-0.5 text-[0.54rem] text-charcoal/45">
+                        {rating ? `${rating.toFixed(1)} ★ verified rating` : cue.concentration}
+                    </p>
+                </div>
+                <a
+                    href={getProductUrl(productHandle)}
+                    className="pointer-events-auto shrink-0 rounded-full bg-charcoal px-4 py-2.5 text-[0.55rem] font-bold uppercase tracking-[0.18em] text-white transition-colors hover:bg-sick-red"
+                >
+                    Shop now →
+                </a>
+            </div>
+            </div>
+        </article>
+    );
+};
+
+const FlavorSection = () => {
+    const sectionRef = useRef<HTMLElement>(null);
+    const sequenceRef = useRef<BestsellerFrameSequenceHandle>(null);
+    const isMob = useMediaQuery({ query: "(max-width:768px)" });
+    const [shopifyProducts, setShopifyProducts] = useState<ShopifyProductSummary[]>([]);
+    const productVideoCueTimes = isMob
+        ? MOBILE_PRODUCT_VIDEO_CUE_TIMES
+        : PRODUCT_VIDEO_CUE_TIMES;
+
+    useEffect(() => {
+        let active = true;
+        getProducts()
+            .then((products) => {
+                if (active && Array.isArray(products)) {
+                    setShopifyProducts(products);
+                }
+            })
+            .catch(() => {
+                // Static cue details remain available when the API is unavailable.
+            });
+
+        return () => {
+            active = false;
+        };
+    }, []);
 
     useGSAP(() => {
         if (!sectionRef.current) return;
-
-        const productCount = visibleFlavorlists.length;
-        if (productCount < 2) return;
-
-        const { holdDur, transDur, scrollLength, totalDuration, transStart, snap } =
-            getProductCarouselTiming(productCount, isMob);
 
         const scroller = ScrollSmoother.get()
             ? document.getElementById("smooth-wrapper") ?? undefined
             : undefined;
 
-        const tl = gsap.timeline({
+        const dots = sectionRef.current.querySelectorAll<HTMLElement>(".bestseller-dot");
+
+        // Include one extra timeline step for the opening transition from the
+        // start of the video into the first product cue.
+        const { holdDur, transDur, scrollLength, snap } =
+            getProductCarouselTiming(PRODUCT_COUNT + 1, isMob);
+        const playhead = { time: VIDEO_START_TIME };
+        let activeIdx = -1;
+
+        gsap.set(".bestseller-product-card", {
+            autoAlpha: 0,
+            y: 24,
+            scale: 0.96,
+        });
+
+        const updateDots = (index: number) => {
+            if (index === activeIdx) return;
+            activeIdx = index;
+
+            dots.forEach((dot, dotIndex) => {
+                if (dotIndex === index) {
+                    dot.className = "bestseller-dot transition-all duration-300 rounded-full w-2.5 h-6 bg-sick-red shadow-[0_0_12px_rgba(220,38,38,0.5)] cursor-pointer";
+                } else {
+                    dot.className = "bestseller-dot transition-all duration-300 rounded-full w-2 h-2 bg-charcoal/20 hover:bg-charcoal/50 cursor-pointer";
+                }
+            });
+        };
+
+        const seekToPlayhead = () => {
+            sequenceRef.current?.setTime(playhead.time);
+
+            const nearestIndex = productVideoCueTimes.reduce((nearest, cueTime, index) =>
+                Math.abs(cueTime - playhead.time) <
+                Math.abs(productVideoCueTimes[nearest] - playhead.time)
+                    ? index
+                    : nearest,
+            0);
+            updateDots(nearestIndex);
+        };
+
+        const timeline = gsap.timeline({
             scrollTrigger: {
                 trigger: sectionRef.current,
                 scroller,
                 start: "top top",
                 end: `+=${scrollLength}`,
-                scrub: 0.35,
-                snap,
+                scrub: 0.65,
                 pin: true,
                 pinSpacing: true,
                 anticipatePin: 1,
                 invalidateOnRefresh: true,
+                // Snap the scroll position to the nearest settled product label.
+                // Because the playhead is tied to scroll, snapping still moves
+                // through the frame sequence instead of jumping timestamps.
+                snap,
                 onToggle: (self) => {
                     sectionRef.current?.classList.toggle("is-scroll-pinned", self.isActive);
+                    seekToPlayhead();
                 },
             },
         });
 
-        tl.addLabel("product-0", 0).to({}, { duration: holdDur, ease: "none" }, 0);
+        let transitionAt = 0;
+        for (let index = 0; index < PRODUCT_COUNT; index += 1) {
+            const settledAt = transitionAt + transDur;
+            const cardInDuration = Math.min(0.35, transDur * 0.35);
+            const cardOutDuration = Math.min(0.25, transDur * 0.25);
 
-        tl.to(".flavor-bg-tint", {
-            backgroundPosition: "100% 50%",
-            ease: "none",
-            duration: totalDuration,
-        }, 0);
-
-        // Floating detail selectors for each product
-        const floatSelectors = (idx: number) => [
-            `.float-tone-${idx}`,
-            `.float-tagline-${idx}`,
-            `.float-top-notes-${idx}`,
-            `.float-heart-notes-${idx}`,
-            `.float-base-notes-${idx}`,
-            `.float-profile-${idx}`,
-        ];
-
-        // Connector lines inside each fp panel
-        const connectorSel = (idx: number) => `.fp-${idx} .connector-lines`;
-
-        visibleFlavorlists.forEach((flavor, i) => {
-            if (i === 0) return;
-
-            const at = transStart(i);
-
-            const prev = `.fp-${i - 1}`;
-            const curr = `.fp-${i}`;
-            const currBottle = `.fp-${i} .product-bottle`;
-            const currCaption = `.fp-${i} .product-caption`;
-            const currGlow = `.fp-${i} .carousel-glow`;
-
-            // Mobile
-            const prevDetailMobile = `.detail-mobile-${i - 1}`;
-            const currDetailMobile = `.detail-mobile-${i}`;
-
-            // Dots
-            const prevDot = `.carousel-dot-${i - 1}`;
-            const currDot = `.carousel-dot-${i}`;
-
-            // Previous floating details
-            const prevFloats = floatSelectors(i - 1);
-            const currFloats = floatSelectors(i);
-            const prevConnectors = connectorSel(i - 1);
-            const currConnectors = connectorSel(i);
-
-            tl
-                // ═══ EXIT previous product ═══
-                // Mobile: no blur/rotateY/scale (GPU-killer during scrub)
-                .to(prev, isMob ? {
-                    opacity: 0,
-                    xPercent: -15,
-                    duration: 0.35,
-                    ease: "power2.inOut",
-                } : {
-                    opacity: 0,
-                    scale: 0.7,
-                    rotateY: -40,
-                    yPercent: -12,
-                    filter: "blur(14px)",
-                    duration: 0.4,
-                    ease: "power2.inOut",
-                }, at)
-
-                // Float OUT — each detail drifts away from center with fade
-                .to(prevFloats[0], { // tone: top-left → drifts up-left
-                    opacity: 0, x: -50, y: -30,
-                    duration: 0.35, ease: "power2.in",
-                }, at)
-                .to(prevFloats[1], { // tagline: top-right → drifts up-right
-                    opacity: 0, x: 50, y: -30,
-                    duration: 0.35, ease: "power2.in",
-                }, at)
-                .to(prevFloats[2], { // top notes: mid-left → drifts left
-                    opacity: 0, x: -60,
-                    duration: 0.3, ease: "power2.in",
-                }, at + 0.02)
-                .to(prevFloats[3], { // heart notes: mid-right → drifts right
-                    opacity: 0, x: 60,
-                    duration: 0.3, ease: "power2.in",
-                }, at + 0.02)
-                .to(prevFloats[4], { // base notes: bottom-left → drifts down-left
-                    opacity: 0, x: -50, y: 30,
-                    duration: 0.35, ease: "power2.in",
-                }, at + 0.03)
-                .to(prevFloats[5], { // profile: bottom-right → drifts down-right
-                    opacity: 0, x: 50, y: 30,
-                    duration: 0.35, ease: "power2.in",
-                }, at + 0.03)
-
-                // Connector lines fade out
-                .to(prevConnectors, {
-                    opacity: 0, duration: 0.25, ease: "power2.in",
-                }, at)
-
-                // Mobile detail out
-                .to(prevDetailMobile, {
-                    opacity: 0, y: 25, duration: 0.25, ease: "power2.in",
-                }, at)
-
-                // Dot shrink
-                .to(prevDot, {
-                    height: 6,
-                    backgroundColor: "rgba(17,17,17,0.15)",
-                    duration: 0.3,
-                }, at)
-
-                // ═══ ENTER current product ═══
-                // Mobile: simple fade+slide (no blur/rotateY/scale)
-                .fromTo(curr, isMob ? {
-                    opacity: 0,
-                    xPercent: 15,
-                } : {
-                    opacity: 0,
-                    scale: 1.25,
-                    rotateY: 40,
-                    yPercent: 10,
-                    filter: "blur(16px)",
-                }, isMob ? {
-                    opacity: 1,
-                    xPercent: 0,
-                    duration: 0.38,
-                    ease: "power2.out",
-                } : {
-                    opacity: 1,
-                    scale: 1,
-                    rotateY: 0,
-                    yPercent: 0,
-                    filter: "blur(0px)",
-                    duration: 0.42,
-                    ease: "power2.out",
-                }, at)
-
-                // Bottle entrance — simpler on mobile
-                .fromTo(currBottle, isMob ? {
-                    yPercent: 12,
-                    scale: 1.05,
-                } : {
-                    yPercent: 18,
-                    rotate: -6,
-                    scale: 1.12,
-                }, isMob ? {
-                    yPercent: 0,
-                    scale: 1,
-                    duration: 0.55,
-                    ease: "power2.out",
-                } : {
-                    yPercent: 0,
-                    rotate: 0,
-                    scale: 1,
-                    duration: 0.75,
-                    ease: "power3.out",
-                }, at)
-
-                // Glow bloom
-                .fromTo(currGlow, {
-                    scale: 0.4, opacity: 0,
-                }, {
-                    scale: 1, opacity: 1,
-                    duration: isMob ? 0.6 : 0.85,
-                    ease: "power2.out",
-                }, at)
-
-                // Caption rise
-                .fromTo(currCaption, {
-                    opacity: 0, yPercent: 45,
-                }, {
-                    opacity: 1, yPercent: 0,
-                    duration: 0.45,
-                    ease: "power2.out",
-                }, at + 0.2)
-
-                // ═══ Float IN — details drift toward their positions from center ═══
-                .fromTo(currFloats[0], { // tone: from center → top-left
-                    opacity: 0, x: 50, y: 40,
-                }, {
-                    opacity: 1, x: 0, y: 0,
-                    duration: 0.45, ease: "power3.out",
-                }, at + 0.15)
-                .fromTo(currFloats[1], { // tagline: from center → top-right
-                    opacity: 0, x: -50, y: 40,
-                }, {
-                    opacity: 1, x: 0, y: 0,
-                    duration: 0.45, ease: "power3.out",
-                }, at + 0.18)
-                .fromTo(currFloats[2], { // top notes: from center → mid-left
-                    opacity: 0, x: 60, y: 15,
-                }, {
-                    opacity: 1, x: 0, y: 0,
-                    duration: 0.4, ease: "power3.out",
-                }, at + 0.22)
-                .fromTo(currFloats[3], { // heart notes: from center → mid-right
-                    opacity: 0, x: -60, y: 15,
-                }, {
-                    opacity: 1, x: 0, y: 0,
-                    duration: 0.4, ease: "power3.out",
-                }, at + 0.22)
-                .fromTo(currFloats[4], { // base notes: from center → bottom-left
-                    opacity: 0, x: 50, y: -35,
-                }, {
-                    opacity: 1, x: 0, y: 0,
-                    duration: 0.45, ease: "power3.out",
-                }, at + 0.26)
-                .fromTo(currFloats[5], { // profile: from center → bottom-right
-                    opacity: 0, x: -50, y: -35,
-                }, {
-                    opacity: 1, x: 0, y: 0,
-                    duration: 0.45, ease: "power3.out",
-                }, at + 0.28)
-
-                // Connector lines fade in
-                .fromTo(currConnectors, {
-                    opacity: 0,
-                }, {
-                    opacity: 1,
-                    duration: 0.6,
-                    ease: "power2.out",
-                }, at + 0.3)
-
-                // Mobile detail entrance
-                .fromTo(currDetailMobile, {
-                    opacity: 0, y: 30,
-                }, {
-                    opacity: 1, y: 0,
-                    duration: 0.4,
-                    ease: "power2.out",
-                }, at + 0.25)
-
-                // Profile bars fill
-                .to(`.profile-bar-${i}`, {
-                    width: "auto",
-                    duration: 0.01,
-                    onComplete: () => {
-                        document.querySelectorAll(`.profile-bar-${i}`).forEach((el) => {
-                            const parent = el.closest('[class*="float-profile"]');
-                            if (parent) {
-                                const bars = parent.querySelectorAll(`[class*="profile-bar"]`);
-                                const widths = [85, 92, 78];
-                                bars.forEach((bar, bi) => {
-                                    (bar as HTMLElement).style.width = `${widths[bi]}%`;
-                                });
-                            }
-                        });
+            if (index > 0) {
+                timeline.to(
+                    `.bestseller-product-card-${index - 1}`,
+                    {
+                        autoAlpha: 0,
+                        y: -18,
+                        scale: 0.98,
+                        duration: cardOutDuration,
+                        ease: "power2.in",
                     },
-                }, at + 0.35)
-
-                // Dot expand
-                .to(currDot, {
-                    height: 24,
-                    backgroundColor: flavor.accentColor,
-                    duration: 0.3,
-                }, at + 0.1);
-
-            const settledAt = at + transDur;
-            tl.addLabel(`product-${i}`, settledAt);
-            if (i < productCount - 1) {
-                tl.to({}, { duration: holdDur, ease: "none" }, settledAt);
+                    transitionAt,
+                );
             }
+
+            timeline.to(
+                playhead,
+                {
+                    time: productVideoCueTimes[index],
+                    duration: transDur,
+                // Linear progress preserves the frame order between the
+                // supplied product timestamps.
+                    ease: "none",
+                    onUpdate: seekToPlayhead,
+                },
+                transitionAt,
+            );
+
+            timeline.fromTo(
+                `.bestseller-product-card-${index}`,
+                { autoAlpha: 0, y: 24, scale: 0.96 },
+                {
+                    autoAlpha: 1,
+                    y: 0,
+                    scale: 1,
+                    duration: cardInDuration,
+                    ease: "power3.out",
+                },
+                Math.max(transitionAt, settledAt - cardInDuration),
+            );
+            timeline.addLabel(`product-${index}`, settledAt);
+
+            if (index < PRODUCT_COUNT - 1) {
+                timeline.to({}, { duration: holdDur, ease: "none" }, settledAt);
+                transitionAt = settledAt + holdDur;
+            }
+        }
+
+        const mainTrigger = timeline.scrollTrigger;
+        if (!mainTrigger) return;
+
+        // Add click listeners on indicator dots
+        const dotHandlers: Array<() => void> = [];
+        dots.forEach((dot, dIdx) => {
+            const handleDotClick = () => {
+                const labelTime = timeline.labels[`product-${dIdx}`] ?? 0;
+                const targetProgress = timeline.duration() > 0
+                    ? labelTime / timeline.duration()
+                    : 0;
+                const targetScroll = mainTrigger.start + targetProgress * scrollLength;
+                const sm = ScrollSmoother.get();
+                if (sm) {
+                    sm.scrollTo(targetScroll, true);
+                } else {
+                    window.scrollTo({ top: targetScroll, behavior: "smooth" });
+                }
+            };
+            dotHandlers.push(handleDotClick);
+            dot.addEventListener("click", handleDotClick);
         });
 
-        const refresh = () => ScrollTrigger.refresh(true);
-        const t1 = window.setTimeout(refresh, 100);
-        const t2 = window.setTimeout(refresh, 450);
-        const t3 = window.setTimeout(refresh, 900);
         return () => {
-            window.clearTimeout(t1);
-            window.clearTimeout(t2);
-            window.clearTimeout(t3);
+            dots.forEach((dot, index) => {
+                dot.removeEventListener("click", dotHandlers[index]);
+            });
+            timeline.kill();
         };
-    }, { scope: sectionRef, dependencies: [isMob], revertOnUpdate: true });
+    }, { scope: sectionRef, dependencies: [isMob] });
 
     return (
-        <section ref={sectionRef} className="flavor-section relative bg-white overflow-hidden">
-
-            {/* Luxury white background with subtle warm hue shift */}
+        <section ref={sectionRef} className="flavor-section relative bg-white overflow-hidden w-full h-screen">
+            {/* Background luxury gradient */}
             <div
                 className="flavor-bg-tint pointer-events-none absolute inset-0 z-0"
                 style={{
                     background:
-                        "linear-gradient(120deg, #ffffff 0%, #faf7f2 35%, #ffffff 65%, #fbf2ee 100%)",
-                    backgroundSize: "220% 100%",
-                    backgroundPosition: "0% 50%",
+                        "radial-gradient(ellipse at 50% 45%, rgba(220,38,38,0.06) 0%, rgba(255,255,255,0) 65%)",
                 }}
             />
-            <div className="pointer-events-none absolute inset-0 z-0 bg-[radial-gradient(circle_at_75%_38%,rgba(220,38,38,0.06),transparent_55%)]" />
-            <div className="pointer-events-none absolute inset-0 z-0 bg-[radial-gradient(circle_at_25%_85%,rgba(17,17,17,0.05),transparent_60%)]" />
 
-            {/* AS SEEN ON top bar */}
-            <div className="as-seen-on absolute top-0 max-md:top-[4.75rem] left-0 right-0 z-30 border-b border-ivory bg-white/75 backdrop-blur-sm">
-                <div className="flex items-center justify-center gap-3 sm:gap-5 md:gap-10 py-3 md:py-4 px-4">
-                    <span
-                        className="text-stone hidden sm:inline text-[0.55rem] md:text-[0.7rem] uppercase tracking-[0.25em] shrink-0"
-                        style={{ fontFamily: "Syne, sans-serif" }}
-                    >
-                        As Seen On
-                    </span>
-                    {asSeenOnLogos.map((logo, index) => (
-                        <Fragment key={logo.alt}>
-                            {index > 0 && <span className="w-px h-3 bg-ivory shrink-0 hidden sm:block" aria-hidden />}
-                            <img
-                                src={logo.src}
-                                alt={logo.alt}
-                                loading="lazy"
-                                decoding="async"
-                                draggable={false}
-                                className="as-seen-on-logo h-3 sm:h-3.5 md:h-4 w-auto max-w-[4.5rem] sm:max-w-none object-contain object-center"
-                            />
-                        </Fragment>
-                    ))}
-                </div>
+            {/* Header: Centered title overlay */}
+            <div className="bestseller-heading absolute top-6 md:top-10 inset-x-0 z-20 flex flex-col items-center pointer-events-none px-4 text-center">
+                <span className="bestseller-heading-kicker mb-1 text-[0.65rem] font-bold uppercase tracking-[0.35em] md:text-xs">
+                    Signature Collection
+                </span>
+                <h2
+                    className="bestseller-heading-title text-2xl sm:text-3xl md:text-5xl uppercase tracking-tight font-black"
+                    style={{ fontFamily: "Syne, sans-serif" }}
+                >
+                    The Bestsellers
+                </h2>
             </div>
 
-            {/* Unlock 10% off vertical sidebar */}
-            <div
-                className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 z-30 items-center justify-center bg-sick-red text-white px-2 py-6 tracking-[0.3em] uppercase text-[0.6rem]"
-                style={{
-                    fontFamily: "Syne, sans-serif",
-                    fontWeight: 600,
-                    writingMode: "vertical-rl",
-                    transform: "translateY(-50%) rotate(180deg)",
-                }}
-            >
-                Unlock 10% Off
+            {/* Vertical Indicator Dots (Right Side) */}
+            <div className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 z-30 flex flex-col items-center gap-3 bg-white/80 backdrop-blur-md p-2.5 rounded-full border border-charcoal/10 shadow-lg">
+                {Array.from({ length: PRODUCT_COUNT }).map((_, i) => (
+                    <div
+                        key={i}
+                        className={`bestseller-dot transition-all duration-300 rounded-full ${
+                            i === 0
+                                ? "w-2.5 h-6 bg-sick-red shadow-[0_0_12px_rgba(220,38,38,0.5)] cursor-pointer"
+                                : "w-2 h-2 bg-charcoal/20 hover:bg-charcoal/50 cursor-pointer"
+                        }`}
+                        title={`Go to ${PRODUCT_VIDEO_CUES[i].name}`}
+                    />
+                ))}
             </div>
 
-            {/* Main editorial layout — mobile: title / carousel / CTA grid | desktop: side by side */}
-            <div className="flavor-layout relative z-10 w-full flex flex-col lg:flex-row h-screen max-md:h-[calc(100dvh-2.75rem)] max-md:min-h-[calc(100dvh-2.75rem)] max-md:grid max-md:grid-rows-[auto_minmax(0,1fr)_auto] max-md:gap-y-2 pt-10 max-md:pt-[8.25rem] md:pt-16 lg:pt-20 pb-14 max-md:pb-3 md:pb-24">
-                <div className="flavor-title-col lg:w-[35%] w-full flex items-center justify-start px-4 max-md:px-5 max-md:pl-5 md:px-12 lg:pl-14 xl:pl-20 2xl:pl-28 py-2 max-md:py-0 lg:py-0 lg:h-full shrink-0">
-                    <FlavorTitle />
-                </div>
-                <div className="flavor-carousel-col lg:w-[65%] w-full flex-1 lg:h-full relative min-h-0 max-md:min-h-[260px] max-md:max-h-[50dvh]">
-                    <FlavorSlider />
-                </div>
+            {/* Full Screen Video Stage */}
+            <div className="bestseller-video-stage absolute inset-0 z-10 flex h-full w-full items-center justify-center pointer-events-none">
+                <BestsellerFrameSequence
+                    ref={sequenceRef}
+                    mobile={isMob}
+                    cueTimes={productVideoCueTimes}
+                />
+            </div>
 
-                {/* CTA — in document flow on mobile so it isn't clipped; absolute on desktop */}
-                <div className="flavor-cta max-md:relative max-md:z-40 max-md:flex max-md:justify-center max-md:px-4 max-md:pb-[max(0.75rem,env(safe-area-inset-bottom))] lg:absolute lg:bottom-[6%] lg:left-1/2 lg:-translate-x-1/2 z-40 flex justify-center w-full pointer-events-none max-md:pointer-events-auto">
-                    <button
-                        type="button"
-                        className="pointer-events-auto max-md:w-full max-md:max-w-sm text-[0.72rem] md:text-sm rounded-full bg-charcoal text-cream px-8 md:px-10 py-3.5 md:py-4 cursor-pointer shadow-[0_12px_32px_rgba(0,0,0,0.18)] hover:bg-sick-red transition-all tracking-[0.22em] md:tracking-[0.25em] uppercase"
-                        style={{ fontFamily: "Syne, sans-serif", fontWeight: 600 }}
-                    >
-                        Shop Best Sellers
-                    </button>
-                </div>
+            {/* Product details animate in only as each timestamp settles. */}
+            <div className="pointer-events-none absolute inset-0 z-30">
+                {PRODUCT_VIDEO_CUES.map((cue, index) => (
+                    <ProductSpotlightCard
+                        key={cue.handle}
+                        cue={cue}
+                        index={index}
+                        product={shopifyProducts.find((product) => product.handle === cue.handle)}
+                    />
+                ))}
             </div>
         </section>
     );

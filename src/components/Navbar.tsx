@@ -23,6 +23,16 @@ const Navbar: React.FC<NavbarProps> = ({ variant = "dark" }) => {
     const forceLightChrome = variant === "light";
     const location = useLocation();
     const isShopPage = location.pathname.startsWith("/shop");
+    const isProductPage = location.pathname.startsWith("/product");
+
+    const productNavLinks = [
+        { label: "Shop",       path: "/shop" },
+        { label: "Our Story",  path: "/our-story" },
+        { label: "VIP Club",   path: "/vip-club" },
+        { label: "Affiliate",  path: "/affiliate" },
+        { label: "Wholesaler", path: "/wholesaler" },
+        { label: "Contact",    path: "/contact" },
+    ];
 
     useEffect(() => {
         const updateCount = () => {
@@ -118,49 +128,94 @@ const Navbar: React.FC<NavbarProps> = ({ variant = "dark" }) => {
         <>
             <nav
                 data-nav-chrome
-                className="fixed top-0 left-0 z-50 flex items-center justify-between md:p-6 sm:p-4 p-3 w-full bg-transparent"
+                className={`fixed top-0 left-0 z-50 flex items-center justify-between w-full transition-all duration-300 ${
+                    isProductPage
+                        ? "bg-[#fcfbf9]/95 backdrop-blur-md border-b border-[#e8e5de]/80 py-3.5 md:px-8 sm:px-6 px-4 shadow-sm"
+                        : "bg-transparent md:p-6 sm:p-4 p-3"
+                }`}
             >
-                <Link to="/" className="block">
+                <Link to="/" className="block shrink-0">
                     <img
                         ref={logoRef}
                         src={s1ckLogo}
                         alt="navbar-logo"
-                        className={`md:w-18 w-20 nav-logo transition-[filter] duration-500 ease-out ${
-                            useLightLogo ? lightLogoClass : ""
+                        className={`transition-[filter,transform] duration-500 ease-out ${
+                            isProductPage
+                                ? "w-16 sm:w-20 hover:scale-105"
+                                : `md:w-18 w-20 nav-logo ${useLightLogo ? lightLogoClass : ""}`
                         }`}
                     />
                 </Link>
 
-                <div className="flex items-center gap-3">
+                {/* Direct Navigation Links for Product Page */}
+                {isProductPage && (
+                    <div className="hidden lg:flex items-center gap-5 xl:gap-7">
+                        {productNavLinks.map((item) => {
+                            const isActive = location.pathname === item.path;
+                            return (
+                                <Link
+                                    key={item.label}
+                                    to={item.path}
+                                    className={`relative text-[0.68rem] xl:text-xs uppercase tracking-[0.18em] font-semibold transition-colors duration-300 py-1 group ${
+                                        isActive ? "text-[#b58a2b]" : "text-charcoal/80 hover:text-charcoal"
+                                    }`}
+                                    style={{ fontFamily: "Syne, sans-serif" }}
+                                >
+                                    <span>{item.label}</span>
+                                    <span
+                                        className={`absolute left-0 -bottom-0.5 h-[1.5px] bg-[#c9a24b] transition-all duration-300 ${
+                                            isActive ? "w-full" : "w-0 group-hover:w-full"
+                                        }`}
+                                    />
+                                </Link>
+                            );
+                        })}
+                    </div>
+                )}
+
+                <div className="flex items-center gap-3 sm:gap-[15px]">
                     {/* Cart Trigger */}
                     <button
                         onClick={() => setIsCartOpen(true)}
-                        className={`group sm:px-5 px-3 py-2 border transition-all duration-500 text-center cursor-pointer flex items-center gap-2 ${
-                            useLightLogo
-                                ? "border-cream/30 bg-transparent hover:bg-cream text-cream hover:text-charcoal"
-                                : "border-charcoal bg-white hover:bg-charcoal text-charcoal hover:text-cream"
+                        className={`nav-action-button group flex h-11 sm:h-12 w-[130px] sm:w-[153px] items-center justify-center gap-2 border p-0 text-center cursor-pointer transition-all duration-500 ${
+                            isProductPage
+                                ? "border-charcoal bg-white hover:bg-charcoal text-charcoal hover:text-cream"
+                                : useLightLogo
+                                    ? "border-cream/30 bg-transparent hover:bg-cream text-cream hover:text-charcoal"
+                                    : "border-charcoal bg-white hover:bg-charcoal text-charcoal hover:text-cream"
                         }`}
                     >
-                        <i className="ri-shopping-bag-line text-sm" />
+                        <i className="ri-shopping-bag-line text-base leading-none" />
                         <span
-                            className="text-xs font-semibold p-0 m-0"
+                            className="m-0 p-0 text-xs sm:text-sm font-semibold leading-none"
                             style={{ fontFamily: 'Syne, sans-serif', letterSpacing: '0.15em' }}
                         >
                             BAG ({cartCount})
                         </span>
                     </button>
 
-                    {!isShopPage && (
+                    {/* On Product Page: Mobile Hamburger Toggle */}
+                    {isProductPage && (
+                        <button
+                            onClick={() => setIsMenuOpen((prev) => !prev)}
+                            className="lg:hidden flex items-center justify-center h-11 sm:h-12 w-11 sm:w-12 border border-charcoal bg-white text-charcoal hover:bg-charcoal hover:text-cream transition-colors duration-300 cursor-pointer"
+                            aria-label="Toggle menu"
+                        >
+                            <i className={isMenuOpen ? "ri-close-line text-xl" : "ri-menu-line text-xl"} />
+                        </button>
+                    )}
+
+                    {!isShopPage && !isProductPage && (
                         <Link
                             to="/shop"
-                            className={`hidden md:block group sm:px-6 px-4 py-2 border transition-all duration-500 text-center cursor-pointer ${
+                            className={`nav-action-button nav-shop-button group hidden h-12 w-[169px] items-center justify-center border p-0 text-center cursor-pointer transition-all duration-500 md:flex ${
                                 useLightLogo
                                     ? "border-cream/30 bg-transparent hover:bg-cream"
                                     : "border-charcoal bg-white hover:bg-charcoal"
                             }`}
                         >
                             <span
-                                className={`text-xs font-medium p-0 m-0 transition-colors duration-500 ${
+                                className={`m-0 p-0 text-sm font-medium leading-none transition-colors duration-500 ${
                                     useLightLogo
                                         ? "text-cream group-hover:text-charcoal"
                                         : "text-charcoal group-hover:text-cream"
@@ -174,46 +229,48 @@ const Navbar: React.FC<NavbarProps> = ({ variant = "dark" }) => {
                 </div>
             </nav>
 
-            {/* Menu toggle — shell handles scroll hide/show; inner keeps cursor-follow */}
-            <div
-                ref={pillShellRef}
-                data-nav-chrome
-                className="pill-shell fixed lg:top-6 top-3 left-1/2 z-[1000]"
-                aria-hidden={!pillVisible && !isMenuOpen}
-            >
-            <div
-                ref={menuRef}
-                className={`menu-hover flex items-center gap-2 px-5 py-2.5 backdrop-blur-xl border rounded-full cursor-pointer group transition-colors duration-500 ${
-                    useLightLogo
-                        ? "bg-white/10 border-cream/20 hover:bg-cream"
-                        : "bg-white/60 border-ivory/60 hover:bg-charcoal"
-                }`}
-                onClick={() => setIsMenuOpen((prev) => !prev)}
-            >
-                <div className="flex flex-col gap-[4px] items-center justify-center">
-                    <span className={`block w-4 h-[1.5px] transition-all duration-400 origin-center ${
-                        useLightLogo
-                            ? `bg-cream group-hover:bg-charcoal ${isMenuOpen ? "rotate-45 translate-y-[2.75px]" : ""}`
-                            : `bg-charcoal group-hover:bg-cream ${isMenuOpen ? "rotate-45 translate-y-[2.75px]" : ""}`
-                    }`} />
-                    <span className={`block w-4 h-[1.5px] transition-all duration-400 origin-center ${
-                        useLightLogo
-                            ? `bg-cream group-hover:bg-charcoal ${isMenuOpen ? "-rotate-45 -translate-y-[2.75px]" : ""}`
-                            : `bg-charcoal group-hover:bg-cream ${isMenuOpen ? "-rotate-45 -translate-y-[2.75px]" : ""}`
-                    }`} />
-                </div>
-                <span
-                    className={`text-[0.6rem] uppercase tracking-[0.2em] transition-colors duration-500 ${
-                        useLightLogo
-                            ? "text-cream group-hover:text-charcoal"
-                            : "text-charcoal group-hover:text-cream"
-                    }`}
-                    style={{ fontFamily: "Syne, sans-serif", fontWeight: 600 }}
+            {/* Menu toggle for non-product pages — shell handles scroll hide/show; inner keeps cursor-follow */}
+            {!isProductPage && (
+                <div
+                    ref={pillShellRef}
+                    data-nav-chrome
+                    className="pill-shell fixed lg:top-6 top-3 left-1/2 z-[1000]"
+                    aria-hidden={!pillVisible && !isMenuOpen}
                 >
-                    {isMenuOpen ? "Close" : "Menu"}
-                </span>
-            </div>
-            </div>
+                    <div
+                        ref={menuRef}
+                        className={`menu-hover flex items-center gap-2 px-5 py-2.5 backdrop-blur-xl border rounded-full cursor-pointer group transition-colors duration-500 ${
+                            useLightLogo
+                                ? "bg-white/10 border-cream/20 hover:bg-cream"
+                                : "bg-white/60 border-ivory/60 hover:bg-charcoal"
+                        }`}
+                        onClick={() => setIsMenuOpen((prev) => !prev)}
+                    >
+                        <div className="flex flex-col gap-[4px] items-center justify-center">
+                            <span className={`block w-4 h-[1.5px] transition-all duration-400 origin-center ${
+                                useLightLogo
+                                    ? `bg-cream group-hover:bg-charcoal ${isMenuOpen ? "rotate-45 translate-y-[2.75px]" : ""}`
+                                    : `bg-charcoal group-hover:bg-cream ${isMenuOpen ? "rotate-45 translate-y-[2.75px]" : ""}`
+                            }`} />
+                            <span className={`block w-4 h-[1.5px] transition-all duration-400 origin-center ${
+                                useLightLogo
+                                    ? `bg-cream group-hover:bg-charcoal ${isMenuOpen ? "-rotate-45 -translate-y-[2.75px]" : ""}`
+                                    : `bg-charcoal group-hover:bg-cream ${isMenuOpen ? "-rotate-45 -translate-y-[2.75px]" : ""}`
+                            }`} />
+                        </div>
+                        <span
+                            className={`text-[0.6rem] uppercase tracking-[0.2em] transition-colors duration-500 ${
+                                useLightLogo
+                                    ? "text-cream group-hover:text-charcoal"
+                                    : "text-charcoal group-hover:text-cream"
+                            }`}
+                            style={{ fontFamily: "Syne, sans-serif", fontWeight: 600 }}
+                        >
+                            {isMenuOpen ? "Close" : "Menu"}
+                        </span>
+                    </div>
+                </div>
+            )}
             <NavMenu isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
             <CartDrawer isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
         </>

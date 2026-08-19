@@ -1,0 +1,107 @@
+[
+  {
+    "name": "theme_info",
+    "theme_name": "S1CK Luxury Theme",
+    "theme_author": "S1CK",
+    "theme_version": "1.0.0",
+    "theme_documentation_url": "https://s1ckshop.com",
+    "theme_support_url": "https://s1ckshop.com"
+  },
+  {
+    "name": "General Settings",
+    "settings": [
+      {
+        "type": "text",
+        "id": "store_name",
+        "label": "Store Name",
+        "default": "S1CK Shop"
+      },
+      {
+        "type": "text",
+        "id": "custom_media_base_url",
+        "label": "Custom Media Base URL (Optional)",
+        "info": "If media files are uploaded to Shopify Files or an external CDN, paste the URL prefix here (e.g. https://cdn.shopify.com/s/files/1/xxxx/files/)."
+      }
+    ]
+  },
+  {
+    "name": "Videos",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "Select replacement videos from Shopify Files. If a setting is left blank, the theme continues using its original video."
+      },
+      {
+        "type": "header",
+        "content": "Homepage hero"
+      },
+      {
+        "type": "video",
+        "id": "hero_desktop_video",
+        "label": "Desktop hero video"
+      },
+      {
+        "type": "video",
+        "id": "hero_mobile_video",
+        "label": "Mobile hero video"
+      },
+      {
+        "type": "header",
+        "content": "Bestseller product showcase"
+      },
+      {
+        "type": "video",
+        "id": "bestseller_desktop_video",
+        "label": "Desktop bestseller video"
+      },
+      {
+        "type": "video",
+        "id": "bestseller_mobile_video",
+        "label": "Mobile bestseller video"
+      },
+      {
+        "type": "header",
+        "content": "Formula scroll reveal"
+      },
+      {
+        "type": "video",
+        "id": "formula_reveal_video",
+        "label": "Scroll-reveal background video"
+      },
+      {
+        "type": "header",
+        "content": "Customer reaction videos"
+      },
+      {
+        "type": "video",
+        "id": "reaction_video_1",
+        "label": "Reaction video 1 — Marcus"
+      },
+      {
+        "type": "video",
+        "id": "reaction_video_2",
+        "label": "Reaction video 2 — Daniel"
+      },
+      {
+        "type": "video",
+        "id": "reaction_video_3",
+        "label": "Reaction video 3 — Alexander"
+      },
+      {
+        "type": "video",
+        "id": "reaction_video_4",
+        "label": "Reaction video 4 — Leo"
+      },
+      {
+        "type": "video",
+        "id": "reaction_video_5",
+        "label": "Reaction video 5 — Julian"
+      },
+      {
+        "type": "video",
+        "id": "reaction_video_6",
+        "label": "Reaction video 6 — Ethan"
+      }
+    ]
+  }
+]

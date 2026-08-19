@@ -1,0 +1,282 @@
+{% liquid
+  assign enable_rtl = settings.enable_rtl
+  assign language_support_rtl = settings.language_support_rtl
+  if enable_rtl and language_support_rtl != blank
+    assign shop_locale = localization.language.iso_code
+    assign language_support_rtl_list = language_support_rtl | split: ','
+    assign is_rtl = language_support_rtl_list | where: shop_locale
+    if is_rtl.size > 0
+      assign enable_rtl = true
+    else
+      assign enable_rtl = false
+    endif
+  endif
+
+  assign body_classes = 'template-' | append: template.name | append: ' ' | append: template.suffix | append: ' m-gradient m-color-' | append: settings.default_color_scheme
+  if settings.page_transition
+    assign body_classes = body_classes | append: ' m:overflow-hidden'
+  endif
+  if template.suffix == 'about-us'
+    assign body_classes = body_classes | append: ' sf__page-about'
+  endif
+%}
+<!doctype html>
+<html
+  class="no-js {% if settings.page_transition %} m:overflow-hidden{% endif %}"
+  lang="{{ request.locale.iso_code }}"
+  data-template="{{ template.name }}"
+  {% if enable_rtl %}
+    dir="rtl"
+  {% endif %}
+>
+  <head>
+    <meta name="google-site-verification" content="36TUANjfbWTOA9Tl_nPd7zf5t3eMNxwasx-99CIXiXE" />
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=0">
+    <meta name="theme-color" content="{{ settings.color_primary }}">
+    <link rel="canonical" href="{{ canonical_url }}">
+    <link rel="preconnect" href="https://fonts.shopifycdn.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.shopify.com" crossorigin>
+
+    {%- if settings.use_favicon == true and settings.favicon != blank -%}
+      <link rel="shortcut icon" type="image/png" href="{{ settings.favicon | image_url: width: 32, height: 32 }}">
+    {%- endif -%}
+
+    <title>
+      {{- page_title -}}
+      {%- if current_tags -%}
+        {%- assign meta_tags = current_tags | join: ', ' %} &ndash; {{ 'general.meta.tags' | t: tags: meta_tags -}}
+      {%- endif -%}
+      {%- if current_page != 1 %} &ndash; {{ 'general.meta.page' | t: page: current_page }}{% endif -%}
+      {%- if template == 'password' -%}
+        {{- shop.name -}}
+      {%- else -%}
+        {%- unless page_title contains shop.name %} &ndash; {{ shop.name }}{% endunless -%}
+      {%- endif -%}
+    </title>
+
+    {%- if page_description -%}
+      <meta name="description" content="{{ page_description | escape }}">
+    {%- endif -%}
+
+    {%- liquid
+      render 'social-meta-tags'
+      render 'font-face'
+      render 'critical-css'
+
+      echo 'main.css' | asset_url | stylesheet_tag: preload: true
+
+      render 'style-tags'
+    -%}
+
+    <script src="{{ 'vendor.js' | asset_url }}" defer="defer"></script>
+    <script src="{{ 'theme-global.js' | asset_url }}" defer="defer"></script>
+    {%- if settings.animations != 'none' -%}
+      <script src="{{ 'animations.js' | asset_url }}" defer="defer"></script>
+    {%- endif -%}
+    {%- if request.design_mode -%}
+      <script src="{{ 'theme-editor.js' | asset_url }}" defer="defer"></script>
+    {%- endif -%}
+
+    {{ content_for_header }}
+
+    <script>
+      document.documentElement.className = document.documentElement.className.replace('no-js', 'js');
+      if (Shopify.designMode) {
+        document.documentElement.classList.add('shopify-design-mode');
+      }
+    </script>
+    {% render 'theme-data' %}
+    {% render 'custom-code-head' %}
+  
+  
+  <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=AW-16883052399"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'AW-16883052399');
+</script>
+    <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-WWPWKL923L"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-WWPWKL923L');
+</script>
+    <script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "rv7qhbg4ta");
+</script>
+    <link rel="alternate" hreflang="en-US" href="https://s1ckshop.com/"/>
+    <meta name="DC.title" content="s1ckshop" />
+<meta name="geo.region" content="US-CA" />
+<meta name="geo.placename" content="Los Angeles" />
+<meta name="geo.position" content="34.053691;-118.242766" />
+<meta name="ICBM" content="34.053691, -118.242766" />
+
+  {% include 'pagefly-app-header' %}</head>
+
+  <body
+    id="m-theme"
+    class="{{ body_classes }}"
+    {% if template.name == 'product' %}
+      data-product-id="{{ product.id }}"
+    {% endif %}
+  >
+    {%- liquid
+      render 'page-transition'
+      render 'scroll-top-button'
+      sections 'header-group'
+    -%}
+
+    <main role="main" id="MainContent">
+      {{ content_for_layout }}
+    </main>
+
+    {%- liquid
+      sections 'footer-group'
+      render 'script-tags'
+      render 'cookie-banner'
+      render 'custom-code-body'
+    -%}
+
+    <script src="{{ 'product-quick-view.js' | asset_url }}" defer="defer"></script>
+    <script src="{{ 'wishlist.js' | asset_url }}" defer="defer"></script>
+    <script src="{{ 'compare-product.js' | asset_url }}" defer="defer"></script>
+
+    {%- if settings.enable_predictive_search -%}
+      <script src="{{ 'predictive-search.js' | asset_url }}" defer="defer"></script>
+    {%- endif -%}
+
+    {%- if linklists['gift-wrapping'].links != blank
+      and linklists['gift-wrapping'].links.first.type == 'product_link'
+    -%}
+      <script src="{{ 'gift-wrapping.js' | asset_url }}" defer="defer"></script>
+    {%- endif -%}
+
+    {%- if settings.show_swatch_option -%}
+      <script src="{{ 'product-card-swatch.js' | asset_url }}" defer="defer"></script>
+    {%- endif -%}
+
+    {%- if settings.enable_cart_drawer and template != 'cart' -%}
+      {% render 'cart-drawer' %}
+    {%- endif -%}
+    {% if product %}
+    <script>
+  window.addEventListener('load', function() {
+  var _learnq = window._learnq || [];
+  function addedToCart() {
+   fetch(`${window.location.origin}/cart.js`)
+   .then(res => res.clone().json().then(data => {
+    var cart = {
+      total_price: data.total_price/100,
+      $value: data.total_price/100,
+      total_discount: data.total_discount,
+      original_total_price: data.original_total_price/100,
+      items: data.items
+    }
+    if (item !== 'undefined') {
+      cart = Object.assign(cart, item)
+    }
+    if (klAjax) {
+       _learnq.push(['track', 'Added to Cart', cart]);
+       klAjax = false;
+      }
+   }))
+  };
+  (function (ns, fetch) {
+    ns.fetch = function() {
+      const response = fetch.apply(this, arguments);
+      response.then(res => {
+        if (`${window.location.origin}/cart/add.js`
+          .includes(res.url) && res.url !== '') {
+              addedToCart()
+        }
+      });
+      return response
+     }
+  }(window, window.fetch));
+  var klAjax = true;
+  var atcButtons = document.querySelectorAll("form[action*='/cart/add'] button[type='submit']");
+  for (var i = 0; i < atcButtons.length; i++) { 
+    atcButtons[i].addEventListener("click", function() {
+      if (klAjax) {
+        _learnq.push(['track', 'Added to Cart', item]);
+        klAjax = false;
+      }
+    })
+  }
+  });
+</script>
+      {% endif %}
+
+
+
+    {% if template == 'product' %}
+<script>
+gtag('event', 'view_item', {
+  'send_to': 'AW-16883052399',
+  'value': '{{ product.price | money_without_currency }}',
+  'currency': '{{ shop.currency }}',
+  'items': [{
+    'id': '{{ product.id }}',
+    'google_business_vertical': 'retail'
+  }]
+});
+  console.log("View Item page tracked!");
+</script>
+{% endif %}
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  document.body.addEventListener("click", function(event) {
+    let addToCartBtn = event.target.closest('[name="add"], .add-to-cart');
+
+    if (addToCartBtn) {
+      console.log("Add to Cart clicked!");
+
+      gtag('event', 'add_to_cart_updated', {
+        'send_to': 'AW-16883052399',
+        'value': '{{ product.price | money_without_currency }}',
+        'currency': '{{ shop.currency }}',
+        'items': [{
+          'id': '{{ product.id }}',
+          'google_business_vertical': 'retail'
+        }]
+      });
+
+      console.log("gtag add_to_cart event fired!");
+    }
+  });
+});
+</script>
+
+    {% if template == 'cart' %}
+<script>
+gtag('event', 'begin_checkout', {
+  'send_to': 'AW-16883052399',
+  'value': '{{ cart.total_price | money_without_currency }}',
+  'currency': '{{ shop.currency }}',
+  'items': [{% for item in cart.items %}{
+    'id': '{{ item.product_id }}',
+    'google_business_vertical': 'retail'
+  },{% endfor %}]
+});
+</script>
+{% endif %}
+
+
+  </body>
+
+  
+</html>

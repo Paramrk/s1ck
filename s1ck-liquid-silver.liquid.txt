@@ -1,0 +1,789 @@
+{%- comment -%}
+  ============================================================
+  S1CK — Liquid Silver Product Page Section
+  Drop into: sections/s1ck-liquid-silver.liquid
+  Add to any template via Theme Editor → Add section,
+  or reference in product.liquid: {% section 's1ck-liquid-silver' %}
+
+  IMAGES: set in the theme customizer (image_picker fields) OR
+  they fall back to dashed placeholders.
+  BUNDLES: paste a Variant ID + Qty per bundle in the schema.
+  CART DRAWER: uses /cart/add.js and dispatches common drawer
+  refresh events. See openCartDrawer() if your theme differs.
+  ============================================================
+{%- endcomment -%}
+
+{%- assign p = section.settings.product -%}
+
+<style>
+  #s1ck-{{ section.id }}{
+    --black:#0a0a0a;--panel:#111;--panel2:#161616;--gold:#c9a24b;--gold-light:#e6c878;
+    --cream:#f5f1e8;--grey:#8a8a8a;--line:#262626;--red:#c8332b;--shop:#5a31f4;--white:#fff;
+    background:var(--black);color:var(--cream);font-family:'Helvetica Neue',Arial,sans-serif;line-height:1.5;
+  }
+  #s1ck-{{ section.id }} *{margin:0;padding:0;box-sizing:border-box}
+  #s1ck-{{ section.id }} img{max-width:100%;display:block}
+  #s1ck-{{ section.id }} .wrap{max-width:1180px;margin:0 auto;padding:0 16px}
+  #s1ck-{{ section.id }} h1,#s1ck-{{ section.id }} h2,#s1ck-{{ section.id }} h3{font-weight:800;letter-spacing:-.01em}
+  #s1ck-{{ section.id }} .gold{color:var(--gold)}
+  #s1ck-{{ section.id }} a{color:inherit;text-decoration:none}
+  #s1ck-{{ section.id }} .btn{display:inline-block;border:none;cursor:pointer;font-weight:800;text-transform:uppercase;letter-spacing:.06em;transition:.2s}
+  #s1ck-{{ section.id }} .btn-gold{background:linear-gradient(180deg,var(--gold-light),var(--gold));color:#1a1400;padding:16px 28px;border-radius:6px}
+  #s1ck-{{ section.id }} .btn-gold:hover{filter:brightness(1.08)}
+  #s1ck-{{ section.id }} .btn-gold[disabled]{opacity:.45;cursor:not-allowed;filter:grayscale(.4)}
+  #s1ck-{{ section.id }} .section-tag{display:flex;align-items:center;gap:14px;margin:0 0 18px}
+  #s1ck-{{ section.id }} .num{width:34px;height:34px;border-radius:50%;background:var(--gold);color:#1a1400;font-weight:800;display:flex;align-items:center;justify-content:center;flex:none}
+  #s1ck-{{ section.id }} .section-tag h4{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--grey)}
+  #s1ck-{{ section.id }} .ph{background:linear-gradient(135deg,#1c1c1c,#0e0e0e);border:1px dashed #333;display:flex;align-items:center;justify-content:center;color:#4d4d4d;font-size:11px;letter-spacing:.1em;text-transform:uppercase;text-align:center}
+  #s1ck-{{ section.id }} .stars{color:var(--gold);letter-spacing:2px}
+
+  /* hero */
+  #s1ck-{{ section.id }} .hero{background:radial-gradient(120% 90% at 60% 40%,#1a1a1a 0%,#000 70%);padding:44px 0}
+  #s1ck-{{ section.id }} .hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:34px;align-items:start}
+  #s1ck-{{ section.id }} .hero-copy .kicker{color:var(--grey);letter-spacing:.14em;text-transform:uppercase;font-size:13px;margin-bottom:8px}
+  #s1ck-{{ section.id }} .hero-copy h1{font-size:52px;line-height:1.02;margin-bottom:18px}
+  #s1ck-{{ section.id }} .hero-copy h1 .em{color:var(--gold)}
+  #s1ck-{{ section.id }} .hero-copy p.lede{color:#cfcabd;max-width:440px;margin-bottom:24px;font-size:15px}
+  #s1ck-{{ section.id }} .hero-media{position:relative;border-radius:14px;overflow:hidden}
+  #s1ck-{{ section.id }} .hero-media .ph,#s1ck-{{ section.id }} .hero-media img{aspect-ratio:1/1;object-fit:cover;width:100%}
+  #s1ck-{{ section.id }} .play{position:absolute;inset:0;margin:auto;width:74px;height:74px;border-radius:50%;background:rgba(0,0,0,.45);border:2px solid #fff;display:flex;align-items:center;justify-content:center}
+  #s1ck-{{ section.id }} .play:after{content:"";border-left:20px solid #fff;border-top:12px solid transparent;border-bottom:12px solid transparent;margin-left:5px}
+  #s1ck-{{ section.id }} .trust-row{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:22px}
+  #s1ck-{{ section.id }} .trust{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 16px;text-align:center;flex:1;min-width:110px}
+  #s1ck-{{ section.id }} .trust .big{font-size:20px;font-weight:800;color:var(--gold)}
+  #s1ck-{{ section.id }} .trust .sm{font-size:11px;color:var(--grey);text-transform:uppercase;letter-spacing:.05em}
+  #s1ck-{{ section.id }} .awards{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px;display:grid;grid-template-columns:repeat(4,1fr);gap:10px;text-align:center}
+  #s1ck-{{ section.id }} .awards .badge .ph,#s1ck-{{ section.id }} .awards .badge img{aspect-ratio:1/1;border-radius:50%;margin:0 auto 6px;width:52px;object-fit:cover}
+  #s1ck-{{ section.id }} .awards .badge span{font-size:9.5px;color:var(--grey);letter-spacing:.08em;text-transform:uppercase;display:block;line-height:1.3}
+
+  /* buy box */
+  #s1ck-{{ section.id }} .buybox{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px;max-width:420px;margin:40px auto}
+  #s1ck-{{ section.id }} .buybox h3{font-size:22px}
+  #s1ck-{{ section.id }} .buybox .subttl{color:var(--gold);font-size:11px;letter-spacing:.14em;text-transform:uppercase;margin-bottom:8px}
+  #s1ck-{{ section.id }} .price-row{display:flex;align-items:center;gap:10px;margin:12px 0 4px}
+  #s1ck-{{ section.id }} .price{font-size:30px;font-weight:800;color:var(--gold)}
+  #s1ck-{{ section.id }} .price-old{color:var(--grey);text-decoration:line-through;font-size:16px}
+  #s1ck-{{ section.id }} .tag-sale{background:var(--red);color:#fff;font-size:10px;font-weight:800;padding:3px 8px;border-radius:4px;letter-spacing:.08em}
+  #s1ck-{{ section.id }} .finance{font-size:12px;color:#b7b2a5;margin-bottom:16px}
+  #s1ck-{{ section.id }} .label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--grey);margin:14px 0 8px}
+  #s1ck-{{ section.id }} .sizes{display:flex;gap:8px;flex-wrap:wrap}
+  #s1ck-{{ section.id }} .size{flex:1;min-width:80px;border:1px solid var(--line);border-radius:8px;padding:12px 6px;text-align:center;cursor:pointer;font-size:13px;background:#0d0d0d;transition:.15s}
+  #s1ck-{{ section.id }} .size small{display:block;color:var(--grey);font-size:10px}
+  #s1ck-{{ section.id }} .size.active,#s1ck-{{ section.id }} .size:hover{border-color:var(--gold);background:#14110a}
+  #s1ck-{{ section.id }} .size[data-soldout]{opacity:.4;cursor:not-allowed;text-decoration:line-through}
+  #s1ck-{{ section.id }} .qty-cart{display:flex;gap:10px;margin:16px 0}
+  #s1ck-{{ section.id }} .qty{display:flex;align-items:center;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+  #s1ck-{{ section.id }} .qty button{background:#0d0d0d;color:var(--cream);border:none;width:40px;height:48px;font-size:20px;cursor:pointer}
+  #s1ck-{{ section.id }} .qty input{width:44px;height:48px;background:#0d0d0d;border:none;color:var(--cream);text-align:center;font-size:16px}
+  #s1ck-{{ section.id }} .add-cart{flex:1;font-size:15px}
+  #s1ck-{{ section.id }} .assure{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:18px;padding-top:18px;border-top:1px solid var(--line);text-align:center}
+  #s1ck-{{ section.id }} .assure div{font-size:9.5px;color:var(--grey);text-transform:uppercase;letter-spacing:.05em}
+  #s1ck-{{ section.id }} .assure .ic{font-size:20px;margin-bottom:4px}
+
+  #s1ck-{{ section.id }} .feat-strip{display:grid;grid-template-columns:repeat(5,1fr);border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin-top:28px}
+  #s1ck-{{ section.id }} .feat-strip div{padding:16px;text-align:center;border-right:1px solid var(--line);font-size:11px;color:var(--grey);text-transform:uppercase;letter-spacing:.06em}
+  #s1ck-{{ section.id }} .feat-strip div:last-child{border-right:none}
+  #s1ck-{{ section.id }} .feat-strip .fbig{color:var(--cream);font-weight:800;font-size:13px;display:block;margin-bottom:3px}
+
+  /* video band */
+  #s1ck-{{ section.id }} .videoband{background:radial-gradient(120% 100% at 30% 50%,#191308,#000 70%);padding:40px 0}
+  #s1ck-{{ section.id }} .vb-grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:30px;align-items:center}
+  #s1ck-{{ section.id }} .vb-grid .ph,#s1ck-{{ section.id }} .vb-grid .vmedia{aspect-ratio:16/10;border-radius:12px;position:relative;overflow:hidden}
+  #s1ck-{{ section.id }} .vb-grid h2{font-size:24px;margin-bottom:10px}
+  #s1ck-{{ section.id }} .vb-grid p{color:#cfcabd;margin-bottom:18px}
+  #s1ck-{{ section.id }} .vb-badges{display:flex;gap:22px;flex-wrap:wrap}
+  #s1ck-{{ section.id }} .vb-badges div{display:flex;align-items:center;gap:10px;font-size:11px;color:var(--grey);text-transform:uppercase;letter-spacing:.06em}
+  #s1ck-{{ section.id }} .vb-badges .ph{width:44px;aspect-ratio:1;border-radius:50%}
+
+  /* generic sections */
+  #s1ck-{{ section.id }} .sec{padding:52px 0;border-top:1px solid var(--line)}
+  #s1ck-{{ section.id }} .sec.alt{background:var(--panel)}
+  #s1ck-{{ section.id }} .sec h2{font-size:30px;text-align:center;margin-bottom:8px}
+  #s1ck-{{ section.id }} .sec .sub{text-align:center;color:var(--grey);max-width:560px;margin:0 auto 34px}
+
+  /* problem */
+  #s1ck-{{ section.id }} .vs-grid{display:grid;grid-template-columns:1fr auto 1fr;gap:24px;align-items:center}
+  #s1ck-{{ section.id }} .fail{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+  #s1ck-{{ section.id }} .fail .ph{aspect-ratio:3/4;border-radius:10px;margin-bottom:8px;position:relative}
+  #s1ck-{{ section.id }} .fail .x{position:absolute;top:8px;right:8px;width:26px;height:26px;background:#000;border-radius:50%;color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px}
+  #s1ck-{{ section.id }} .fail small{font-size:10px;color:var(--grey);text-transform:uppercase;letter-spacing:.05em}
+  #s1ck-{{ section.id }} .vs-badge{width:60px;height:60px;border-radius:50%;background:#000;border:2px solid var(--gold);color:var(--gold);display:flex;align-items:center;justify-content:center;font-weight:800;margin:0 auto}
+  #s1ck-{{ section.id }} .win .ph,#s1ck-{{ section.id }} .win img{aspect-ratio:3/4;border-radius:10px;max-width:180px;margin:0 auto 16px}
+  #s1ck-{{ section.id }} .win ul{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  #s1ck-{{ section.id }} .win li{font-size:12px;display:flex;gap:8px;align-items:center;text-transform:uppercase;letter-spacing:.04em}
+  #s1ck-{{ section.id }} .check{color:var(--gold);font-weight:800}
+
+  /* why */
+  #s1ck-{{ section.id }} .why-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:16px}
+  #s1ck-{{ section.id }} .why-grid .cell{text-align:center}
+  #s1ck-{{ section.id }} .why-grid .ph,#s1ck-{{ section.id }} .why-grid img{width:56px;aspect-ratio:1;border-radius:12px;margin:0 auto 12px;object-fit:cover}
+  #s1ck-{{ section.id }} .why-grid h5{font-size:12px;text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px;color:var(--gold)}
+  #s1ck-{{ section.id }} .why-grid p{font-size:11.5px;color:var(--grey)}
+
+  /* scent */
+  #s1ck-{{ section.id }} .scent-cols{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  #s1ck-{{ section.id }} .scent-cols .col h5{font-size:13px;text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px}
+  #s1ck-{{ section.id }} .scent-cols .col .time{color:var(--gold);font-size:11px;margin-bottom:14px}
+  #s1ck-{{ section.id }} .notes{display:flex;gap:12px;flex-wrap:wrap}
+  #s1ck-{{ section.id }} .note{text-align:center;font-size:10px;color:var(--grey)}
+  #s1ck-{{ section.id }} .note .ph{width:52px;aspect-ratio:1;border-radius:50%;margin:0 auto 6px}
+
+  /* reactions */
+  #s1ck-{{ section.id }} .vids{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:34px}
+  #s1ck-{{ section.id }} .vids .ph{aspect-ratio:9/13;border-radius:10px;position:relative}
+  #s1ck-{{ section.id }} .revs{display:grid;grid-template-columns:repeat(5,1fr);gap:14px}
+  #s1ck-{{ section.id }} .rev{background:#0d0d0d;border:1px solid var(--line);border-radius:10px;padding:16px;text-align:center;font-size:12px}
+  #s1ck-{{ section.id }} .rev .stars{display:block;margin-bottom:10px}
+  #s1ck-{{ section.id }} .rev cite{display:block;margin-top:10px;color:var(--gold);font-style:normal;font-size:11px}
+
+  /* top rated */
+  #s1ck-{{ section.id }} .rated{display:grid;grid-template-columns:1fr auto 1fr;gap:24px;align-items:center}
+  #s1ck-{{ section.id }} .quote{background:#0d0d0d;border:1px solid var(--line);border-radius:10px;padding:22px;font-style:italic;color:#d8d3c6}
+  #s1ck-{{ section.id }} .quote cite{display:block;margin-top:10px;color:var(--gold);font-style:normal;font-size:12px}
+  #s1ck-{{ section.id }} .bigrate .n{font-size:70px;font-weight:800;color:var(--cream);line-height:1;text-align:center}
+  #s1ck-{{ section.id }} .bigrate .stars{font-size:22px;text-align:center;display:block}
+  #s1ck-{{ section.id }} .bigrate .out{text-align:center;color:var(--grey);letter-spacing:.1em;font-size:12px}
+
+  /* comparison */
+  #s1ck-{{ section.id }} .compare{display:grid;grid-template-columns:auto 1fr auto;gap:24px;align-items:center}
+  #s1ck-{{ section.id }} .compare .prod{text-align:center}
+  #s1ck-{{ section.id }} .compare .prod .ph,#s1ck-{{ section.id }} .compare .prod img{aspect-ratio:3/4;width:150px;border-radius:10px;margin-bottom:8px;object-fit:cover}
+  #s1ck-{{ section.id }} .compare .prod small{font-size:11px;color:var(--grey);text-transform:uppercase;letter-spacing:.06em}
+  #s1ck-{{ section.id }} table.cmp{width:100%;border-collapse:collapse;font-size:12px}
+  #s1ck-{{ section.id }} table.cmp th,#s1ck-{{ section.id }} table.cmp td{padding:11px 12px;text-align:left;border-bottom:1px solid var(--line)}
+  #s1ck-{{ section.id }} table.cmp thead th{background:#000;text-transform:uppercase;letter-spacing:.06em;font-size:11px;color:var(--grey)}
+  #s1ck-{{ section.id }} table.cmp .us{background:#14110a;color:var(--cream);font-weight:700}
+  #s1ck-{{ section.id }} table.cmp thead .us{color:var(--gold)}
+  #s1ck-{{ section.id }} table.cmp .them{color:var(--grey)}
+  #s1ck-{{ section.id }} table.cmp td .check{margin-right:6px}
+
+  /* bundles */
+  #s1ck-{{ section.id }} .bundles{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:34px}
+  #s1ck-{{ section.id }} .bundle{background:#0d0d0d;border:1px solid var(--line);border-radius:12px;padding:22px;text-align:center;position:relative;display:flex;flex-direction:column}
+  #s1ck-{{ section.id }} .bundle.pop{border-color:var(--gold)}
+  #s1ck-{{ section.id }} .bundle .flag{position:absolute;top:-11px;left:50%;transform:translateX(-50%);background:var(--gold);color:#1a1400;font-size:10px;font-weight:800;padding:4px 12px;border-radius:20px;letter-spacing:.08em;text-transform:uppercase}
+  #s1ck-{{ section.id }} .bundle h5{font-size:16px;letter-spacing:.06em;text-transform:uppercase}
+  #s1ck-{{ section.id }} .bundle .qtytxt{font-size:11px;color:var(--grey);margin-bottom:12px}
+  #s1ck-{{ section.id }} .bundle .ph,#s1ck-{{ section.id }} .bundle img.bimg{aspect-ratio:4/3;border-radius:8px;margin-bottom:14px;object-fit:cover;width:100%}
+  #s1ck-{{ section.id }} .bundle .bprice{font-size:26px;font-weight:800;color:var(--gold)}
+  #s1ck-{{ section.id }} .bundle .bprice s{font-size:15px;color:var(--grey);margin-left:6px}
+  #s1ck-{{ section.id }} .bundle .save{color:var(--gold);font-size:12px;font-weight:700;margin:4px 0 14px}
+  #s1ck-{{ section.id }} .bundle .btn{margin-top:auto;width:100%}
+
+  /* addons */
+  #s1ck-{{ section.id }} .addons{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:40px}
+  #s1ck-{{ section.id }} .addon{background:#0d0d0d;border:1px solid var(--line);border-radius:10px;padding:16px;display:flex;gap:12px;align-items:center;font-size:12px;cursor:pointer}
+  #s1ck-{{ section.id }} .addon .ph,#s1ck-{{ section.id }} .addon img{width:44px;aspect-ratio:1;border-radius:8px;flex:none;object-fit:cover}
+  #s1ck-{{ section.id }} .addon .plus{color:var(--gold);font-weight:800;margin-top:4px;display:block}
+  #s1ck-{{ section.id }} .addon.vip{border-color:var(--gold);background:#14110a}
+
+  /* faq */
+  #s1ck-{{ section.id }} .faq{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  #s1ck-{{ section.id }} details{background:#0d0d0d;border:1px solid var(--line);border-radius:8px;padding:14px 16px;cursor:pointer}
+  #s1ck-{{ section.id }} details summary{list-style:none;display:flex;justify-content:space-between;font-size:13px;font-weight:600}
+  #s1ck-{{ section.id }} details summary::-webkit-details-marker{display:none}
+  #s1ck-{{ section.id }} details[open] summary{color:var(--gold)}
+  #s1ck-{{ section.id }} details p{font-size:12.5px;color:var(--grey);margin-top:10px}
+
+  /* final cta */
+  #s1ck-{{ section.id }} .finalcta{background:linear-gradient(90deg,#000 0%,#191308 100%);padding:40px 0}
+  #s1ck-{{ section.id }} .fc-grid{display:grid;grid-template-columns:auto 1fr auto;gap:24px;align-items:center}
+  #s1ck-{{ section.id }} .fc-grid .ph,#s1ck-{{ section.id }} .fc-grid img{width:150px;aspect-ratio:1;border-radius:10px;object-fit:cover}
+  #s1ck-{{ section.id }} .fc-grid h2{font-size:28px}
+  #s1ck-{{ section.id }} .fc-trust{display:flex;gap:24px;margin-top:12px}
+  #s1ck-{{ section.id }} .fc-trust div{font-size:11px;color:var(--grey)}
+  #s1ck-{{ section.id }} .fc-trust b{color:var(--gold);display:block;font-size:16px}
+  #s1ck-{{ section.id }} .fc-note{text-align:center;color:var(--grey);font-size:11px;margin-top:16px;letter-spacing:.05em}
+
+  /* sticky */
+  #s1ck-{{ section.id }} .sticky{position:fixed;bottom:0;left:0;right:0;background:rgba(10,10,10,.96);border-top:1px solid var(--gold);backdrop-filter:blur(8px);z-index:50;transform:translateY(110%);transition:.3s}
+  #s1ck-{{ section.id }} .sticky.show{transform:translateY(0)}
+  #s1ck-{{ section.id }} .sticky .wrap{display:flex;align-items:center;gap:16px;padding:12px 16px}
+  #s1ck-{{ section.id }} .sticky .ph,#s1ck-{{ section.id }} .sticky img{width:44px;height:44px;border-radius:8px;flex:none;object-fit:cover}
+  #s1ck-{{ section.id }} .sticky .s-name{font-weight:800;font-size:14px}
+  #s1ck-{{ section.id }} .sticky .s-price{color:var(--gold);font-weight:800}
+  #s1ck-{{ section.id }} .sticky .s-price s{color:var(--grey);font-size:12px;margin-left:6px}
+  #s1ck-{{ section.id }} .sticky .btn{margin-left:auto}
+
+  @media(max-width:900px){
+    #s1ck-{{ section.id }} .hero-grid,#s1ck-{{ section.id }} .vb-grid,#s1ck-{{ section.id }} .rated,
+    #s1ck-{{ section.id }} .compare,#s1ck-{{ section.id }} .fc-grid,#s1ck-{{ section.id }} .vs-grid{grid-template-columns:1fr}
+    #s1ck-{{ section.id }} .hero-copy h1{font-size:38px}
+    #s1ck-{{ section.id }} .why-grid{grid-template-columns:repeat(3,1fr)}
+    #s1ck-{{ section.id }} .vids{grid-template-columns:repeat(2,1fr)}
+    #s1ck-{{ section.id }} .revs{grid-template-columns:1fr 1fr}
+    #s1ck-{{ section.id }} .bundles,#s1ck-{{ section.id }} .addons,#s1ck-{{ section.id }} .scent-cols,#s1ck-{{ section.id }} .faq{grid-template-columns:1fr}
+    #s1ck-{{ section.id }} .feat-strip{grid-template-columns:repeat(2,1fr)}
+    #s1ck-{{ section.id }} .compare .prod{display:none}
+  }
+</style>
+
+<div id="s1ck-{{ section.id }}" data-section="{{ section.id }}">
+
+  {%- comment -%} ============ 1. HERO ============ {%- endcomment -%}
+  <section class="hero" id="s1ck-top-{{ section.id }}">
+    <div class="wrap">
+      <div class="hero-grid">
+        <div class="hero-copy">
+          <p class="kicker">{{ section.settings.hero_kicker }}</p>
+          <h1>{{ section.settings.hero_heading }}</h1>
+          <p class="lede">{{ section.settings.hero_sub }}</p>
+          <div class="trust-row">
+            <div class="trust"><span class="stars">★★★★★</span><div class="big">{{ section.settings.stat_rating }}</div><div class="sm">{{ section.settings.stat_reviews }}</div></div>
+            <div class="trust"><div class="big">{{ section.settings.stat_customers }}</div><div class="sm">Happy Customers</div></div>
+            <div class="trust"><div class="big">{{ section.settings.stat_years }}</div><div class="sm">#1 Rated</div></div>
+            <div class="trust"><div class="big">🇺🇸</div><div class="sm">Made in USA</div></div>
+          </div>
+          <div class="awards">
+            {%- for i in (1..4) -%}
+              {%- assign img = section.settings['award_' | append: i | append: '_img'] -%}
+              {%- assign txt = section.settings['award_' | append: i | append: '_txt'] -%}
+              <div class="badge">
+                {%- if img -%}<img src="{{ img | image_url: width: 120 }}" alt="{{ txt }}">{%- else -%}<div class="ph">BADGE</div>{%- endif -%}
+                <span>{{ txt }}</span>
+              </div>
+            {%- endfor -%}
+          </div>
+        </div>
+        <div class="hero-media">
+          {%- if section.settings.hero_image -%}
+            <img src="{{ section.settings.hero_image | image_url: width: 900 }}" alt="{{ p.title | default: 'Liquid Silver' }}">
+          {%- else -%}
+            <div class="ph">HERO PRODUCT IMAGE / VIDEO</div>
+          {%- endif -%}
+          {%- if section.settings.hero_video_url != blank -%}<a class="play" href="{{ section.settings.hero_video_url }}" target="_blank" rel="noopener" aria-label="Play video"></a>{%- endif -%}
+        </div>
+      </div>
+      <div class="feat-strip">
+        <div><span class="fbig">Highly Concentrated</span>48mg Pheromone Blend</div>
+        <div><span class="fbig">310+ Sprays</span>Long-Lasting</div>
+        <div><span class="fbig">8+ Hours</span>On Skin</div>
+        <div><span class="fbig">24+ Hours</span>On Clothes</div>
+        <div><span class="fbig">Crafted With</span>92% Raw Materials</div>
+      </div>
+    </div>
+  </section>
+
+  {%- comment -%} ============ BUY BOX (real variants + AJAX cart) ============ {%- endcomment -%}
+  <section class="wrap" style="padding:0 16px">
+    <div class="buybox">
+      <p class="subttl">Premium Pheromone Fragrance</p>
+      <h3>{{ p.title | default: section.settings.hero_heading_plain | default: 'Liquid Silver' }}</h3>
+      <span class="stars">★★★★★</span> <small style="color:var(--grey)">({{ section.settings.buybox_review_count }})</small>
+
+      {%- if p -%}
+        <div class="price-row">
+          <span class="price" data-s1ck-price>{{ p.selected_or_first_available_variant.price | money }}</span>
+          {%- if p.selected_or_first_available_variant.compare_at_price > p.selected_or_first_available_variant.price -%}
+            <span class="price-old" data-s1ck-compare>{{ p.selected_or_first_available_variant.compare_at_price | money }}</span>
+            <span class="tag-sale">SALE</span>
+          {%- endif -%}
+        </div>
+        <p class="finance">{{ section.settings.finance_text }}</p>
+
+        {%- if p.variants.size > 1 -%}
+          <p class="label">Size</p>
+          <div class="sizes" data-s1ck-variants>
+            {%- for v in p.variants -%}
+              <div class="size {% if v == p.selected_or_first_available_variant %}active{% endif %}"
+                   data-variant-id="{{ v.id }}"
+                   data-price="{{ v.price | money }}"
+                   data-compare="{% if v.compare_at_price > v.price %}{{ v.compare_at_price | money }}{% endif %}"
+                   {% unless v.available %}data-soldout{% endunless %}>
+                {{ v.title }}
+              </div>
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
+
+        <input type="hidden" data-s1ck-selected value="{{ p.selected_or_first_available_variant.id }}">
+
+        <div class="qty-cart">
+          <div class="qty" data-s1ck-qty>
+            <button type="button" data-dec>−</button>
+            <input type="text" value="1" inputmode="numeric" data-qty-input>
+            <button type="button" data-inc>+</button>
+          </div>
+          <button class="btn btn-gold add-cart" data-s1ck-add
+            {% unless p.selected_or_first_available_variant.available %}disabled{% endunless %}>
+            {% if p.selected_or_first_available_variant.available %}{{ section.settings.cart_button_text }}{% else %}Sold Out{% endif %}
+          </button>
+        </div>
+      {%- else -%}
+        <p style="color:var(--red);font-size:13px;margin:14px 0">⚠ Select a product for this section in the theme editor to enable add-to-cart.</p>
+      {%- endif -%}
+
+      <div class="assure">
+        <div><div class="ic">🛡️</div>30 Day Guarantee</div>
+        <div><div class="ic">🔒</div>Secure Checkout</div>
+        <div><div class="ic">🚚</div>Free Shipping Over $50</div>
+      </div>
+    </div>
+  </section>
+
+  {%- comment -%} ============ VIDEO BAND ============ {%- endcomment -%}
+  <section class="videoband">
+    <div class="wrap vb-grid">
+      <div class="vmedia">
+        {%- if section.settings.band_image -%}
+          <img src="{{ section.settings.band_image | image_url: width: 900 }}" alt="" style="width:100%;height:100%;object-fit:cover">
+        {%- else -%}<div class="ph" style="width:100%;height:100%">30-SECOND VIDEO</div>{%- endif -%}
+        {%- if section.settings.band_video_url != blank -%}<a class="play" href="{{ section.settings.band_video_url }}" target="_blank" rel="noopener"></a>{%- endif -%}
+      </div>
+      <div>
+        <h2>{{ section.settings.band_heading }}</h2>
+        <p>{{ section.settings.band_sub }}</p>
+        <div class="vb-badges">
+          <div><div class="ph"></div>Premium Quality Ingredients</div>
+          <div><div class="ph"></div>Real Reactions, Real Results</div>
+          <div><div class="ph"></div>Luxury Performance</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {%- comment -%} ============ 2. PROBLEM ============ {%- endcomment -%}
+  <section class="sec alt">
+    <div class="wrap">
+      <div class="section-tag"><span class="num">2</span><h4>The Problem — Why most colognes fail you</h4></div>
+      <h2>Most Colognes Fail You.<br><span class="gold">Liquid Silver Doesn't.</span></h2>
+      <div class="sub"></div>
+      <div class="vs-grid">
+        <div class="fail">
+          <div class="card"><div class="ph"><span class="x">✕</span></div><small>Smell Good For An Hour</small></div>
+          <div class="card"><div class="ph"><span class="x">✕</span></div><small>Fade &amp; Disappear</small></div>
+          <div class="card"><div class="ph"><span class="x">✕</span></div><small>Blend Into The Crowd</small></div>
+          <div class="card"><div class="ph"><span class="x">✕</span></div><small>Get Forgotten</small></div>
+        </div>
+        <div class="vs-badge">VS</div>
+        <div class="win">
+          {%- if section.settings.win_image -%}<img src="{{ section.settings.win_image | image_url: width: 400 }}" alt="">{%- else -%}<div class="ph">LIQUID SILVER</div>{%- endif -%}
+          <ul>
+            <li><span class="check">✓</span> Signature Scent</li>
+            <li><span class="check">✓</span> That Stands Out</li>
+            <li><span class="check">✓</span> Memorable</li>
+            <li><span class="check">✓</span> Unforgettable</li>
+            <li><span class="check">✓</span> Get Compliments</li>
+            <li><span class="check">✓</span> Wherever You Go</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {%- comment -%} ============ 3. WHY ============ {%- endcomment -%}
+  <section class="sec">
+    <div class="wrap">
+      <div class="section-tag"><span class="num">3</span><h4>Why Liquid Silver — Top benefits at a glance</h4></div>
+      <h2>Why 100,000+ Men Choose Liquid Silver</h2>
+      <div class="sub"></div>
+      <div class="why-grid">
+        <div class="cell"><div class="ph"></div><h5>48mg Premium Pheromone Blend</h5><p>Engineered for real human attraction.</p></div>
+        <div class="cell"><div class="ph"></div><h5>92% Premium Raw Materials</h5><p>Higher quality. Better performance.</p></div>
+        <div class="cell"><div class="ph"></div><h5>8+ Hour Performance</h5><p>Long-lasting on skin, 24+ on clothes.</p></div>
+        <div class="cell"><div class="ph"></div><h5>310+ Sprays Per Bottle</h5><p>More sprays. More value.</p></div>
+        <div class="cell"><div class="ph"></div><h5>Inspired by 2016 Aventus</h5><p>Iconic DNA. Modern performance.</p></div>
+        <div class="cell"><div class="ph"></div><h5>Proudly Made in USA</h5><p>Crafted with premium standards.</p></div>
+      </div>
+    </div>
+  </section>
+
+  {%- comment -%} ============ 4. SCENT JOURNEY ============ {%- endcomment -%}
+  <section class="sec alt">
+    <div class="wrap">
+      <div class="section-tag"><span class="num">4</span><h4>Scent Journey — The evolution of Liquid Silver</h4></div>
+      <div class="scent-cols">
+        <div class="col"><h5>First Impression</h5><div class="time">(0 – 10 Minutes)</div>
+          <div class="notes">
+            <div class="note"><div class="ph"></div>Pineapple</div><div class="note"><div class="ph"></div>Apple</div>
+            <div class="note"><div class="ph"></div>Bergamot</div><div class="note"><div class="ph"></div>Juniper</div>
+          </div></div>
+        <div class="col"><h5>Heart Notes</h5><div class="time">(10 – 60 Minutes)</div>
+          <div class="notes">
+            <div class="note"><div class="ph"></div>Jasmine</div><div class="note"><div class="ph"></div>Patchouli</div>
+            <div class="note"><div class="ph"></div>Molecule 01</div>
+          </div></div>
+        <div class="col"><h5>The Drydown</h5><div class="time">(60 Minutes +)</div>
+          <div class="notes">
+            <div class="note"><div class="ph"></div>Musk</div><div class="note"><div class="ph"></div>Ambergris</div>
+            <div class="note"><div class="ph"></div>Vanilla</div><div class="note"><div class="ph"></div>Woody</div>
+          </div></div>
+      </div>
+    </div>
+  </section>
+
+  {%- comment -%} ============ 5. REACTIONS ============ {%- endcomment -%}
+  <section class="sec">
+    <div class="wrap">
+      <div class="section-tag"><span class="num">5</span><h4>Real Reactions — Video testimonials from real customers</h4></div>
+      <h2>Real People. Real Results.</h2>
+      <div class="sub"></div>
+      <div class="vids">
+        {%- for i in (1..5) -%}<div class="ph">VIDEO<div class="play"></div></div>{%- endfor -%}
+      </div>
+      <h2 style="font-size:22px">What Our Customers Say</h2>
+      <div class="revs" style="margin-top:20px">
+        {%- for block in section.blocks -%}
+          {%- if block.type == 'review' -%}
+            <div class="rev" {{ block.shopify_attributes }}>
+              <span class="stars">{% for s in (1..block.settings.stars) %}★{% endfor %}{% for s in (1..5) %}{% if forloop.index > block.settings.stars %}☆{% endif %}{% endfor %}</span>
+              {{ block.settings.text }}<cite>— {{ block.settings.name }}</cite>
+            </div>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+    </div>
+  </section>
+
+  {%- comment -%} ============ 6. TOP RATED ============ {%- endcomment -%}
+  <section class="sec alt">
+    <div class="wrap">
+      <div class="section-tag"><span class="num">6</span><h4>Top Rated — Big rating + review quotes</h4></div>
+      <div class="rated">
+        <div class="quote">"{{ section.settings.quote_left }}"<cite>— {{ section.settings.quote_left_name }}</cite></div>
+        <div class="bigrate">
+          <div class="n">5</div><span class="stars">★★★★★</span>
+          <div class="out">OUT OF 5 · {{ section.settings.stat_reviews }}</div>
+        </div>
+        <div class="quote">"{{ section.settings.quote_right }}"<cite>— {{ section.settings.quote_right_name }}</cite></div>
+      </div>
+    </div>
+  </section>
+
+  {%- comment -%} ============ 7. COMPARISON ============ {%- endcomment -%}
+  <section class="sec">
+    <div class="wrap">
+      <div class="section-tag"><span class="num">7</span><h4>Comparison Chart — S1CK vs Other Brands</h4></div>
+      <div class="compare">
+        <div class="prod">
+          {%- if section.settings.compare_us_img -%}<img src="{{ section.settings.compare_us_img | image_url: width: 300 }}" alt="">{%- else -%}<div class="ph">S1CK</div>{%- endif -%}
+          <small>S1CK Liquid Silver</small>
+        </div>
+        <table class="cmp">
+          <thead><tr><th>Features</th><th class="us">S1CK Liquid Silver</th><th>Other Brands</th></tr></thead>
+          <tbody>
+            <tr><td>Pheromone Blend</td><td class="us"><span class="check">✓</span>48mg Premium Blend</td><td class="them">0mg – None</td></tr>
+            <tr><td>Raw Material Quality</td><td class="us"><span class="check">✓</span>92% Premium</td><td class="them">20% – 60%</td></tr>
+            <tr><td>Longevity (Skin)</td><td class="us"><span class="check">✓</span>8+ Hours</td><td class="them">2 – 4 Hours</td></tr>
+            <tr><td>Longevity (Clothes)</td><td class="us"><span class="check">✓</span>24+ Hours</td><td class="them">4 – 6 Hours</td></tr>
+            <tr><td>Sprays Per Bottle</td><td class="us"><span class="check">✓</span>310+ Sprays</td><td class="them">100 – 150 Sprays</td></tr>
+            <tr><td>Compliment Factor</td><td class="us"><span class="check">✓</span>High – Proven</td><td class="them">Low – Unproven</td></tr>
+            <tr><td>Price Per Spray</td><td class="us"><span class="check">✓</span>High Value</td><td class="them">Overpriced / Low Value</td></tr>
+          </tbody>
+        </table>
+        <div class="prod">
+          {%- if section.settings.compare_them_img -%}<img src="{{ section.settings.compare_them_img | image_url: width: 300 }}" alt="">{%- else -%}<div class="ph">OTHER</div>{%- endif -%}
+          <small>Other Brands</small>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {%- comment -%} ============ 8. BUNDLES + ADDONS + FAQ ============ {%- endcomment -%}
+  <section class="sec alt">
+    <div class="wrap">
+      <div class="section-tag"><span class="num">8</span><h4>Bundles · Add-Ons · FAQ · Final CTA</h4></div>
+      <h2>Choose Your Power Level</h2>
+      <div class="sub"></div>
+      <div class="bundles">
+        {%- for block in section.blocks -%}
+          {%- if block.type == 'bundle' -%}
+            <div class="bundle {% if block.settings.highlight %}pop{% endif %}" {{ block.shopify_attributes }}>
+              {%- if block.settings.flag != blank -%}<span class="flag">{{ block.settings.flag }}</span>{%- endif -%}
+              <h5>{{ block.settings.title }}</h5>
+              <div class="qtytxt">{{ block.settings.subtitle }}</div>
+              {%- if block.settings.image -%}<img class="bimg" src="{{ block.settings.image | image_url: width: 500 }}" alt="">{%- else -%}<div class="ph"></div>{%- endif -%}
+              <div class="bprice">{{ block.settings.price }}{% if block.settings.compare != blank %}<s>{{ block.settings.compare }}</s>{% endif %}</div>
+              {%- if block.settings.save != blank -%}<div class="save">{{ block.settings.save }}</div>{%- endif -%}
+              <button class="btn btn-gold" data-s1ck-bundle
+                data-variant-id="{{ block.settings.variant_id }}"
+                data-qty="{{ block.settings.add_qty | default: 1 }}">Add to Cart</button>
+            </div>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+
+      <h2 style="font-size:20px">Complete Your Routine (Add &amp; Save)</h2>
+      <div class="addons" style="margin-top:20px">
+        {%- for block in section.blocks -%}
+          {%- if block.type == 'addon' -%}
+            <div class="addon {% if block.settings.vip %}vip{% endif %}" {{ block.shopify_attributes }}
+              {% if block.settings.variant_id != blank %}data-s1ck-bundle data-variant-id="{{ block.settings.variant_id }}" data-qty="1"{% endif %}>
+              {%- if block.settings.image -%}<img src="{{ block.settings.image | image_url: width: 120 }}" alt="">{%- else -%}<div class="ph"></div>{%- endif -%}
+              <div>{{ block.settings.title }}<span class="plus">{{ block.settings.price }}</span></div>
+            </div>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+
+      <h2 style="font-size:20px">Frequently Asked Questions</h2>
+      <div class="faq" style="margin-top:20px">
+        {%- for block in section.blocks -%}
+          {%- if block.type == 'faq' -%}
+            <details {{ block.shopify_attributes }}><summary>{{ block.settings.q }}<span>+</span></summary><p>{{ block.settings.a }}</p></details>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+    </div>
+  </section>
+
+  {%- comment -%} ============ FINAL CTA ============ {%- endcomment -%}
+  <section class="finalcta">
+    <div class="wrap fc-grid">
+      {%- if section.settings.cta_image -%}<img src="{{ section.settings.cta_image | image_url: width: 400 }}" alt="">{%- else -%}<div class="ph">MAN IMAGE</div>{%- endif -%}
+      <div>
+        <h2>Become The Man <span class="gold">They Remember.</span></h2>
+        <div class="fc-trust">
+          <div><b>{{ section.settings.stat_customers }}</b>Happy Customers</div>
+          <div><b>{{ section.settings.stat_years }}</b>#1 Rated</div>
+          <div><b>{{ section.settings.stat_rating }}</b>{{ section.settings.stat_reviews }}</div>
+        </div>
+      </div>
+      <a href="#s1ck-top-{{ section.id }}" class="btn btn-gold">{{ section.settings.final_cta_text }}</a>
+    </div>
+    <p class="fc-note">30 Day Guarantee · Secure Checkout · Free Shipping Over $50</p>
+  </section>
+
+  {%- comment -%} ============ STICKY BAR ============ {%- endcomment -%}
+  <div class="sticky" data-s1ck-sticky>
+    <div class="wrap">
+      {%- if section.settings.hero_image -%}<img src="{{ section.settings.hero_image | image_url: width: 90 }}" alt="">{%- else -%}<div class="ph"></div>{%- endif -%}
+      <div>
+        <div class="s-name">{{ p.title | default: 'Liquid Silver' }}</div>
+        <div class="s-price" data-s1ck-sticky-price>{% if p %}{{ p.selected_or_first_available_variant.price | money }}{% endif %}</div>
+      </div>
+      <button class="btn btn-gold" data-s1ck-add-sticky>{{ section.settings.cart_button_text }}</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var root = document.getElementById('s1ck-{{ section.id }}');
+  if(!root) return;
+
+  var selected   = root.querySelector('[data-s1ck-selected]');
+  var priceEl    = root.querySelector('[data-s1ck-price]');
+  var compareEl  = root.querySelector('[data-s1ck-compare]');
+  var stickyPrice= root.querySelector('[data-s1ck-sticky-price]');
+  var qtyInput   = root.querySelector('[data-qty-input]');
+  var addBtn     = root.querySelector('[data-s1ck-add]');
+  var sticky     = root.querySelector('[data-s1ck-sticky]');
+
+  /* qty stepper */
+  var qtyWrap = root.querySelector('[data-s1ck-qty]');
+  if(qtyWrap){
+    qtyWrap.querySelector('[data-dec]').onclick=function(){qtyInput.value=Math.max(1,(parseInt(qtyInput.value)||1)-1)};
+    qtyWrap.querySelector('[data-inc]').onclick=function(){qtyInput.value=(parseInt(qtyInput.value)||1)+1};
+  }
+
+  /* variant selector */
+  root.querySelectorAll('[data-s1ck-variants] .size').forEach(function(el){
+    el.addEventListener('click',function(){
+      if(el.hasAttribute('data-soldout')) return;
+      root.querySelectorAll('[data-s1ck-variants] .size').forEach(function(x){x.classList.remove('active')});
+      el.classList.add('active');
+      if(selected) selected.value = el.getAttribute('data-variant-id');
+      if(priceEl) priceEl.textContent = el.getAttribute('data-price');
+      if(stickyPrice) stickyPrice.textContent = el.getAttribute('data-price');
+      var cmp = el.getAttribute('data-compare');
+      if(compareEl){ compareEl.textContent = cmp || ''; compareEl.style.display = cmp ? '' : 'none'; }
+    });
+  });
+
+  /* AJAX add to cart */
+  function addToCart(id, qty, btn){
+    if(!id){ alert('No variant configured.'); return; }
+    var original = btn ? btn.textContent : '';
+    if(btn){ btn.textContent = 'Adding…'; btn.disabled = true; }
+    fetch('/cart/add.js',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Accept':'application/json'},
+      body: JSON.stringify({ items:[{ id: parseInt(id), quantity: parseInt(qty)||1 }] })
+    })
+    .then(function(r){ if(!r.ok) return r.json().then(function(e){throw e}); return r.json(); })
+    .then(function(){
+      if(btn){ btn.textContent='Added ✓'; setTimeout(function(){btn.textContent=original;btn.disabled=false;},1400); }
+      openCartDrawer();
+    })
+    .catch(function(err){
+      if(btn){ btn.textContent=original; btn.disabled=false; }
+      alert((err && err.description) ? err.description : 'Could not add to cart.');
+    });
+  }
+
+  /* open the theme's cart drawer — covers Dawn + most common themes.
+     If your drawer doesn't open, replace the body of this function
+     with your theme's own trigger (or window.location='/cart'). */
+  function openCartDrawer(){
+    document.dispatchEvent(new CustomEvent('cart:refresh',{bubbles:true}));
+    document.dispatchEvent(new CustomEvent('cart:build'));
+    // Dawn / Horizon style
+    var drawer = document.querySelector('cart-drawer, cart-notification');
+    if(drawer){
+      fetch('/?section_id=cart-drawer').then(function(r){return r.text()}).then(function(html){
+        try{
+          var el=new DOMParser().parseFromString(html,'text/html').querySelector('cart-drawer');
+          if(el && drawer.tagName==='CART-DRAWER'){ drawer.innerHTML=el.innerHTML; }
+        }catch(e){}
+        if(drawer.classList) drawer.classList.remove('is-empty');
+        if(typeof drawer.open==='function') drawer.open();
+        else drawer.classList.add('active','animate','drawer--open');
+        document.body.classList.add('overflow-hidden');
+      }).catch(function(){});
+      return;
+    }
+    // fallbacks used by other themes
+    document.dispatchEvent(new CustomEvent('ajaxProduct:added'));
+    document.body.classList.add('js-drawer-open','cart-open');
+    var t=document.querySelector('[data-cart-drawer-toggle],[href="#cart-drawer"],.js-drawer-open-right');
+    if(t) t.click();
+  }
+
+  if(addBtn) addBtn.addEventListener('click',function(){ addToCart(selected && selected.value, qtyInput && qtyInput.value, addBtn); });
+  var addSticky = root.querySelector('[data-s1ck-add-sticky]');
+  if(addSticky) addSticky.addEventListener('click',function(){ addToCart(selected && selected.value, qtyInput && qtyInput.value, addSticky); });
+
+  /* bundle + addon buttons */
+  root.querySelectorAll('[data-s1ck-bundle]').forEach(function(el){
+    el.addEventListener('click',function(){ addToCart(el.getAttribute('data-variant-id'), el.getAttribute('data-qty'), el.tagName==='BUTTON'?el:null); });
+  });
+
+  /* sticky reveal */
+  if(sticky){
+    window.addEventListener('scroll',function(){
+      if(window.scrollY>700) sticky.classList.add('show'); else sticky.classList.remove('show');
+    },{passive:true});
+  }
+
+  /* single-open FAQ */
+  root.querySelectorAll('details').forEach(function(d){
+    d.addEventListener('toggle',function(){ if(d.open) root.querySelectorAll('details').forEach(function(o){ if(o!==d) o.open=false; }); });
+  });
+})();
+</script>
+
+{% schema %}
+{
+  "name": "S1CK Product Page",
+  "tag": "section",
+  "class": "s1ck-product-section",
+  "settings": [
+    { "type": "header", "content": "Product" },
+    { "type": "product", "id": "product", "label": "Product (drives price, variants, add-to-cart)" },
+    { "type": "text", "id": "cart_button_text", "label": "Add to cart button text", "default": "Add to Cart" },
+    { "type": "text", "id": "buybox_review_count", "label": "Buy box review count", "default": "22" },
+    { "type": "text", "id": "finance_text", "label": "Financing line", "default": "or 4 interest-free payments with shop · View sample plans" },
+
+    { "type": "header", "content": "Hero" },
+    { "type": "text", "id": "hero_kicker", "label": "Kicker", "default": "The Fragrance" },
+    { "type": "html", "id": "hero_heading", "label": "Heading (HTML — use <span class='em'> for gold)", "default": "They'll <span class='em'>Remember You By.</span>" },
+    { "type": "text", "id": "hero_heading_plain", "label": "Plain heading fallback", "default": "Liquid Silver" },
+    { "type": "textarea", "id": "hero_sub", "label": "Sub headline", "default": "Premium Aventus-inspired fragrance infused with a 48mg pheromone blend engineered to create unforgettable first impressions." },
+    { "type": "image_picker", "id": "hero_image", "label": "Hero image" },
+    { "type": "url", "id": "hero_video_url", "label": "Hero video link (optional)" },
+
+    { "type": "header", "content": "Trust Stats" },
+    { "type": "text", "id": "stat_rating", "label": "Rating", "default": "4.9/5" },
+    { "type": "text", "id": "stat_reviews", "label": "Reviews text", "default": "22,000+ Reviews" },
+    { "type": "text", "id": "stat_customers", "label": "Customers", "default": "100,000+" },
+    { "type": "text", "id": "stat_years", "label": "Years", "default": "6 Years" },
+
+    { "type": "header", "content": "Award Badges" },
+    { "type": "image_picker", "id": "award_1_img", "label": "Award 1 image" },
+    { "type": "text", "id": "award_1_txt", "label": "Award 1 text", "default": "Best of Pheromones" },
+    { "type": "image_picker", "id": "award_2_img", "label": "Award 2 image" },
+    { "type": "text", "id": "award_2_txt", "label": "Award 2 text", "default": "House of Pheromones #1" },
+    { "type": "image_picker", "id": "award_3_img", "label": "Award 3 image" },
+    { "type": "text", "id": "award_3_txt", "label": "Award 3 text", "default": "Top Brand Globally" },
+    { "type": "image_picker", "id": "award_4_img", "label": "Award 4 image" },
+    { "type": "text", "id": "award_4_txt", "label": "Award 4 text", "default": "Featured in Publications" },
+
+    { "type": "header", "content": "Video Band" },
+    { "type": "image_picker", "id": "band_image", "label": "Band image/thumbnail" },
+    { "type": "url", "id": "band_video_url", "label": "Band video link" },
+    { "type": "text", "id": "band_heading", "label": "Heading", "default": "Watch The 30-Second Experience" },
+    { "type": "textarea", "id": "band_sub", "label": "Sub", "default": "See why 100,000+ men choose Liquid Silver to be unforgettable." },
+
+    { "type": "header", "content": "Section 2 — VS image" },
+    { "type": "image_picker", "id": "win_image", "label": "Liquid Silver 'win' image" },
+
+    { "type": "header", "content": "Section 6 — Quotes" },
+    { "type": "text", "id": "quote_left", "label": "Left quote", "default": "Beats all the designer colognes. #1 forever." },
+    { "type": "text", "id": "quote_left_name", "label": "Left name", "default": "Kawika W." },
+    { "type": "text", "id": "quote_right", "label": "Right quote", "default": "You can never go wrong with Liquid Silver." },
+    { "type": "text", "id": "quote_right_name", "label": "Right name", "default": "Omar S." },
+
+    { "type": "header", "content": "Section 7 — Comparison images" },
+    { "type": "image_picker", "id": "compare_us_img", "label": "S1CK product image" },
+    { "type": "image_picker", "id": "compare_them_img", "label": "Other brands image" },
+
+    { "type": "header", "content": "Final CTA" },
+    { "type": "image_picker", "id": "cta_image", "label": "CTA background/man image" },
+    { "type": "text", "id": "final_cta_text", "label": "CTA button text", "default": "Get Liquid Silver Now" }
+  ],
+  "blocks": [
+    {
+      "type": "review", "name": "Customer Review", "limit": 5,
+      "settings": [
+        { "type": "text", "id": "name", "label": "Name", "default": "Marcus T." },
+        { "type": "range", "id": "stars", "label": "Stars", "min": 1, "max": 5, "step": 1, "default": 5 },
+        { "type": "textarea", "id": "text", "label": "Review", "default": "Liquid Silver is the GOAT. Nothing else comes close to the reactions I get." }
+      ]
+    },
+    {
+      "type": "bundle", "name": "Bundle", "limit": 3,
+      "settings": [
+        { "type": "text", "id": "title", "label": "Title", "default": "The Collector" },
+        { "type": "text", "id": "subtitle", "label": "Subtitle", "default": "2 × 100ml Bottles" },
+        { "type": "text", "id": "flag", "label": "Flag (e.g. Most Popular)" },
+        { "type": "checkbox", "id": "highlight", "label": "Highlight (gold border)", "default": false },
+        { "type": "image_picker", "id": "image", "label": "Image" },
+        { "type": "text", "id": "price", "label": "Price", "default": "$369" },
+        { "type": "text", "id": "compare", "label": "Compare-at (strikethrough)", "default": "$440" },
+        { "type": "text", "id": "save", "label": "Save text", "default": "Save 16%" },
+        { "type": "text", "id": "variant_id", "label": "Variant ID to add", "info": "Paste the numeric variant ID this button adds to cart." },
+        { "type": "number", "id": "add_qty", "label": "Quantity to add", "default": 1 }
+      ]
+    },
+    {
+      "type": "addon", "name": "Add-On", "limit": 4,
+      "settings": [
+        { "type": "text", "id": "title", "label": "Title", "default": "Add 10ml Travel Spray" },
+        { "type": "text", "id": "price", "label": "Price label", "default": "+$35" },
+        { "type": "image_picker", "id": "image", "label": "Image" },
+        { "type": "checkbox", "id": "vip", "label": "VIP style (gold)", "default": false },
+        { "type": "text", "id": "variant_id", "label": "Variant ID to add (optional)" }
+      ]
+    },
+    {
+      "type": "faq", "name": "FAQ", "limit": 8,
+      "settings": [
+        { "type": "text", "id": "q", "label": "Question", "default": "How do pheromones work?" },
+        { "type": "textarea", "id": "a", "label": "Answer", "default": "Your answer here." }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "S1CK Product Page",
+      "blocks": [
+        { "type": "review" }, { "type": "review" }, { "type": "review" }, { "type": "review" }, { "type": "review" },
+        { "type": "bundle", "settings": { "title": "The Starter", "subtitle": "1 × 100ml Bottle", "flag": "", "price": "$205", "compare": "", "save": "Save 13%", "highlight": false } },
+        { "type": "bundle", "settings": { "title": "The Collector", "subtitle": "2 × 100ml Bottles", "flag": "Most Popular", "price": "$369", "compare": "$440", "save": "Save 16%", "highlight": true } },
+        { "type": "bundle", "settings": { "title": "The Legend", "subtitle": "3 × 100ml Bottles", "flag": "Best Value", "price": "$525", "compare": "$615", "save": "Save 24%", "highlight": false } },
+        { "type": "addon", "settings": { "title": "Add 10ml Travel Spray", "price": "+$35" } },
+        { "type": "addon", "settings": { "title": "Add Le Toxique Roll-On Oil 10ml", "price": "+$42" } },
+        { "type": "addon", "settings": { "title": "Add S1CK Oil Pheromone Oil 6ml", "price": "+$59" } },
+        { "type": "addon", "settings": { "title": "VIP Club Membership", "price": "Up to 35% Off · Free Gifts", "vip": true } },
+        { "type": "faq", "settings": { "q": "How do pheromones work?" } },
+        { "type": "faq", "settings": { "q": "Is it safe to use daily?" } },
+        { "type": "faq", "settings": { "q": "How many sprays should I use?" } },
+        { "type": "faq", "settings": { "q": "What is your return policy?" } },
+        { "type": "faq", "settings": { "q": "How long does it last?" } },
+        { "type": "faq", "settings": { "q": "Do you ship internationally?" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

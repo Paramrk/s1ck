@@ -3,13 +3,14 @@ import { Link } from "react-router-dom";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import Navbar from "../components/Navbar";
-import menImg from "../assets/menu-img/men-menu.webp";
-import womenImg from "../assets/menu-img/women-menu.webp";
+import { getImage } from "../utils/media";
 
 const ShopPage = () => {
     const containerRef = useRef<HTMLDivElement>(null);
     const menImgRef = useRef<HTMLImageElement>(null);
     const womenImgRef = useRef<HTMLImageElement>(null);
+    const menImg = getImage("shop_img_men") || getImage("men-menu.webp");
+    const womenImg = getImage("shop_img_women") || getImage("women-menu.webp");
 
     // Hover/parallax effects only make sense with a fine pointer.
     const hasFineHover =

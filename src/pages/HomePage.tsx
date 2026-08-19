@@ -3,9 +3,9 @@ import Navbar from "../components/Navbar";
 import HeroSection from "../sections/HeroSection";
 import gsap from "gsap";
 import MessageSection from "../sections/MessageSection";
+import TrustBannerSection from "../sections/TrustBannerSection";
 import FlavorSection from "../sections/FlavorSection";
 import ScentCompositionSection from "../sections/ScentCompositionSection";
-import { ScrollSmoother } from "gsap/all";
 import { useGSAP } from "@gsap/react";
 import NutritionSection from "../sections/NutritionSection";
 import BenifitSection from "../sections/BenifitSection";
@@ -13,42 +13,52 @@ import PheromoneBenefits from "../sections/PheromoneBenefits";
 import FooterSection from "../sections/FooterSection";
 import TestimonialSection from "../sections/TestimonialSection";
 import PreLoader from "../components/PreLoader";
-import DeferredSection from "../components/DeferredSection";
 import { useEffect, useState } from "react";
 import { useScrollTriggerRefresh } from "../hooks/useScrollTriggerRefresh";
 
-gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
+gsap.registerPlugin(ScrollTrigger);
 
 const HomePage = () => {
     const [loaded, setLoaded] = useState(false);
     useScrollTriggerRefresh();
 
     useGSAP(() => {
-        if (ScrollSmoother.get()) return;
-
-        const isMobile = window.innerWidth <= 768;
         ScrollTrigger.config({ ignoreMobileResize: true });
-
-        if (!isMobile) {
-            ScrollSmoother.create({
-                wrapper: "#smooth-wrapper",
-                content: "#smooth-content",
-                smooth: 1.5,
-                effects: false,
-            });
-        }
-
         ScrollTrigger.refresh();
     }, []);
 
-    useGSAP(() => {
+    useEffect(() => {
         if (!loaded) return;
-        requestAnimationFrame(() => ScrollTrigger.refresh(true));
+
+        // All scroll sections must exist before ScrollTrigger measures the page.
+        // Mounting tall sections later made downstream pins (especially Science
+        // of S1CK) keep coordinates from the shorter placeholder layout.
+        let secondFrame = 0;
+        const firstFrame = requestAnimationFrame(() => {
+            secondFrame = requestAnimationFrame(() => {
+                ScrollTrigger.sort();
+                ScrollTrigger.refresh(true);
+            });
+        });
+        const settledRefresh = window.setTimeout(() => {
+            ScrollTrigger.sort();
+            ScrollTrigger.refresh(true);
+        }, 300);
+
+        document.fonts?.ready?.then(() => {
+            ScrollTrigger.sort();
+            ScrollTrigger.refresh(true);
+        });
+
+        return () => {
+            cancelAnimationFrame(firstFrame);
+            cancelAnimationFrame(secondFrame);
+            window.clearTimeout(settledRefresh);
+        };
     }, [loaded]);
 
     useEffect(() => {
         return () => {
-            ScrollSmoother.get()?.kill();
             ScrollTrigger.getAll().forEach((t) => t.kill());
         };
     }, []);
@@ -62,26 +72,17 @@ const HomePage = () => {
 
                     {loaded && (
                         <>
-                            <DeferredSection minHeight="100dvh">
-                                <MessageSection />
-                            </DeferredSection>
+                            <TrustBannerSection />
+                            <MessageSection />
                             <FlavorSection />
                             <ScentCompositionSection />
-                            <DeferredSection minHeight="100dvh">
-                                <NutritionSection showMockup={true} />
-                            </DeferredSection>
-                            <DeferredSection minHeight="100dvh">
-                                <div>
-                                    <BenifitSection />
-                                    <TestimonialSection />
-                                </div>
-                            </DeferredSection>
-                            <DeferredSection minHeight="100dvh">
+                            <NutritionSection showMockup={true} />
+                            <BenifitSection />
+                            <TestimonialSection />
+                            <div className="bg-[#0a0908]">
                                 <PheromoneBenefits showMockup={true} />
-                            </DeferredSection>
-                            <DeferredSection minHeight="50vh" rootMargin="520px 0px">
                                 <FooterSection />
-                            </DeferredSection>
+                            </div>
                         </>
                     )}
                 </div>

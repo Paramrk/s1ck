@@ -1,0 +1,132 @@
+{{ 's1ck-product-mockup.css' | asset_url | stylesheet_tag }}
+
+{% liquid
+  assign product_name = product.title | default: 'Liquid Silver'
+  assign current_variant = product.selected_or_first_available_variant
+  assign review_count = product.metafields.reviews.rating_count | default: section.settings.review_count
+  assign rating_value = product.metafields.reviews.rating.value.rating | default: section.settings.rating_value
+%}
+
+<div class="s1ck-product-conversion">
+  <section class="s1ck-product-section s1ck-rating-strip" aria-labelledby="s1ck-rating-title-{{ section.id }}">
+    <div class="s1ck-product-section__content">
+      <blockquote>“{{ section.settings.quote_left }}”<cite>— {{ section.settings.quote_left_name }}</cite></blockquote>
+      <div class="s1ck-rating-score">
+        <strong id="s1ck-rating-title-{{ section.id }}">{{ rating_value }}</strong>
+        <span class="s1ck-stars" aria-label="{{ rating_value }} out of 5 stars">★★★★★</span>
+        <b>out of 5</b>
+        <small>{{ review_count }}+ reviews</small>
+      </div>
+      <blockquote>“{{ section.settings.quote_right }}”<cite>— {{ section.settings.quote_right_name }}</cite></blockquote>
+    </div>
+  </section>
+
+  <section class="s1ck-product-section s1ck-comparison" aria-labelledby="s1ck-comparison-title-{{ section.id }}">
+    <div class="s1ck-product-section__content">
+      <h2 id="s1ck-comparison-title-{{ section.id }}" class="s1ck-visually-hidden">Product comparison chart</h2>
+      <div class="s1ck-comparison-layout">
+        <div class="s1ck-comparison-product">
+          {% if product.featured_image != blank %}
+            {{ product.featured_image | image_url: width: 300 | image_tag: loading: 'lazy', widths: '140, 220, 300', alt: product_name }}
+          {% endif %}
+          <b>S1CK<br>{{ product_name }}</b>
+        </div>
+        <div class="s1ck-comparison-table" role="table" aria-label="{{ product_name }} compared with other brands">
+          <div class="s1ck-comparison-row s1ck-comparison-head" role="row"><span>Features</span><b>S1CK {{ product_name }}</b><span>Other brands</span></div>
+          <div class="s1ck-comparison-row" role="row"><span>Pheromone blend</span><b>✓ 48mg premium blend</b><span>0mg – none</span></div>
+          <div class="s1ck-comparison-row" role="row"><span>Raw material quality</span><b>✓ 92% premium</b><span>20% – 60%</span></div>
+          <div class="s1ck-comparison-row" role="row"><span>Longevity (skin)</span><b>✓ 8+ hours</b><span>2 – 4 hours</span></div>
+          <div class="s1ck-comparison-row" role="row"><span>Longevity (clothes)</span><b>✓ 24+ hours</b><span>4 – 6 hours</span></div>
+          <div class="s1ck-comparison-row" role="row"><span>Sprays per bottle</span><b>✓ 310+ sprays</b><span>100 – 150 sprays</span></div>
+          <div class="s1ck-comparison-row" role="row"><span>Compliment factor</span><b>✓ High – proven</b><span>Low – unproven</span></div>
+          <div class="s1ck-comparison-row" role="row"><span>Price per spray</span><b>✓ High value</b><span>Overpriced</span></div>
+        </div>
+        <div class="s1ck-other-bottle" aria-label="Other brand bottle"><span></span><b>Other<br>brands</b></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="s1ck-product-section s1ck-product-offers" aria-labelledby="s1ck-offers-title-{{ section.id }}">
+    <div class="s1ck-product-section__content">
+      <h2 id="s1ck-offers-title-{{ section.id }}">Choose your power level</h2>
+      <div class="s1ck-bundle-grid">
+        {% for quantity in (1..3) %}
+          {% liquid
+            assign bundle_total = current_variant.price | times: quantity
+            assign bundle_form_id = 's1ck-bundle-' | append: section.id | append: '-' | append: quantity
+            case quantity
+              when 1
+                assign bundle_name = 'The Starter'
+                assign bundle_note = '1 × bottle'
+              when 2
+                assign bundle_name = 'The Collector'
+                assign bundle_note = 'Most popular · 2 × bottles'
+              else
+                assign bundle_name = 'The Legend'
+                assign bundle_note = 'Best value · 3 × bottles'
+            endcase
+          %}
+          <article class="s1ck-bundle-card{% if quantity == 2 %} is-featured{% endif %}">
+            {% if quantity == 2 %}<span class="s1ck-bundle-badge">Most popular</span>{% endif %}
+            <h3>{{ bundle_name }}</h3>
+            <p>{{ bundle_note }}</p>
+            <div class="s1ck-bundle-bottles" aria-hidden="true">
+              {% for bottle in (1..quantity) %}<span></span>{% endfor %}
+            </div>
+            <strong>{{ bundle_total | money }}</strong>
+            {% form 'product', product, id: bundle_form_id, class: 's1ck-bundle-form' %}
+              <input type="hidden" name="id" value="{{ current_variant.id }}">
+              <input type="hidden" name="quantity" value="{{ quantity }}">
+              <button type="submit" name="add"{% unless current_variant.available %} disabled{% endunless %}>
+                {% if current_variant.available %}Add {{ quantity }} to cart{% else %}Sold out{% endif %}
+              </button>
+            {% endform %}
+          </article>
+        {% endfor %}
+      </div>
+
+      <h3 class="s1ck-addons-title">Complete your routine</h3>
+      <div class="s1ck-addon-grid" role="list">
+        <div role="listitem"><span>□</span><b>10ml travel spray</b><small>Take your signature scent anywhere.</small></div>
+        <div role="listitem"><span>□</span><b>Le Toxique roll-on</b><small>A concentrated pocket-size companion.</small></div>
+        <div role="listitem"><span>□</span><b>S1CK oil</b><small>Layer your fragrance for extra impact.</small></div>
+        <div role="listitem" class="is-vip"><span>♛</span><b>VIP club membership</b><small>Members-only savings and gifts.</small></div>
+      </div>
+
+      <h3 class="s1ck-faq-title">Frequently asked questions</h3>
+      <div class="s1ck-faq-grid">
+        <details><summary>How do pheromones work?</summary><p>Pheromone fragrance is designed to complement your natural scent and create a distinctive, memorable impression.</p></details>
+        <details><summary>Is it safe to use daily?</summary><p>Use as directed and apply to pulse points. If you have sensitive skin, patch test before regular use.</p></details>
+        <details><summary>How many sprays should I use?</summary><p>Start with 3–5 sprays across pulse points, then adjust to your preferred projection.</p></details>
+        <details><summary>What is your return policy?</summary><p>Your store's current shipping and return policy applies to every order.</p></details>
+        <details><summary>How long does it last?</summary><p>The formula is designed for 8+ hours on skin and longer on clothing, depending on use and environment.</p></details>
+        <details><summary>Do you ship internationally?</summary><p>Available destinations and live delivery options are shown during checkout.</p></details>
+      </div>
+    </div>
+  </section>
+
+  <section class="s1ck-final-cta" aria-label="Buy {{ product_name }}">
+    <div>
+      <p>Become the man they remember.</p>
+      <span><b>100,000+</b> happy customers · <b>4.9/5</b> customer rating · 30-day guarantee</span>
+    </div>
+    <a href="#s1ck-product-buy">Get {{ product_name }} now</a>
+  </section>
+</div>
+
+{% schema %}
+{
+  "name": "S1CK product conversion",
+  "tag": "section",
+  "class": "s1ck-product-conversion-section",
+  "settings": [
+    { "type": "text", "id": "rating_value", "label": "Fallback rating", "default": "5" },
+    { "type": "text", "id": "review_count", "label": "Fallback review count", "default": "22,000" },
+    { "type": "text", "id": "quote_left", "label": "Left review quote", "default": "Beats all the designer colognes. Number one forever." },
+    { "type": "text", "id": "quote_left_name", "label": "Left reviewer", "default": "Kavika W." },
+    { "type": "text", "id": "quote_right", "label": "Right review quote", "default": "You can never go wrong with this scent." },
+    { "type": "text", "id": "quote_right_name", "label": "Right reviewer", "default": "Omar S." }
+  ],
+  "presets": [{ "name": "S1CK product conversion" }]
+}
+{% endschema %}

@@ -1,0 +1,103 @@
+<!doctype html>
+<html class="no-js" lang="{{ request.locale.iso_code }}">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>{{ page_title }}{% if current_tags %} &ndash; tagged "{{ current_tags | join: ', ' }}"{% endif %}{% if current_page != 1 %} &ndash; Page {{ current_page }}{% endif %}{% unless page_title contains shop.name %} &ndash; {{ shop.name }}{% endunless %}</title>
+  
+  {% comment %} Dynamic Shopify CDN Base & Liquid Video Mappings {% endcomment %}
+  <script>
+    (function() {
+      try {
+        var assetUrl = "{{ 's1ck-app.css' | asset_url }}";
+        var assetBaseUrl = assetUrl.split('s1ck-app.css')[0];
+        if (!assetBaseUrl || !assetBaseUrl.endsWith('/')) {
+          assetBaseUrl = assetUrl.substring(0, assetUrl.lastIndexOf('/') + 1);
+        }
+        window.__SHOPIFY_ASSET_BASE_URL__ = assetBaseUrl;
+
+        var fileBaseUrl = assetBaseUrl;
+        if (assetBaseUrl.indexOf('/assets/') !== -1) {
+          fileBaseUrl = assetBaseUrl.replace('/assets/', '/files/').replace(/\/t\/[^\/]+\/files\//, '/files/');
+        } else if (assetBaseUrl.indexOf('/s/files/') !== -1) {
+          var filesIdx = assetBaseUrl.indexOf('/s/files/');
+          var sub = assetBaseUrl.substring(filesIdx + 9);
+          var subParts = sub.split('/');
+          if (subParts.length >= 2) {
+            fileBaseUrl = assetBaseUrl.substring(0, filesIdx + 9) + subParts[0] + '/' + subParts[1] + '/files/';
+          }
+        }
+        window.__SHOPIFY_FILE_BASE_URL__ = fileBaseUrl;
+
+        var customMediaBaseUrl = {{ settings.custom_media_base_url | default: '' | json }};
+        function legacyVideoUrl(filename) {
+          if (!customMediaBaseUrl) return null;
+          return customMediaBaseUrl.replace(/\/?$/, '/') + filename;
+        }
+
+        {% assign hero_desktop_source = settings.hero_desktop_video.sources | where: 'format', 'mp4' | first %}
+        {% assign hero_desktop_source = hero_desktop_source | default: settings.hero_desktop_video.sources.first %}
+        {% assign hero_mobile_source = settings.hero_mobile_video.sources | where: 'format', 'mp4' | first %}
+        {% assign hero_mobile_source = hero_mobile_source | default: settings.hero_mobile_video.sources.first %}
+        {% assign bestseller_desktop_source = settings.bestseller_desktop_video.sources | where: 'format', 'mp4' | first %}
+        {% assign bestseller_desktop_source = bestseller_desktop_source | default: settings.bestseller_desktop_video.sources.first %}
+        {% assign bestseller_mobile_source = settings.bestseller_mobile_video.sources | where: 'format', 'mp4' | first %}
+        {% assign bestseller_mobile_source = bestseller_mobile_source | default: settings.bestseller_mobile_video.sources.first %}
+        {% assign formula_reveal_source = settings.formula_reveal_video.sources | where: 'format', 'mp4' | first %}
+        {% assign formula_reveal_source = formula_reveal_source | default: settings.formula_reveal_video.sources.first %}
+        {% assign reaction_video_1_source = settings.reaction_video_1.sources | where: 'format', 'mp4' | first %}
+        {% assign reaction_video_1_source = reaction_video_1_source | default: settings.reaction_video_1.sources.first %}
+        {% assign reaction_video_2_source = settings.reaction_video_2.sources | where: 'format', 'mp4' | first %}
+        {% assign reaction_video_2_source = reaction_video_2_source | default: settings.reaction_video_2.sources.first %}
+        {% assign reaction_video_3_source = settings.reaction_video_3.sources | where: 'format', 'mp4' | first %}
+        {% assign reaction_video_3_source = reaction_video_3_source | default: settings.reaction_video_3.sources.first %}
+        {% assign reaction_video_4_source = settings.reaction_video_4.sources | where: 'format', 'mp4' | first %}
+        {% assign reaction_video_4_source = reaction_video_4_source | default: settings.reaction_video_4.sources.first %}
+        {% assign reaction_video_5_source = settings.reaction_video_5.sources | where: 'format', 'mp4' | first %}
+        {% assign reaction_video_5_source = reaction_video_5_source | default: settings.reaction_video_5.sources.first %}
+        {% assign reaction_video_6_source = settings.reaction_video_6.sources | where: 'format', 'mp4' | first %}
+        {% assign reaction_video_6_source = reaction_video_6_source | default: settings.reaction_video_6.sources.first %}
+
+        // Theme-editor selections override the original Shopify Files names.
+        window.__SHOPIFY_VIDEOS__ = {
+          "hero-bg-3.mp4": {% if hero_desktop_source != blank %}{{ hero_desktop_source.url | json }}{% else %}(legacyVideoUrl("hero-bg-3.mp4") || {{ 'hero-bg-3.mp4' | file_url | json }}){% endif %},
+          "hero-mobile.mp4": {% if hero_mobile_source != blank %}{{ hero_mobile_source.url | json }}{% else %}(legacyVideoUrl("hero-mobile.mp4") || {{ 'hero-mobile.mp4' | file_url | json }}){% endif %},
+          "bestseller-web.webm": {% if bestseller_desktop_source != blank %}{{ bestseller_desktop_source.url | json }}{% else %}(legacyVideoUrl("bestseller-web.webm") || {{ 'bestseller-web.webm' | file_url | json }}){% endif %},
+          "bestseller-mobile.webm": {% if bestseller_mobile_source != blank %}{{ bestseller_mobile_source.url | json }}{% else %}(legacyVideoUrl("bestseller-mobile.webm") || {{ 'bestseller-mobile.webm' | file_url | json }}){% endif %},
+          "video-1.mp4": {% if formula_reveal_source != blank %}{{ formula_reveal_source.url | json }}{% else %}(legacyVideoUrl("video-1.mp4") || {{ 'video-1.mp4' | file_url | json }}){% endif %},
+          "video-2.mp4": "{{ 'video-2.mp4' | file_url }}",
+          "video-3.mp4": "{{ 'video-3.mp4' | file_url }}",
+          "f1.mp4": {% if reaction_video_1_source != blank %}{{ reaction_video_1_source.url | json }}{% else %}(legacyVideoUrl("f1.mp4") || {{ 'f1.mp4' | file_url | json }}){% endif %},
+          "f2.mp4": {% if reaction_video_2_source != blank %}{{ reaction_video_2_source.url | json }}{% else %}(legacyVideoUrl("f2.mp4") || {{ 'f2.mp4' | file_url | json }}){% endif %},
+          "f3.mp4": {% if reaction_video_3_source != blank %}{{ reaction_video_3_source.url | json }}{% else %}(legacyVideoUrl("f3.mp4") || {{ 'f3.mp4' | file_url | json }}){% endif %},
+          "f5.mp4": {% if reaction_video_4_source != blank %}{{ reaction_video_4_source.url | json }}{% else %}(legacyVideoUrl("f5.mp4") || {{ 'f5.mp4' | file_url | json }}){% endif %},
+          "f6.mp4": {% if reaction_video_5_source != blank %}{{ reaction_video_5_source.url | json }}{% else %}(legacyVideoUrl("f6.mp4") || {{ 'f6.mp4' | file_url | json }}){% endif %},
+          "f7.mp4": {% if reaction_video_6_source != blank %}{{ reaction_video_6_source.url | json }}{% else %}(legacyVideoUrl("f7.mp4") || {{ 'f7.mp4' | file_url | json }}){% endif %}
+        };
+
+        console.log('[S1CK Theme] Asset Base URL:', window.__SHOPIFY_ASSET_BASE_URL__);
+        console.log('[S1CK Theme] Files Base URL:', window.__SHOPIFY_FILE_BASE_URL__);
+        console.log('[S1CK Theme] Liquid Videos:', window.__SHOPIFY_VIDEOS__);
+      } catch (err) {
+        console.error('[S1CK Theme] Error computing CDN base URLs:', err);
+      }
+    })();
+  </script>
+
+  {% if page_description %}
+    <meta name="description" content="{{ page_description | escape }}">
+  {% endif %}
+  <link rel="canonical" href="{{ canonical_url }}">
+  {{ content_for_header }}
+  
+  {% comment %} S1CK Custom Theme Styles {% endcomment %}
+  {{ 's1ck-app.css' | asset_url | stylesheet_tag }}
+</head>
+<body class="bg-black text-white">
+  {{ content_for_layout }}
+
+  {% comment %} S1CK Custom Theme Script {% endcomment %}
+  {{ 's1ck-app.js' | asset_url | script_tag }}
+</body>
+</html>

@@ -4,7 +4,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import Navbar from "../components/Navbar";
 import FooterSection from "../sections/FooterSection";
-import heroImg from "../assets/menu-img/story-menu.webp";
+import { getImage } from "../utils/media";
 import { useScrollTriggerRefresh } from "../hooks/useScrollTriggerRefresh";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -218,6 +218,9 @@ const VipClubPage = () => {
         gsap.to(card, { y: 0, duration: 0.4, ease: "power3.out" });
     };
 
+    const vipDesktop = getImage("vip-desktop.jpg");
+    const vipMobile = getImage("vip-mobile.jpg");
+
     return (
         <main ref={pageRef} className="bg-cream min-h-dvh">
             <Navbar variant="light" />
@@ -225,14 +228,17 @@ const VipClubPage = () => {
             {/* Hero */}
             <section className="vip-hero relative h-[75vh] w-full overflow-hidden">
                 <div className="vip-hero-img-wrap absolute inset-0">
-                    <img
-                        ref={heroImgRef}
-                        src={heroImg}
-                        alt="VIP Club"
-                        loading="eager"
-                        decoding="async"
-                        className="w-full h-[120%] object-cover absolute top-0 left-0"
-                    />
+                    <picture>
+                        <source media="(max-width: 768px)" srcSet={vipMobile} />
+                        <img
+                            ref={heroImgRef}
+                            src={vipDesktop}
+                            alt="S1CK VIP Black Card Luxury Access"
+                            loading="eager"
+                            decoding="async"
+                            className="w-full h-[120%] object-cover object-center absolute top-0 left-0"
+                        />
+                    </picture>
                 </div>
                 <div className="absolute inset-0 bg-gradient-to-t from-charcoal/90 via-charcoal/50 to-charcoal/10 z-10" />
 

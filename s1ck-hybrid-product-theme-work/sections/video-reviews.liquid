@@ -1,0 +1,459 @@
+{% comment %}
+  S1CK — Video Review Carousel
+  Add via theme customizer. Supports Shopify-hosted video and YouTube per slide.
+{% endcomment %}
+
+<div class="s1ck-vr" data-s1ck-vr>
+  {% if section.settings.heading != blank %}
+    <div class="s1ck-vr__head">
+      <h2 class="s1ck-vr__title">{{ section.settings.heading }}</h2>
+      {% if section.settings.subheading != blank %}
+        <p class="s1ck-vr__sub">{{ section.settings.subheading }}</p>
+      {% endif %}
+    </div>
+  {% endif %}
+
+  <div class="s1ck-vr__viewport">
+    <button class="s1ck-vr__nav s1ck-vr__nav--prev" type="button" aria-label="Previous review" data-s1ck-prev>
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false">
+        <path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+
+    <ul class="s1ck-vr__track" data-s1ck-track role="list">
+      {% for block in section.blocks %}
+        <li class="s1ck-vr__slide" {{ block.shopify_attributes }}>
+          <div class="s1ck-vr__media">
+            {% if block.settings.video_type == 'youtube' and block.settings.youtube_id != blank %}
+              <div
+                class="s1ck-vr__yt"
+                data-s1ck-yt="{{ block.settings.youtube_id | escape }}"
+              >
+                <img
+                  class="s1ck-vr__poster"
+                  src="https://i.ytimg.com/vi/{{ block.settings.youtube_id | escape }}/hqdefault.jpg"
+                  alt="{{ block.settings.reviewer_name | default: 'Customer' | escape }} video review of Arcane pheromone cologne"
+                  loading="lazy"
+                  width="360"
+                  height="640"
+                >
+                <button class="s1ck-vr__play" type="button" aria-label="Play video review from {{ block.settings.reviewer_name | default: 'customer' | escape }}">
+                  <svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true" focusable="false">
+                    <path d="M8 5.5v13l11-6.5z" fill="currentColor"/>
+                  </svg>
+                </button>
+              </div>
+
+            {% elsif block.settings.video != blank %}
+              {{ block.settings.video
+                 | video_tag:
+                   image_size: '480x',
+                   controls: true,
+                   playsinline: true,
+                   preload: 'none',
+                   class: 's1ck-vr__video'
+              }}
+
+            {% else %}
+              <div class="s1ck-vr__empty">Add a video to this slide.</div>
+            {% endif %}
+          </div>
+
+          <div class="s1ck-vr__body">
+            {% if block.settings.rating > 0 %}
+              <div class="s1ck-vr__stars" role="img" aria-label="{{ block.settings.rating }} out of 5 stars">
+                {% for i in (1..5) %}
+                  <span class="s1ck-vr__star{% if i > block.settings.rating %} is-off{% endif %}" aria-hidden="true">&#9733;</span>
+                {% endfor %}
+              </div>
+            {% endif %}
+
+            {% if block.settings.quote != blank %}
+              <blockquote class="s1ck-vr__quote">{{ block.settings.quote }}</blockquote>
+            {% endif %}
+
+            {% if block.settings.reviewer_name != blank %}
+              <p class="s1ck-vr__name">
+                {{ block.settings.reviewer_name }}
+                {% if block.settings.verified %}
+                  <span class="s1ck-vr__badge">Verified buyer</span>
+                {% endif %}
+              </p>
+            {% endif %}
+          </div>
+        </li>
+      {% endfor %}
+    </ul>
+
+    <button class="s1ck-vr__nav s1ck-vr__nav--next" type="button" aria-label="Next review" data-s1ck-next>
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false">
+        <path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+  </div>
+</div>
+
+<style>
+  .s1ck-vr {
+    --vr-bg: {{ section.settings.bg_color }};
+    --vr-fg: {{ section.settings.text_color }};
+    --vr-accent: {{ section.settings.accent_color }};
+    background: var(--vr-bg);
+    color: var(--vr-fg);
+    padding: {{ section.settings.padding_top }}px 0 {{ section.settings.padding_bottom }}px;
+  }
+
+  .s1ck-vr__head {
+    text-align: center;
+    max-width: 42rem;
+    margin: 0 auto 2.25rem;
+    padding: 0 1.25rem;
+  }
+
+  .s1ck-vr__title {
+    margin: 0;
+    font-size: clamp(1.5rem, 3.5vw, 2.125rem);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  .s1ck-vr__sub {
+    margin: 0.625rem 0 0;
+    opacity: 0.72;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+  }
+
+  .s1ck-vr__viewport {
+    position: relative;
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 0 1.25rem;
+  }
+
+  .s1ck-vr__track {
+    display: flex;
+    gap: 1.125rem;
+    margin: 0;
+    padding: 0.25rem 0 1.25rem;
+    list-style: none;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .s1ck-vr__track::-webkit-scrollbar { display: none; }
+
+  .s1ck-vr__slide {
+    flex: 0 0 clamp(220px, 74vw, 268px);
+    scroll-snap-align: center;
+  }
+
+  @media (min-width: 750px) {
+    .s1ck-vr__slide { flex-basis: 268px; scroll-snap-align: start; }
+  }
+
+  .s1ck-vr__media {
+    position: relative;
+    aspect-ratio: 9 / 16;
+    border-radius: 3px;
+    overflow: hidden;
+    background: #0d0d0d;
+  }
+
+  .s1ck-vr__media video,
+  .s1ck-vr__media iframe,
+  .s1ck-vr__poster {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border: 0;
+    display: block;
+  }
+
+  .s1ck-vr__play {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 58px;
+    height: 58px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.5);
+    background: rgba(0,0,0,0.45);
+    color: #fff;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    backdrop-filter: blur(2px);
+    transition: background 0.2s ease, transform 0.2s ease;
+  }
+
+  .s1ck-vr__play:hover { background: rgba(0,0,0,0.7); transform: translate(-50%, -50%) scale(1.06); }
+  .s1ck-vr__play:focus-visible { outline: 2px solid var(--vr-accent); outline-offset: 3px; }
+
+  .s1ck-vr__empty {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    color: rgba(255,255,255,0.55);
+    font-size: 0.8125rem;
+    padding: 1rem;
+    text-align: center;
+  }
+
+  .s1ck-vr__body { padding: 0.875rem 0.125rem 0; }
+
+  .s1ck-vr__stars { letter-spacing: 0.14em; font-size: 0.8125rem; color: var(--vr-accent); }
+  .s1ck-vr__star.is-off { opacity: 0.24; }
+
+  .s1ck-vr__quote {
+    margin: 0.5rem 0 0;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    font-style: italic;
+  }
+
+  .s1ck-vr__name {
+    margin: 0.625rem 0 0;
+    font-size: 0.8125rem;
+    letter-spacing: 0.04em;
+    opacity: 0.85;
+  }
+
+  .s1ck-vr__badge {
+    display: inline-block;
+    margin-left: 0.4rem;
+    padding: 0.1rem 0.4rem;
+    font-size: 0.625rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border: 1px solid currentColor;
+    border-radius: 2px;
+    opacity: 0.7;
+  }
+
+  .s1ck-vr__nav {
+    position: absolute;
+    top: 34%;
+    z-index: 2;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1px solid rgba(128,128,128,0.35);
+    background: var(--vr-bg);
+    color: var(--vr-fg);
+    display: none;
+    place-items: center;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+  }
+
+  .s1ck-vr__nav:focus-visible { outline: 2px solid var(--vr-accent); outline-offset: 2px; }
+  .s1ck-vr__nav[disabled] { opacity: 0.3; cursor: default; }
+  .s1ck-vr__nav--prev { left: -0.25rem; }
+  .s1ck-vr__nav--next { right: -0.25rem; }
+
+  @media (min-width: 990px) {
+    .s1ck-vr__nav { display: grid; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .s1ck-vr__track { scroll-behavior: auto; }
+    .s1ck-vr__play { transition: none; }
+  }
+</style>
+
+<script>
+  (function () {
+    var roots = document.querySelectorAll('[data-s1ck-vr]');
+
+    roots.forEach(function (root) {
+      var track = root.querySelector('[data-s1ck-track]');
+      var prev = root.querySelector('[data-s1ck-prev]');
+      var next = root.querySelector('[data-s1ck-next]');
+      if (!track) return;
+
+      function step() {
+        var slide = track.querySelector('.s1ck-vr__slide');
+        if (!slide) return 280;
+        return slide.getBoundingClientRect().width + 18;
+      }
+
+      function sync() {
+        if (!prev || !next) return;
+        var max = track.scrollWidth - track.clientWidth - 2;
+        prev.disabled = track.scrollLeft <= 2;
+        next.disabled = track.scrollLeft >= max;
+      }
+
+      if (prev) prev.addEventListener('click', function () { track.scrollBy({ left: -step(), behavior: 'smooth' }); });
+      if (next) next.addEventListener('click', function () { track.scrollBy({ left: step(), behavior: 'smooth' }); });
+
+      track.addEventListener('scroll', sync, { passive: true });
+      window.addEventListener('resize', sync);
+      sync();
+
+      root.querySelectorAll('[data-s1ck-yt]').forEach(function (wrap) {
+        var btn = wrap.querySelector('.s1ck-vr__play');
+        if (!btn) return;
+
+        btn.addEventListener('click', function () {
+          var id = wrap.getAttribute('data-s1ck-yt');
+          if (!id) return;
+
+          var frame = document.createElement('iframe');
+          frame.src = 'https://www.youtube-nocookie.com/embed/' + encodeURIComponent(id) + '?autoplay=1&rel=0&playsinline=1';
+          frame.setAttribute('title', 'Customer video review');
+          frame.setAttribute('allow', 'accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture');
+          frame.setAttribute('allowfullscreen', '');
+          frame.setAttribute('loading', 'lazy');
+
+          wrap.innerHTML = '';
+          wrap.appendChild(frame);
+        });
+      });
+    });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Video reviews",
+  "tag": "section",
+  "class": "s1ck-video-reviews",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Real customers, real reactions"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "info": "Optional line under the heading."
+    },
+    {
+      "type": "header",
+      "content": "Colours"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background",
+      "default": "#0B0B0B"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text",
+      "default": "#F5F0E6"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Stars and focus ring",
+      "default": "#C9A24B"
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 56
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 56
+    }
+  ],
+  "blocks": [
+    {
+      "type": "review",
+      "name": "Video review",
+      "settings": [
+        {
+          "type": "select",
+          "id": "video_type",
+          "label": "Video source",
+          "options": [
+            { "value": "shopify", "label": "Shopify-hosted video" },
+            { "value": "youtube", "label": "YouTube" }
+          ],
+          "default": "shopify"
+        },
+        {
+          "type": "video",
+          "id": "video",
+          "label": "Shopify video",
+          "info": "Used when source is set to Shopify-hosted."
+        },
+        {
+          "type": "text",
+          "id": "youtube_id",
+          "label": "YouTube video ID",
+          "info": "Just the ID, not the full URL. In youtube.com/watch?v=AbC123xyz the ID is AbC123xyz."
+        },
+        {
+          "type": "range",
+          "id": "rating",
+          "label": "Star rating",
+          "min": 0,
+          "max": 5,
+          "step": 1,
+          "default": 5
+        },
+        {
+          "type": "textarea",
+          "id": "quote",
+          "label": "Quote",
+          "info": "Use the customer's own words. Keep it short — two lines reads best."
+        },
+        {
+          "type": "text",
+          "id": "reviewer_name",
+          "label": "Customer name"
+        },
+        {
+          "type": "checkbox",
+          "id": "verified",
+          "label": "Show verified buyer badge",
+          "default": true,
+          "info": "Only tick this for customers with a matching order."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Video reviews",
+      "blocks": [
+        { "type": "review" },
+        { "type": "review" },
+        { "type": "review" }
+      ]
+    }
+  ]
+}
+{% endschema %}

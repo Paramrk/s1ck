@@ -15,16 +15,18 @@ export const useScrollTriggerRefresh = (debounceMs = 150) => {
             t = setTimeout(() => ScrollTrigger.refresh(true), debounceMs);
         };
 
-        window.addEventListener("resize", trigger);
-        window.addEventListener("orientationchange", () => {
+        const onOrientationChange = () => {
             if (t) clearTimeout(t);
             t = setTimeout(() => ScrollTrigger.refresh(true), debounceMs);
-        });
+        };
+
+        window.addEventListener("resize", trigger);
+        window.addEventListener("orientationchange", onOrientationChange);
 
         return () => {
             if (t) clearTimeout(t);
             window.removeEventListener("resize", trigger);
-            window.removeEventListener("orientationchange", trigger);
+            window.removeEventListener("orientationchange", onOrientationChange);
         };
     }, [debounceMs]);
 };

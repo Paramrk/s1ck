@@ -1,0 +1,27 @@
+[
+  {
+    "name": "theme_info",
+    "theme_name": "S1CK Luxury Theme",
+    "theme_author": "S1CK",
+    "theme_version": "1.0.0",
+    "theme_documentation_url": "https://s1ckshop.com",
+    "theme_support_url": "https://s1ckshop.com"
+  },
+  {
+    "name": "General Settings",
+    "settings": [
+      {
+        "type": "text",
+        "id": "store_name",
+        "label": "Store Name",
+        "default": "S1CK Shop"
+      },
+      {
+        "type": "text",
+        "id": "custom_media_base_url",
+        "label": "Custom Media Base URL (Optional)",
+        "info": "If media files are uploaded to Shopify Files or an external CDN, paste the URL prefix here (e.g. https://cdn.shopify.com/s/files/1/xxxx/files/)."
+      }
+    ]
+  }
+]

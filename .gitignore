@@ -92,3 +92,12 @@ Thumbs.db
 
 # Large Video (hosted on CDN)
 src/assets/videos/pin-video.mp4
+*.zip
+exported theme/
+shopify-media-files/
+/s1ck-shopify-theme.zip
+/s1ck-shopify-theme
+/shopify
+/s1ck-media-files.zip
+/s1ck-media-files
+tmp/

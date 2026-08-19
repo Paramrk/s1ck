@@ -1,21 +1,23 @@
-import bottleOne from "../assets/fruits/Perfume_bottle_on_white_background_202605271151.png";
-import bottleTwo from "../assets/fruits/Perfume_bottle_on_white_background_202605271154.png";
-import bottleThree from "../assets/fruits/remove_the_water_splash_202605271151.png";
+import { getImage } from "../utils/media";
 
-import vanilla from "../assets/fruits/vanilla.png";
-import cinemonsticks from "../assets/fruits/cinemonsticks.png";
-import berryred from "../assets/fruits/berryred.png";
-import orange from "../assets/fruits/orange.png";
+const bottleOne = getImage("Perfume_bottle_on_white_background_202605271151.webp");
+const bottleTwo = getImage("Perfume_bottle_on_white_background_202605271154.webp");
+const bottleThree = getImage("remove_the_water_splash_202605271151.webp");
 
-import blueberry from "../assets/fruits/blueberry.png";
-import grapes from "../assets/fruits/grapes.png";
-import apple from "../assets/fruits/apple.png";
-import starfruit from "../assets/fruits/starfruit.png";
+const vanilla = getImage("vanilla.webp");
+const cinemonsticks = getImage("cinemonsticks.webp");
+const berryred = getImage("berryred.webp");
+const orange = getImage("orange.webp");
 
-import peach from "../assets/fruits/peach.png";
-import cinemon from "../assets/fruits/cinemon.png";
-import oranageg from "../assets/fruits/oranageg.png";
-import pomogranade from "../assets/fruits/pomogranade.png";
+const blueberry = getImage("blueberry.webp");
+const grapes = getImage("grapes.webp");
+const apple = getImage("apple.webp");
+const starfruit = getImage("starfruit.webp");
+
+const peach = getImage("peach.webp");
+const cinemon = getImage("cinemon.webp");
+const oranageg = getImage("oranageg.webp");
+const pomogranade = getImage("pomogranade.webp");
 
 export type ScentFruit = {
     src: string;

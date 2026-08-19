@@ -4,13 +4,13 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ScrollSmoother, SplitText } from "gsap/all";
 import ScentSectionTitle from "../components/ScentSectionTitle";
 import { useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
 import { useMediaQuery } from "react-responsive";
 import {
     scentCompositions,
     type ScentCompositionItem,
 } from "../constants/scentComposition";
 import { getProductCarouselTiming } from "../utils/productCarouselScroll";
+import { getProductUrl } from "../utils/shopify";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -354,9 +354,9 @@ const ScentCompositionSection = () => {
                                     className={`sc-copy sc-copy-${i} flex min-h-0 flex-col overflow-hidden max-md:relative max-md:z-30 max-md:shrink-0 max-md:justify-start max-md:bg-white max-md:pt-1 max-md:pb-0 lg:flex-1 lg:order-2 lg:justify-center lg:pl-4 lg:pt-2 xl:pl-8`}
                                 >
                                     <div className="sc-copy-inner w-full">
-                                        <div className="sc-copy-title flex items-start pr-1">
+                                        <div className="sc-copy-title flex w-full items-center">
                                             <h3
-                                                className="text-charcoal text-xl sm:text-2xl lg:text-[2rem] xl:text-[2.15rem] uppercase font-bold leading-[1.12] tracking-tight"
+                                                className="w-full text-left text-charcoal text-xl sm:text-2xl lg:text-[2rem] xl:text-[2.15rem] uppercase font-bold leading-[1.12] tracking-tight"
                                                 style={{ fontFamily: "Syne, sans-serif" }}
                                             >
                                                 {item.name}
@@ -364,8 +364,8 @@ const ScentCompositionSection = () => {
                                         </div>
 
                                         <div className="sc-copy-cta">
-                                            <Link
-                                                to={item.shopHref}
+                                            <a
+                                                href={getProductUrl(item.name)}
                                                 className="sc-buy-btn flex w-full min-h-[3.25rem] sm:min-h-[3.5rem] items-center justify-center gap-2 rounded-full px-8 py-3.5 sm:py-4 text-xs uppercase tracking-[0.2em] font-semibold text-white transition-opacity duration-300 hover:opacity-90 pointer-events-auto relative z-40"
                                                 style={{
                                                     fontFamily: "Syne, sans-serif",
@@ -375,10 +375,10 @@ const ScentCompositionSection = () => {
                                             >
                                                 Shop Now
                                                 <i className="ri-shopping-bag-3-line text-base" aria-hidden="true" />
-                                            </Link>
+                                            </a>
                                         </div>
 
-                                        <div className="sc-copy-body pr-1">
+                                        <div className="sc-copy-body w-full">
                                             <HighlightsList item={item} />
                                         </div>
                                     </div>

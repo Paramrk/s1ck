@@ -1,15 +1,5 @@
 import { visibleFlavorlists } from "../constants/visibleFlavors";
-
-const images: Record<string, { default: string }> = import.meta.glob(
-    "../assets/images/*.{webp,svg}",
-    { eager: true }
-);
-
-const getImage = (fileName?: string): string | undefined => {
-    if (!fileName?.trim()) return undefined;
-    const key = `../assets/images/${fileName}`;
-    return images[key]?.default;
-};
+import { getVideo, getImage } from "../utils/media";
 
 const FlavorSlider = () => {
     return (
@@ -21,7 +11,6 @@ const FlavorSlider = () => {
             }}
         >
             {visibleFlavorlists.map((flavor, i) => {
-                const drinkSrc = getImage(flavor.drinkImage);
                 const isFirst = i === 0;
                 const vis = isFirst ? 1 : 0;
 
@@ -257,33 +246,71 @@ const FlavorSlider = () => {
                             </div>
                         </div>
 
-                        {/* ─── BOTTLE ─── */}
+                        {/* ─── BOTTLE / VIDEO STAGE ─── */}
                         <div className="relative max-md:order-1 max-md:flex max-md:flex-1 max-md:items-center max-md:justify-center max-md:w-full max-md:min-h-0 max-md:max-h-[58%] lg:contents">
-                        {drinkSrc && (
-                            <img
-                                src={drinkSrc}
-                                alt={flavor.name}
-                                loading={isFirst ? "eager" : "lazy"}
-                                decoding="async"
-                                draggable={false}
-                                className="product-bottle relative z-10 max-md:h-full max-md:max-h-full max-md:w-auto max-md:object-contain h-[38%] md:h-[65%] max-h-[540px] object-contain"
+                            {/* Central Video Wrapper with Parallax capability */}
+                            <div className="bestseller-video-wrap relative z-10 flex items-center justify-center max-md:h-full max-md:w-full h-[38%] md:h-[65%] max-h-[540px] pointer-events-none">
+                                {/* Fallback Bottle Image behind video stage */}
+                                <img
+                                    src={getImage("ls.webp")}
+                                    alt="S1CK Bestseller"
+                                    className="absolute inset-0 m-auto max-h-full w-auto object-contain z-0 pointer-events-none opacity-90 drop-shadow-[0_20px_50px_rgba(0,0,0,0.18)]"
+                                />
+
+                                {/* Desktop Web Video */}
+                                <video
+                                    key={getVideo("bestseller-web.webm")}
+                                    src={getVideo("bestseller-web.webm")}
+                                    ref={(el) => {
+                                        if (el) {
+                                            el.muted = true;
+                                            el.playsInline = true;
+                                            try {
+                                                if (el.currentTime === 0) el.currentTime = 0.05;
+                                            } catch {}
+                                        }
+                                    }}
+                                    autoPlay
+                                    loop
+                                    muted
+                                    playsInline
+                                    preload="auto"
+                                    className="bestseller-video bestseller-video-web hidden md:block max-h-full w-auto object-contain drop-shadow-[0_30px_60px_rgba(0,0,0,0.28)] relative z-10"
+                                    style={{ willChange: "transform" }}
+                                />
+                                {/* Mobile Video */}
+                                <video
+                                    key={getVideo("bestseller-mobile.webm")}
+                                    src={getVideo("bestseller-mobile.webm")}
+                                    ref={(el) => {
+                                        if (el) {
+                                            el.muted = true;
+                                            el.playsInline = true;
+                                            try {
+                                                if (el.currentTime === 0) el.currentTime = 0.05;
+                                            } catch {}
+                                        }
+                                    }}
+                                    autoPlay
+                                    loop
+                                    muted
+                                    playsInline
+                                    preload="auto"
+                                    className="bestseller-video bestseller-video-mobile md:hidden max-md:h-full max-md:max-h-full max-md:w-auto max-md:object-contain drop-shadow-[0_20px_40px_rgba(0,0,0,0.25)] relative z-10"
+                                    style={{ willChange: "transform" }}
+                                />
+                            </div>
+
+                            {/* ─── Floor shadow ─── */}
+                            <div
+                                className="floor-shadow absolute bottom-[6%] md:bottom-[12%] left-1/2 -translate-x-1/2 pointer-events-none rounded-full max-md:bottom-[4%]"
                                 style={{
-                                    filter: "drop-shadow(0 30px 60px rgba(0,0,0,0.28)) drop-shadow(0 10px 20px rgba(0,0,0,0.14))",
-                                    willChange: "transform",
+                                    width: "40%",
+                                    height: "20px",
+                                    background: "radial-gradient(ellipse, rgba(0,0,0,0.18) 0%, rgba(0,0,0,0) 70%)",
+                                    filter: "blur(4px)",
                                 }}
                             />
-                        )}
-
-                        {/* ─── Floor shadow ─── */}
-                        <div
-                            className="floor-shadow absolute bottom-[6%] md:bottom-[12%] left-1/2 -translate-x-1/2 pointer-events-none rounded-full max-md:bottom-[4%]"
-                            style={{
-                                width: "40%",
-                                height: "20px",
-                                background: "radial-gradient(ellipse, rgba(0,0,0,0.18) 0%, rgba(0,0,0,0) 70%)",
-                                filter: "blur(4px)",
-                            }}
-                        />
                         </div>
 
                         {/* ─── BOTTOM CAPTION: Name & Counter ─── */}

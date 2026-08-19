@@ -6,7 +6,15 @@ import menu1 from "../assets/menu-img/men-menu.webp";
 import menu3 from "../assets/menu-img/shop-menu.webp";
 import menu4 from "../assets/menu-img/story-menu.webp";
 
-const defaultMenuImg = menu1;
+const getCustomMenuImage = (name: string, fallback: string): string => {
+    if (typeof window !== "undefined") {
+        const w = window as any;
+        if (w.__SHOPIFY_MENU_IMAGES__ && w.__SHOPIFY_MENU_IMAGES__[name]) {
+            return w.__SHOPIFY_MENU_IMAGES__[name];
+        }
+    }
+    return fallback;
+};
 
 interface MenuItem {
     name: string;
@@ -27,13 +35,15 @@ const NavMenu: React.FC<NavMenuProps> = ({ isOpen, onClose }) => {
     const imgRef = useRef<HTMLImageElement>(null);
     const imgOverlayRef = useRef<HTMLImageElement>(null);
 
+    const defaultMenuImg = getCustomMenuImage("Shop", menu1);
+
     const menuItems: MenuItem[] = [
-        { name: "Shop",      img: menu3, path: "/shop" },
-        { name: "Our Story", img: menu1, path: "/our-story" },
-        { name: "VIP Club",  img: menu4, path: "/vip-club" },
-        { name: "Affiliate", img: menu3, path: "/affiliate" },
-        { name: "Wholesaler", img: menu1, path: "/wholesaler" },
-        { name: "Contact" },
+        { name: "Shop",       img: getCustomMenuImage("Shop", menu3), path: "/shop" },
+        { name: "Our Story",  img: getCustomMenuImage("Our Story", menu4), path: "/our-story" },
+        { name: "VIP Club",   img: getCustomMenuImage("VIP Club", menu4), path: "/vip-club" },
+        { name: "Affiliate",  img: getCustomMenuImage("Affiliate", menu3), path: "/affiliate" },
+        { name: "Wholesaler", img: getCustomMenuImage("Wholesaler", menu1), path: "/wholesaler" },
+        { name: "Contact",    img: getCustomMenuImage("Contact", menu4), path: "/contact" },
     ];
 
     const [hovered, setHovered] = useState<string | null>(null);
@@ -197,7 +207,7 @@ const NavMenu: React.FC<NavMenuProps> = ({ isOpen, onClose }) => {
 
                                         {/* Link text */}
                                         <span
-                                            className={`uppercase lg:text-[4.5vw] md:text-6xl text-4xl font-bold tracking-tight transition-all duration-500 relative ${
+                                            className={`uppercase lg:text-[3.2vw] md:text-5xl text-3xl font-bold tracking-tight transition-all duration-500 relative ${
                                                 hovered === item.name
                                                     ? "text-charcoal"
                                                     : hovered

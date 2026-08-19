@@ -60,86 +60,99 @@ const benefits = [
 const PheromoneBenefits = ({ showMockup = false }: { showMockup?: boolean }) => {
     const sectionRef = useRef<HTMLElement>(null);
     const [activeIndex, setActiveIndex] = useState(0);
+    const activeIndexRef = useRef(0);
 
     useGSAP(() => {
-        const mm = gsap.matchMedia();
+        const section = sectionRef.current;
+        if (!section) return;
 
-        const buildPanels = (mobile: boolean) => {
-            const panels = gsap.utils.toArray<HTMLElement>(".pheromone-panel");
-            if (panels.length === 0) return;
+        const panels = Array.from(
+            section.querySelectorAll<HTMLElement>(".pheromone-panel"),
+        );
+        if (panels.length < 2) return;
 
-            const transitionPart = mobile ? 0.3 : 0.35;
+        const lastPanelIndex = panels.length - 1;
 
-            ScrollTrigger.create({
-                trigger: sectionRef.current,
-                start: "top top",
-                // More scroll distance on mobile = slower, smoother transitions
-                end: () => `+=${panels.length * (mobile ? 200 : 250)}vh`,
-                pin: true,
-                anticipatePin: 1,
-                // Higher scrub = more interpolation = smoother feel
-                scrub: mobile ? 2.5 : 2.5,
-                invalidateOnRefresh: true,
-                onUpdate: (self) => {
-                    const progress = self.progress;
-                    const step = 1 / panels.length;
-                    const currentIdx = Math.min(Math.floor(progress / step), panels.length - 1);
-                    setActiveIndex(currentIdx);
+        // Drive a CSS custom property instead of the transform declaration.
+        // This keeps the first image visible even before ScrollTrigger starts,
+        // while React counter updates cannot overwrite the panel position.
+        gsap.set(panels, {
+            autoAlpha: 1,
+        });
+        gsap.set(panels[0], { "--panel-x": "0%" });
+        gsap.set(panels.slice(1), { "--panel-x": "100%" });
+        panels.forEach((panel, index) => {
+            gsap.set(panel, { zIndex: index + 1 });
+        });
 
-                    panels.forEach((panel, i) => {
-                        if (mobile && Math.abs(i - currentIdx) > 1) {
-                            if (panel.style.opacity !== '0') {
-                                gsap.set(panel, { opacity: 0, x: '100%', zIndex: 0 });
-                            }
-                            return;
-                        }
+        const timeline = gsap.timeline({ paused: true });
+        const edgeHold = 0.45;
 
-                        const panelStart = i * step;
-                        const rawInPanel = (progress - panelStart) / step;
-                        const clamped = Math.max(0, Math.min(1, rawInPanel));
+        // Give the first panel a deliberate resting beat before the next card
+        // enters, and retain the final card before releasing into the footer.
+        timeline.to({}, { duration: edgeHold });
 
-                        const transitionProgress = Math.min(1, clamped / transitionPart);
-                        // Smoother easing curve
-                        const p = transitionProgress * transitionProgress * (3 - 2 * transitionProgress);
+        panels.slice(1).forEach((panel, index) => {
+            const position = edgeHold + index;
 
-                        gsap.set(panel, {
-                            x: `${(1 - p) * 100}%`,
-                            opacity: p > 0.01 ? 1 : 0,
-                            zIndex: i + 1,
-                            force3D: true,
-                        });
-
-                        const numEl = panel.querySelector<HTMLElement>(".bg-number");
-                        if (numEl) gsap.set(numEl, { yPercent: (1 - p) * -12, xPercent: (1 - p) * 4 });
-
-                        const content = panel.querySelector<HTMLElement>(".panel-inner");
-                        if (content) gsap.set(content, { yPercent: (1 - p) * 8, opacity: Math.min(1, p * 2) });
-
-                        const stat = panel.querySelector<HTMLElement>(".stat-value");
-                        if (stat) gsap.set(stat, { scale: 0.8 + p * 0.2, opacity: Math.min(1, p * 1.8) });
-
-                        const line = panel.querySelector<HTMLElement>(".accent-line");
-                        if (line) gsap.set(line, { scaleX: Math.min(1, p * 1.5) });
-
-                        const glow = panel.querySelector<HTMLElement>(".accent-glow");
-                        if (glow) gsap.set(glow, { opacity: p * 0.4, scale: 0.9 + p * 0.2 });
-                    });
+            timeline.to(
+                panel,
+                {
+                    "--panel-x": "0%",
+                    duration: 1,
+                    ease: "none",
                 },
-            });
+                position,
+            );
+        });
+        timeline.to({}, { duration: edgeHold });
+
+        const scrollTrigger = ScrollTrigger.create({
+            trigger: section,
+            animation: timeline,
+            start: "top top",
+            end: () => `+=${Math.round((benefits.length + 0.5) * window.innerHeight)}`,
+            scrub: 0.65,
+            pin: section,
+            pinSpacing: true,
+            anticipatePin: 1,
+            invalidateOnRefresh: true,
+            refreshPriority: -20,
+            onUpdate: (self) => {
+                const nextIndex = Math.min(
+                    lastPanelIndex,
+                    Math.max(0, Math.round(self.progress * lastPanelIndex)),
+                );
+
+                if (nextIndex !== activeIndexRef.current) {
+                    activeIndexRef.current = nextIndex;
+                    setActiveIndex(nextIndex);
+                }
+            },
+            onLeaveBack: () => {
+                activeIndexRef.current = 0;
+                setActiveIndex(0);
+                timeline.progress(0);
+            },
+            onLeave: () => {
+                activeIndexRef.current = lastPanelIndex;
+                setActiveIndex(lastPanelIndex);
+                timeline.progress(1);
+            },
+        });
+
+        return () => {
+            scrollTrigger.kill();
+            timeline.kill();
         };
-
-        mm.add("(max-width: 768px)", () => buildPanels(true));
-        mm.add("(min-width: 769px)", () => buildPanels(false));
-
-        return () => mm.revert();
-    }, []);
+    }, { scope: sectionRef });
 
     return (
         <section
             ref={sectionRef}
-            className="pheromone-benefits-section"
-            style={{ height: "100dvh", overflow: "hidden", position: "relative" }}
+            className="pheromone-benefits-section relative h-[100dvh] overflow-hidden bg-[#0a0908]"
         >
+            <div className="pheromone-benefits-sticky relative h-[100dvh] overflow-hidden bg-[#0a0908]">
             {/* Subtle grid background */}
             <div
                 className="absolute inset-0 pointer-events-none"
@@ -252,8 +265,6 @@ const PheromoneBenefits = ({ showMockup = false }: { showMockup?: boolean }) => 
                         className="pheromone-panel absolute inset-0 overflow-hidden"
                         style={{
                             background: "#0a0908",
-                            opacity: i === 0 ? 1 : 0,
-                            transform: i === 0 ? "translateX(0%)" : "translateX(100%)",
                         }}
                     >
                         {/* Accent glow orb */}
@@ -298,7 +309,7 @@ const PheromoneBenefits = ({ showMockup = false }: { showMockup?: boolean }) => 
                             {/* Top half: Mockup image */}
                             {showMockup && b.image && (
                                 <div
-                                    className="relative w-full h-[40%] shrink-0"
+                                    className="panel-media relative w-full h-[40%] shrink-0"
                                     style={{
                                         maskImage: "linear-gradient(to bottom, black 60%, transparent 100%)",
                                         WebkitMaskImage: "linear-gradient(to bottom, black 60%, transparent 100%)",
@@ -307,7 +318,7 @@ const PheromoneBenefits = ({ showMockup = false }: { showMockup?: boolean }) => 
                                     <img
                                         src={getImage(b.image)}
                                         alt={b.title.replace('\n', ' ')}
-                                        loading="lazy"
+                                        loading="eager"
                                         decoding="async"
                                         className="w-full h-full object-cover object-center opacity-80"
                                     />
@@ -424,7 +435,7 @@ const PheromoneBenefits = ({ showMockup = false }: { showMockup?: boolean }) => 
                             {/* Right Side Mockup Image */}
                             {showMockup && b.image && (
                                 <div
-                                    className="absolute right-0 top-0 bottom-0 w-[70%] lg:w-[60%] pointer-events-none z-0"
+                                    className="panel-media absolute right-0 top-0 bottom-0 w-[70%] lg:w-[60%] pointer-events-none z-0"
                                     style={{
                                         maskImage: "linear-gradient(to right, transparent 0%, black 30%)",
                                         WebkitMaskImage: "linear-gradient(to right, transparent 0%, black 30%)",
@@ -433,7 +444,7 @@ const PheromoneBenefits = ({ showMockup = false }: { showMockup?: boolean }) => 
                                     <img
                                         src={getImage(b.image)}
                                         alt={b.title.replace('\n', ' ')}
-                                        loading="lazy"
+                                        loading="eager"
                                         decoding="async"
                                         className="w-full h-full object-cover object-[70%_center] opacity-90"
                                     />
@@ -581,6 +592,7 @@ const PheromoneBenefits = ({ showMockup = false }: { showMockup?: boolean }) => 
                         </div>
                     </div>
                 ))}
+            </div>
             </div>
         </section>
     );

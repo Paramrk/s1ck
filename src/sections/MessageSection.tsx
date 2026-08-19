@@ -1,111 +1,116 @@
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
-import { SplitText } from "gsap/all";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useRef } from "react";
+
+gsap.registerPlugin(ScrollTrigger);
 
 const MessageSection = () => {
+    const sectionRef = useRef<HTMLElement>(null);
 
     useGSAP(() => {
-        const mm = gsap.matchMedia();
+        if (!sectionRef.current) return;
 
-        const buildMessage = (isMobile: boolean) => {
-            document.fonts.ready.then(() => {
-                // Animate each headline line from ghost → solid on scroll
-                const lines = gsap.utils.toArray<HTMLElement>(".msg-line, .msg-line-last");
-                lines.forEach((line) => {
-                    const split = SplitText.create(line, { type: "words" });
-                    gsap.to(split.words, {
-                        color: "#111111",
-                        ease: "power1.in",
-                        stagger: isMobile ? 0.3 : 0.6,
-                        scrollTrigger: {
-                            trigger: line,
-                            start: isMobile ? "top 80%" : "top 65%",
-                            end: isMobile ? "bottom 60%" : "bottom 45%",
-                            scrub: isMobile ? 1 : 1.3,
-                        }
-                    });
-                });
+        const media = gsap.matchMedia();
+        media.add({
+            isMobile: "(max-width: 768px)",
+            isDesktop: "(min-width: 769px)",
+            reduceMotion: "(prefers-reduced-motion: reduce)",
+        }, (context) => {
+            const { isMobile, reduceMotion } = context.conditions as {
+                isMobile: boolean;
+                isDesktop: boolean;
+                reduceMotion: boolean;
+            };
+            if (reduceMotion) return;
 
-                // Red banner slide-in
-                const revealTl = gsap.timeline({
-                    delay: isMobile ? 0 : 0.5,
-                    scrollTrigger: {
-                        trigger: ".msg-text-scroll",
-                        start: isMobile ? "top 85%" : "top 65%",
-                        end: isMobile ? "top 55%" : undefined,
-                        scrub: isMobile ? 1.5 : false,
-                    }
-                });
-
-                revealTl.to(".msg-text-scroll", {
-                    clipPath: "polygon(0% 0%,100% 0%, 100% 100%, 0% 100%)",
-                    ease: "circ.inOut"
-                }, "<");
-
-                // Paragraph text reveal
-                const paragraphSplit = SplitText.create(".message-content p", { type: "words,lines", linesClass: "paragraph-line" });
-                const paragraphTl = gsap.timeline({
-                    scrollTrigger: {
-                        trigger: ".message-content p",
-                        start: isMobile ? "top 90%" : "top 70%",
-                        end: isMobile ? "top 55%" : undefined,
-                        scrub: isMobile ? 1.5 : false,
-                    }
-                });
-
-                paragraphTl.from(paragraphSplit.words, {
-                    stagger: 0.01,
-                    yPercent: isMobile ? 100 : 300,
-                    rotate: isMobile ? 1 : 3,
-                    ease: "power1.inOut"
-                });
-
-                if (isMobile) {
-                    gsap.from(".message-content .max-w-md", {
-                        opacity: 0,
-                        y: 40,
-                        ease: "power3.out",
-                        scrollTrigger: {
-                            trigger: ".message-content .max-w-md",
-                            start: "top 95%",
-                            end: "top 55%",
-                            scrub: 1.5,
-                        }
-                    });
-                }
+            const words = gsap.utils.toArray<HTMLElement>(".message-word");
+            const timeline = gsap.timeline({
+                scrollTrigger: {
+                    trigger: sectionRef.current,
+                    start: "top top",
+                    end: () => `+=${Math.max(
+                        window.innerHeight * (isMobile ? 0.78 : 1.15),
+                        isMobile ? 460 : 720,
+                    )}`,
+                    pin: ".message-sticky",
+                    pinSpacing: true,
+                    scrub: isMobile ? 0.55 : 1.05,
+                    anticipatePin: 1,
+                    invalidateOnRefresh: true,
+                },
             });
-        };
 
-        mm.add("(max-width: 768px)", () => buildMessage(true));
-        mm.add("(min-width: 769px)", () => buildMessage(false));
+            timeline
+                .from(words, {
+                    opacity: 0,
+                    yPercent: isMobile ? 35 : 70,
+                    rotationX: isMobile ? -35 : -78,
+                    filter: isMobile ? "none" : "blur(8px)",
+                    transformOrigin: "50% 100%",
+                    stagger: isMobile ? 0.14 : 0.28,
+                    duration: isMobile ? 0.6 : 0.9,
+                    ease: "power2.out",
+                })
+                .from(".enough-cord", {
+                    scaleY: 0,
+                    transformOrigin: "top center",
+                    stagger: 0.05,
+                    duration: isMobile ? 0.28 : 0.38,
+                    ease: "power2.inOut",
+                }, ">-0.08")
+                .from(".message-enough", {
+                    opacity: 0,
+                    yPercent: isMobile ? -80 : -145,
+                    z: isMobile ? 0 : -280,
+                    rotationX: isMobile ? -45 : -86,
+                    rotationZ: isMobile ? -4 : -9,
+                    transformOrigin: "50% 0%",
+                    duration: isMobile ? 0.75 : 1.15,
+                    ease: "back.out(1.35)",
+                }, "<0.04")
+                .to(".message-enough", {
+                    yPercent: isMobile ? 1.5 : 2,
+                    rotationX: isMobile ? 3 : 6,
+                    rotationZ: isMobile ? 1.5 : 2.2,
+                    duration: 0.3,
+                    ease: "sine.inOut",
+                })
+                .to(".message-enough", {
+                    yPercent: 0,
+                    rotationX: 0,
+                    rotationZ: 0,
+                    duration: 0.25,
+                    ease: "sine.inOut",
+                });
 
-        return () => mm.revert();
-    }, []);
+            return () => timeline.kill();
+        });
+
+        return () => media.revert();
+    }, { scope: sectionRef });
 
     return (
-        <section className="message-content">
-            <div className="container mx-auto flex-center py-28 relative">
-                <div className="w-full h-full md:px-28 px-5">
-                    <div className="msg-wrapper">
-                        <h1 className="msg-line">You're Either</h1>
-                        <h1 className="msg-line">The One They</h1>
-                        <h1 className="msg-line">Notice</h1>
-                        <div className="msg-text-scroll">
-                            <div className="bg-sick-red md:py-4 py-3 md:px-8 px-5 inline-block">
-                                <h2 className="text-white tracking-[0.02em]">Or The One They Forget.</h2>
-                            </div>
-                        </div>
-                        <h1 className="msg-line-last">S1CK Makes Sure It's Always You.</h1>
-                    </div>
-                    <div className="flex-center md:mt-20 mt-10">
-                        <div className="max-w-md px-10 flex-center overflow-hidden">
-                            <p>Formulated with real pheromone compounds. Not a cologne. Not a perfume. A biological advantage — bottled.</p>
-                        </div>
-                    </div>
-                </div>
+        <section ref={sectionRef} className="message-content">
+            <div className="message-sticky">
+                <h2 className="message-heading" aria-label="Because being different isn't enough">
+                    <span className="message-line" aria-hidden="true">
+                        <span className="message-word">Because</span>
+                        <span className="message-word">Being</span>
+                    </span>
+                    <span className="message-line" aria-hidden="true">
+                        <span className="message-word">Different</span>
+                        <span className="message-word">Isn't</span>
+                    </span>
+                    <span className="enough-hanger" aria-hidden="true">
+                        <span className="enough-cord enough-cord-left" />
+                        <span className="enough-cord enough-cord-right" />
+                        <span className="message-enough">Enough</span>
+                    </span>
+                </h2>
             </div>
         </section>
-    )
-}
+    );
+};
 
 export default MessageSection;

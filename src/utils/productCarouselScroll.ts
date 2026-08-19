@@ -1,11 +1,11 @@
-/** Snap + hold timing so each product locks until the next scroll input. */
+/** Smooth transition + hold timing so bottle animation plays continuously while scrolling */
 export const getProductCarouselTiming = (itemCount: number, isMobile: boolean) => {
-    const transDur = isMobile ? 0.32 : 0.28;
-    const holdDur = isMobile ? 0.92 : 0.82;
+    const transDur = isMobile ? 0.95 : 1.2;
+    const holdDur = isMobile ? 0.45 : 0.5;
     const stepSlot = transDur + holdDur;
-    const scrollPerStep = isMobile ? 400 : 340;
+    const scrollPerStep = isMobile ? 680 : 880;
     const scrollLength =
-        itemCount > 1 ? (itemCount - 1) * scrollPerStep + (isMobile ? 220 : 180) : 0;
+        itemCount > 1 ? (itemCount - 1) * scrollPerStep + (isMobile ? 400 : 500) : 0;
     const totalDuration = itemCount > 1 ? holdDur + (itemCount - 1) * stepSlot : 0;
 
     const transStart = (index: number) => holdDur + (index - 1) * stepSlot;
@@ -14,9 +14,9 @@ export const getProductCarouselTiming = (itemCount: number, isMobile: boolean) =
         itemCount > 1
             ? ({
                   snapTo: "labels" as const,
-                  duration: { min: 0.22, max: 0.5 },
-                  delay: 0.08,
-                  ease: "power2.inOut" as const,
+                  duration: { min: 0.25, max: 0.55 },
+                  delay: 0.22,
+                  ease: "power2.out" as const,
                   directional: false,
                   inertia: false,
               } as const)

@@ -5,9 +5,9 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import Navbar from "../components/Navbar";
 import FooterSection from "../sections/FooterSection";
+import ProductCard3D from "../components/ProductCard3D";
 import { flavorlists } from "../constants/details";
 import { getImage } from "../utils/media";
-import menImg from "../assets/menu-img/men-menu.webp";
 import { useScrollTriggerRefresh } from "../hooks/useScrollTriggerRefresh";
 import { getProductsByCollection, getMergedProduct } from "../utils/shopify";
 
@@ -17,11 +17,8 @@ const MenShopPage = () => {
     const pageRef = useRef<HTMLDivElement>(null);
     const heroImgRef = useRef<HTMLImageElement>(null);
     const [shopifyProducts, setShopifyProducts] = useState<any[]>([]);
+    const menImg = getImage("shop_img_men") || getImage("men-menu.webp");
     useScrollTriggerRefresh();
-
-    const hasFineHover =
-        typeof window !== "undefined" &&
-        window.matchMedia("(hover: hover) and (pointer: fine)").matches;
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -33,7 +30,6 @@ const MenShopPage = () => {
                 }
             })
             .catch((err) => console.error("Error loading products from Shopify:", err));
-
 
         return () => {
             ScrollTrigger.getAll().forEach((t) => t.kill());
@@ -117,34 +113,20 @@ const MenShopPage = () => {
         );
 
         // Product cards — staggered with scale
-        gsap.utils.toArray<HTMLElement>(".product-card").forEach((card, i) => {
+        gsap.utils.toArray<HTMLElement>(".product-card-3d-wrapper").forEach((card, i) => {
             gsap.fromTo(
                 card,
-                { y: 80, opacity: 0, scale: 0.95 },
+                { y: 60, opacity: 0, scale: 0.96 },
                 {
                     y: 0, opacity: 1, scale: 1,
                     duration: 0.8,
-                    delay: i * 0.1,
+                    delay: i * 0.08,
                     ease: "power3.out",
-                    scrollTrigger: { trigger: card, start: "top 90%" },
+                    scrollTrigger: { trigger: card, start: "top 92%" },
                 }
             );
         });
     }, { scope: pageRef });
-
-    // Product card hover — GSAP for buttery feel
-    const handleCardEnter = (e: React.MouseEvent) => {
-        const card = e.currentTarget as HTMLElement;
-        const img = card.querySelector(".card-img") as HTMLElement;
-        gsap.to(card, { y: -8, duration: 0.4, ease: "power2.out" });
-        gsap.to(img, { scale: 1.08, duration: 0.6, ease: "power2.out" });
-    };
-    const handleCardLeave = (e: React.MouseEvent) => {
-        const card = e.currentTarget as HTMLElement;
-        const img = card.querySelector(".card-img") as HTMLElement;
-        gsap.to(card, { y: 0, duration: 0.4, ease: "power3.out" });
-        gsap.to(img, { scale: 1, duration: 0.6, ease: "power3.out" });
-    };
 
     return (
         <main ref={pageRef} className="bg-cream min-h-dvh">
@@ -194,29 +176,39 @@ const MenShopPage = () => {
             </section>
 
             {/* Product Grid */}
-            <section className="px-6 md:px-14 py-24">
+            <section className="px-6 md:px-14 py-20">
                 <div className="max-w-7xl mx-auto">
                     {/* Section heading */}
-                    <div className="products-heading flex items-center gap-5 mb-14">
-                        <span className="block w-10 h-px bg-champagne" />
-                        <p
-                            className="text-champagne text-[0.6rem] uppercase tracking-[0.35em]"
-                            style={{ fontFamily: "Syne, sans-serif", fontWeight: 600 }}
-                        >
-                            Collection — {shopifyProducts.length > 0 ? shopifyProducts.length : flavorlists.length} scents
-                        </p>
+                    <div className="products-heading flex items-center justify-between gap-5 mb-12">
+                        <div className="flex items-center gap-4">
+                            <span className="block w-10 h-px bg-champagne" />
+                            <p
+                                className="text-champagne text-[0.65rem] uppercase tracking-[0.35em]"
+                                style={{ fontFamily: "Syne, sans-serif", fontWeight: 600 }}
+                            >
+                                Signature Fragrances — {shopifyProducts.length > 0 ? shopifyProducts.length : flavorlists.length} scents
+                            </p>
+                        </div>
+                        <span className="text-[0.65rem] uppercase tracking-widest text-stone-500 font-semibold hidden sm:inline">
+                            Premium Extraction • 48mg Pheromones
+                        </span>
                     </div>
 
-                    <div className="product-grid grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-x-8 gap-y-14">
+                    <div className="product-grid grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-x-8 gap-y-10">
                         {(shopifyProducts.length > 0
                             ? shopifyProducts.map((p) => {
                                   const merged = getMergedProduct(p);
+                                  const firstVariant = p.variants?.nodes?.[0];
                                   return {
                                       id: p.id,
                                       name: p.title,
                                       handle: p.handle,
                                       image: merged?.displayImage || "",
                                       price: `$${parseFloat(p.priceRange?.minVariantPrice?.amount || "0").toFixed(2)}`,
+                                      numericPrice: parseFloat(p.priceRange?.minVariantPrice?.amount || "0"),
+                                      currencyCode: p.priceRange?.minVariantPrice?.currencyCode || "USD",
+                                      variantId: firstVariant?.id,
+                                      badge: "48mg Pheromones",
                                   };
                               })
                             : flavorlists.map((p) => ({
@@ -225,56 +217,16 @@ const MenShopPage = () => {
                                   handle: p.name.toLowerCase().replace(/[èéêë]/g, "e").replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, ""),
                                   image: getImage(p.drinkImage || ""),
                                   price: "$89.00",
+                                  numericPrice: 89,
+                                  currencyCode: "USD",
+                                  badge: "48mg Pheromones",
                               }))
                         ).map((product, i) => (
-                            <Link
-                                to={product.handle ? `/product/${product.handle}` : "#"}
-                                key={product.id}
-                                className="product-card group cursor-pointer block text-current"
-                                style={{ textDecoration: "none" }}
-                                onMouseEnter={hasFineHover ? handleCardEnter : undefined}
-                                onMouseLeave={hasFineHover ? handleCardLeave : undefined}
-                            >
-                                <div className="relative aspect-[4/5] overflow-hidden bg-parchment">
-                                    {/* Number tag */}
-                                    <span
-                                        className="absolute top-4 left-4 z-10 text-black text-[0.6rem] uppercase tracking-[0.2em]"
-                                        style={{ fontFamily: "Inter, sans-serif", fontWeight: 300 }}
-                                    >
-                                        {String(i + 1).padStart(2, "0")}
-                                    </span>
-                                    {product.image ? (
-                                        <img
-                                            src={product.image}
-                                            alt={product.name}
-                                            loading="lazy"
-                                            decoding="async"
-                                            className="card-img absolute inset-0 w-full h-full object-cover object-center"
-                                        />
-                                    ) : (
-                                        <div className="absolute inset-0 w-full h-full flex items-center justify-center text-charcoal/30 bg-parchment">
-                                            No Image
-                                        </div>
-                                    )}
-                                </div>
-                                <div className="pt-5 flex items-start justify-between">
-                                    <div>
-                                        <h3
-                                            className="text-charcoal text-sm uppercase tracking-[0.15em]"
-                                            style={{ fontFamily: "Syne, sans-serif", fontWeight: 600 }}
-                                        >
-                                            {product.name}
-                                        </h3>
-                                        <p
-                                            className="text-stone text-xs mt-1.5 tracking-wide"
-                                            style={{ fontFamily: "Inter, sans-serif", fontWeight: 400 }}
-                                        >
-                                            {product.price}
-                                        </p>
-                                    </div>
-                                    <i className="ri-arrow-right-up-line text-taupe text-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                                </div>
-                            </Link>
+                            <ProductCard3D
+                                key={product.id || product.handle}
+                                product={product}
+                                index={i}
+                            />
                         ))}
                     </div>
                 </div>

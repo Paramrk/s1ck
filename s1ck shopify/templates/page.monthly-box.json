@@ -1,0 +1,546 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "page",
+      "disabled": true,
+      "settings": {}
+    },
+    "image_with_text_2_n9dHB4": {
+      "type": "image-with-text-2",
+      "name": "Image with text overlay",
+      "settings": {
+        "color_scheme": "scheme-39a05794-888f-4419-b1df-51854f14fad2",
+        "container": "w-full",
+        "hero_size": "adapt",
+        "show_overlay": true,
+        "image": "shopify://shop_images/Untitled_design_12_4f91eef9-4095-435c-8b0c-4ab6b6bae02b.png",
+        "image_link": "",
+        "parallax": false,
+        "parallax_direction": "vertical",
+        "content_in_container": false,
+        "content_position": "center middle",
+        "text_alignment": "center",
+        "text_size": "medium",
+        "text_color": "white",
+        "title": "Power. Chemistry. Obsession. Delivered Monthly",
+        "subtitle": "",
+        "text": "<p>Choose your weapon. Subscribe to our 10ml pheromone decants and save up to 35% off retail while supply last.</p>",
+        "button_label": "Explore Plans",
+        "button_link": "",
+        "button_style": "m-button--primary",
+        "button_size": "",
+        "text_alignment_mobile": "center",
+        "use_content_above": false,
+        "custom_class": "",
+        "animations": "inherit",
+        "enable_bg_zoom_effect": true
+      }
+    },
+    "custom_liquid_3NQxRD": {
+      "type": "custom-liquid",
+      "name": "Custom liquid",
+      "settings": {
+        "custom_liquid": "<div style=\"max-width:1000px;margin:auto; margin-top:48px;\">\n  <h3 style=\"text-align:center; font-size:2rem; font-weight:bold; margin-bottom:26px;\">\n    <span style=\"font-size:2rem;\"></span> Why Join the S1CK Sub Club?\n  </h3>\n  <div style=\"display: flex; flex-wrap: wrap; gap: 40px; justify-content: center;\">\n    <!-- COLUMN 1 -->\n    <ul style=\"flex: 1; min-width: 285px; list-style: none; padding: 0; margin: 0;\">\n      <li style=\"margin-bottom: 14px;\">🪙 Save up to 35% off retail pricing</li>\n      <li style=\"margin-bottom: 14px;\">🧠 Curated drops monthly </li>\n      <li style=\"margin-bottom: 14px;\">🔄 Skip, cancel, or switch anytime</li>\n    </ul>\n    <!-- COLUMN 2 -->\n    <ul style=\"flex: 1; min-width: 285px; list-style: none; padding: 0; margin: 0;\">\n      <li style=\"margin-bottom: 14px;\">💎 Exclusive formulas, only for subscribers</li>\n      <li style=\"margin-bottom: 14px;\">💥 Pheromone-powered attraction, delivered to your door</li>\n    </ul>\n  </div>\n</div>",
+        "custom_class": ""
+      }
+    },
+    "custom_liquid_76yGzR": {
+      "type": "custom-liquid",
+      "disabled": true,
+      "name": "Custom liquid",
+      "settings": {
+        "custom_liquid": "<div style=\"display: flex; flex-wrap: wrap; justify-content: center; gap: 32px; max-width: 900px; margin: 0 auto;\">\n  <!-- The Tease -->\n  <div style=\"flex: 1 1 325px; max-width: 420px; min-width: 270px; border:1px solid #ececec; border-radius:16px; padding:22px 24px 20px 24px; background:#fff; margin-bottom: 24px; box-sizing: border-box;\">\n    <div style=\"font-size:1.19em; font-weight:700; margin-bottom:3px;\">\n      <span style=\"font-size:1.18em;\">🥤</span> The Tease\n    </div>\n    <div style=\"color:#333; font-weight:600; margin-bottom:7px;\">\\$39/mo</div>\n    <div style=\"margin-bottom:7px;\">1 Spray Decant per month</div>\n    <div style=\"margin-bottom:10px;\"><strong>Highlights:</strong> Save up to 20% 🪙</div>\n    <a href=\"#\" style=\"display:inline-block;background:#222;color:#fff;border-radius:6px;padding:11px 25px;font-weight:bold;text-decoration:none;font-size:1em;\">Subscribe</a>\n  </div>\n\n  <!-- Double Dose -->\n  <div style=\"flex: 1 1 325px; max-width: 420px; min-width: 270px; border:1px solid #ececec; border-radius:16px; padding:22px 24px 20px 24px; background:#fff; margin-bottom: 24px; box-sizing: border-box;\">\n    <div style=\"font-size:1.19em; font-weight:700; margin-bottom:3px;\">\n      <span style=\"font-size:1.18em;\">🥤🥤</span> Double Dose\n    </div>\n    <div style=\"color:#333; font-weight:600; margin-bottom:7px;\">\\$75/mo</div>\n    <div style=\"margin-bottom:7px;\">2 Spray Decants per month</div>\n    <div style=\"margin-bottom:10px;\"><strong>Highlights:</strong> Day/Night Control ⚡</div>\n    <a href=\"#\" style=\"display:inline-block;background:#222;color:#fff;border-radius:6px;padding:11px 25px;font-weight:bold;text-decoration:none;font-size:1em;\">Subscribe</a>\n  </div>\n\n  <!-- The Arsenal -->\n  <div style=\"flex: 1 1 325px; max-width: 420px; min-width: 270px; border:1px solid #ececec; border-radius:16px; padding:22px 24px 20px 24px; background:#fff; margin-bottom: 24px; box-sizing: border-box;\">\n    <div style=\"font-size:1.19em; font-weight:700; margin-bottom:3px;\">\n      <span style=\"font-size:1.18em;\">🧪🧪🧪</span> The Arsenal\n    </div>\n    <div style=\"color:#333; font-weight:600; margin-bottom:7px;\">\\$105/mo</div>\n    <div style=\"margin-bottom:7px;\">3 Spray Decants per month</div>\n    <div style=\"margin-bottom:10px;\"><strong>Highlights:</strong> Full Rotation – Save 29% <span style=\"font-size:1.05em;\">🔥</span></div>\n    <a href=\"#\" style=\"display:inline-block;background:#222;color:#fff;border-radius:6px;padding:11px 25px;font-weight:bold;text-decoration:none;font-size:1em;\">Subscribe</a>\n  </div>\n\n  <!-- Black Label Access -->\n  <div style=\"flex: 1 1 325px; max-width: 420px; min-width: 270px; border:1.5px solid #d4af37; border-radius:16px; padding:22px 24px 20px 24px; background:#fff; margin-bottom: 24px; box-sizing: border-box; box-shadow: 0 0 10px #f5e6c0;\">\n    <div style=\"font-size:1.19em; font-weight:700; margin-bottom:3px; color:#d4af37;\">\n      <span style=\"font-size:1.18em;\">🖤</span> <span style=\"color:#d4af37;\">Black Label Access</span>\n    </div>\n    <div style=\"color:#d4af37; font-weight:700; margin-bottom:7px;\">\\$120/mo</div>\n    <div style=\"margin-bottom:7px;\">2 Spray + 1 Oil-based Decant</div>\n    <div style=\"margin-bottom:10px;\"><strong>Highlights:</strong> Exclusive Oils – VIP Tier <span style=\"font-size:1.08em;\">🔒</span></div>\n    <a href=\"#\" style=\"display:inline-block;background:#d4af37;color:#222;border-radius:6px;padding:11px 25px;font-weight:bold;text-decoration:none;font-size:1em;\">Upgrade to Black Label</a>\n  </div>\n</div>",
+        "custom_class": ""
+      }
+    },
+    "custom_liquid_nHRrnF": {
+      "type": "custom-liquid",
+      "name": "Custom liquid",
+      "settings": {
+        "custom_liquid": "<video \n  controls \n  playsinline \n  poster=\"https://cdn.shopify.com/s/files/1/0022/0358/2529/files/1000075989.jpg?v=1755337514\"\n  style=\"width:100%; height:auto; display:block; border-radius:12px;\"\n>\n  <source src=\"https://cdn.shopify.com/videos/c/o/v/d7fda80fc06647e09dc69cf8bd9efebc.mp4\" type=\"video/mp4\">\n  Your browser does not support the video tag.\n</video>",
+        "custom_class": ""
+      }
+    },
+    "video_hero_KwD83y": {
+      "type": "video-hero",
+      "disabled": true,
+      "name": "Video hero",
+      "settings": {
+        "color_scheme": "",
+        "container": "w-full",
+        "hero_size": "adapt",
+        "video_ratio": "16/9",
+        "show_overlay": true,
+        "video_type": "shopify",
+        "shopify_video": "shopify://files/videos/1000075894.mp4",
+        "video_url": "https://www.youtube.com/watch?v=_9VUPq3SxOc",
+        "content_in_container": false,
+        "content_position": "center middle",
+        "text_alignment": "center",
+        "text_size": "medium",
+        "text_color": "white",
+        "title": "",
+        "subtitle": "",
+        "text": "",
+        "button_label": "",
+        "button_link": "",
+        "button_style": "m-button--primary",
+        "button_size": "",
+        "button_label_2": "",
+        "button_link_2": "",
+        "button_style_2": "m-button--primary",
+        "button_size_2": "",
+        "use_content_above": false,
+        "custom_class": "",
+        "animations": "inherit"
+      }
+    },
+    "custom_liquid_VTWqUW": {
+      "type": "custom-liquid",
+      "name": "Custom liquid",
+      "settings": {
+        "custom_liquid": "<div style=\"max-width:1000px; margin: 50px auto 60px auto;\">\n\n  <!-- Main Headline -->\n  <h2 style=\"text-align:center;color:#292929;font-size:2.12rem;font-weight:800;letter-spacing:.5px;margin-bottom:4px;\">\n    KEY BENEFITS OF SUBSCRIBING\n  </h2>\n  <div style=\"color:#4c4c4c;font-size:1.13em;text-align:center;margin-bottom:2.2em;\">\n    All our plans come with upgrades, convenience, and subscriber-only perks.\n  </div>\n  \n  <table style=\"width:100%; border-collapse:collapse; margin:auto; background:#fff; font-size:1.07em; border:1.5px solid #bbb;\">\n    <!-- HEADER ROW -->\n    <tr style=\"background:#C23A2A;color:#fff;\">\n      <th style=\"padding:18px 8px; font-size:1.06em;font-weight:700;text-align:left;border:1.5px solid #bbb;\">Subscription Plan</th>\n      <th style=\"padding:18px 8px; font-size:1.06em;font-weight:700;text-align:left;border:1.5px solid #bbb;\">Key Benefit(s)</th>\n      <th style=\"padding:18px 8px; font-size:1.06em;font-weight:700;text-align:left;border:1.5px solid #bbb;\">Special Subscriber Only Perk</th>\n    </tr>\n\n    <!-- PLAN 1 -->\n    <tr>\n      <td style=\"padding:18px 8px; border:1.5px solid #bbb;\">The Tease</td>\n      <td style=\"padding:18px 8px; border:1.5px solid #bbb;\">Affordable entry, enjoy one curated scent each month</td>\n      <td style=\"padding:18px 8px; border:1.5px solid #bbb;\">Flexible—pause, switch, or cancel anytime</td>\n    </tr>\n    <!-- PLAN 2 -->\n    <tr>\n      <td style=\"padding:18px 8px; border:1.5px solid #bbb;\">Double Dip</td>\n      <td style=\"padding:18px 8px; border:1.5px solid #bbb;\">Get two scents/month for day & night variety. Great for sharing!</td>\n      <td style=\"padding:18px 8px; border:1.5px solid #bbb;\">Early access to seasonal drops</td>\n    </tr>\n    <!-- PLAN 3 -->\n    <tr>\n      <td style=\"padding:18px 8px; border:1.5px solid #bbb;\">The Arsenal</td>\n      <td style=\"padding:18px 8px; border:1.5px solid #bbb;\">Full rotation of 3 fragrances every month—never get bored!</td>\n      <td style=\"padding:18px 8px; border:1.5px solid #bbb;\">Best value 25% off for 3 + Private Members Group</td>\n    </tr>\n    <!-- PLAN 4 -->\n    <tr>\n      <td style=\"padding:18px 8px; border:1.5px solid #bbb;\">Black Label Access</td>\n      <td style=\"padding:18px 8px; border:1.5px solid #bbb;\">Includes 2 10ml sprays of choice + 1 Premium Pheromone roll on oil.</td>\n      <td style=\"padding:18px 8px; border:1.5px solid #bbb;\">Members VIP Private Members Group + offer Special perks Bonus and 1st Access to new upcoming drops </td>\n    </tr>\n  </table>\n</div>",
+        "custom_class": ""
+      }
+    },
+    "custom_liquid_HkHtJH": {
+      "type": "custom-liquid",
+      "name": "Custom liquid",
+      "settings": {
+        "custom_liquid": "<div class=\"as-seen-on\">\n        <div class=\"as-seen-on-text\">AS SEEN ON</div>\n        <div class=\"logos-container\">\n            <img src=\"https://cdn.shopify.com/s/files/1/0022/0358/2529/files/Fox-logo_1.png?v=1722110543\" alt=\"Fox Logo\">\n            <img src=\"https://cdn.shopify.com/s/files/1/0022/0358/2529/files/usa-today-logo_1.png?v=1722110543\" alt=\"USA Today Logo\">\n            <img src=\"https://cdn.shopify.com/s/files/1/0022/0358/2529/files/marketwatch-logo_1.png?v=1722110543\" alt=\"MarketWatch Logo\">\n            <img src=\"https://cdn.shopify.com/s/files/1/0022/0358/2529/files/digital-journal.png?v=1722110543\" alt=\"Digital Journal Logo\">\n        </div>\n    </div>\n<style>\n.as-seen-on {\n    background-color: #ddd;\n    padding: 25px 0;\n    text-align: center;\ndisplay:flex;\nflex-direction:row;\njustify-content:center;\nalign-items:center;\n}\n\n.as-seen-on-text {\n    font-size: 25px;\n    font-weight: bold;\n    color: #000;\n    margin-right: 100px;\n    display: inline-block; /* Keep the text inline with the logos */\n    vertical-align: middle;\n}\n\n.logos-container {\n    display: flex;\nalign: middle;\ngap:25px;\n}\n\n.logos-container img {\n    height: 25px; /* Set a fixed height for all logos */\n    width: auto;  /* Maintain aspect ratio */\n}\n\n/* Mobile-specific styles */\n@media (max-width: 768px) {\n    .as-seen-on {\n        padding: 10px 0;\ndisplay:flex;\nflex-direction:column;\n    }\n\n    .as-seen-on-text {\nfont-size:20px;\n        display: block; /* Move the headline to the top */\n        margin-bottom: 25px;\nmargin-left:auto;\nmargin-right:auto;\nmargin-top:25px;\n    }\n\n    .logos-container {\n        display: flex;\nflex-direction:row;\n        justify-content: center;\n        flex-wrap: nowrap; /* Keep all logos in one line */\ngap:20px;\nmargin-bottom:20px;\n    }\n\n    .logos-container img {\n        height: 15px; \n    }\n}\n</style>",
+        "custom_class": ""
+      }
+    },
+    "rich_text_WktWVf": {
+      "type": "rich-text",
+      "blocks": {
+        "subheading_xpbGPz": {
+          "type": "subheading",
+          "settings": {
+            "subheading": "⭐ ⭐ ⭐ ⭐ ⭐ Over 100,000+ Happy Customers"
+          }
+        },
+        "heading_yCKj97": {
+          "type": "heading",
+          "settings": {
+            "heading": "<h1 style=\"font-size: 32px;\">SCIENTIFICALLY FORMULATED TO ATTRACT⭐</h1>",
+            "heading_size": "h2"
+          }
+        },
+        "text_wyMnUK": {
+          "type": "text",
+          "settings": {
+            "text": "<p>Rated #1 Pheromones 6 Years In A Row By House Of Pheromones</p>"
+          }
+        },
+        "button_7Ni8tw": {
+          "type": "button",
+          "disabled": true,
+          "settings": {
+            "button_label": "GET upto 50% OFF",
+            "button_link": "https://s1ckshop.com/pages/fragrances-bundle",
+            "button_style": "m-button--secondary",
+            "button_size": ""
+          }
+        }
+      },
+      "block_order": [
+        "subheading_xpbGPz",
+        "heading_yCKj97",
+        "text_wyMnUK",
+        "button_7Ni8tw"
+      ],
+      "name": "Rich text",
+      "settings": {
+        "container": "container",
+        "color_scheme": "dark",
+        "content_alignment": "center",
+        "padding_top": 100,
+        "padding_bottom": 96,
+        "custom_class": "",
+        "animations": "inherit"
+      }
+    },
+    "rich_text_aT7QKw": {
+      "type": "rich-text",
+      "blocks": {
+        "heading_ALJzfY": {
+          "type": "heading",
+          "settings": {
+            "heading": "S1CKSHOP SUBSCRIPTION",
+            "heading_size": "h2"
+          }
+        },
+        "text_jXfgqy": {
+          "type": "text",
+          "settings": {
+            "text": "<p><em>Our signature 10ml bottles deliver luxury fragrance blends crafted for maximum impact—designed for convenience and premium results.</em></p>"
+          }
+        }
+      },
+      "block_order": [
+        "heading_ALJzfY",
+        "text_jXfgqy"
+      ],
+      "name": "Rich text",
+      "settings": {
+        "container": "container",
+        "color_scheme": "footer",
+        "content_alignment": "center",
+        "padding_top": 96,
+        "padding_bottom": 60,
+        "custom_class": "",
+        "animations": "inherit"
+      }
+    },
+    "custom_liquid_zFMmqx": {
+      "type": "custom-liquid",
+      "disabled": true,
+      "name": "Custom liquid",
+      "settings": {
+        "custom_liquid": "<div style=\"background:#DDDDDD; padding:60px 0 40px 0;\">\n  <div style=\"display: flex; flex-wrap: wrap; justify-content: center; gap: 32px; max-width: 990px; margin: 0 auto;\">\n    <!-- The Tease -->\n    <div style=\"flex: 1 1 325px; max-width: 420px; min-width: 260px; background: linear-gradient(135deg, #fdfbfb 0%, #f5f7fa 80%); border: 1.5px solid #ececec; border-radius:18px; padding:26px 22px 20px; margin-bottom: 28px; box-shadow: 0 4px 16px #b8bbc333; box-sizing: border-box; position: relative;\">\n      <span style=\"position:absolute;top:-22px;left:22px;font-size:2rem;opacity:0.10;\">🥤</span>\n      <div style=\"font-size:1.22em;font-weight:700;margin-bottom:4px;display:flex;align-items:center;gap:8px;\">\n        <span style=\"font-size:1.13em;\">🥤</span> The Tease\n      </div>\n      <div style=\"color:#212; font-weight:600; margin-bottom:7px;\">\\$39/mo</div>\n      <div style=\"margin-bottom:7px;\">1 Spray Decant per month</div>\n      <div style=\"margin-bottom:10px;\"><strong>Highlights:</strong> Save up to 20% 🪙</div>\n      <a href=\"#\" style=\"display:inline-block;background:#19191e;color:#fff;border-radius:6px;padding:12px 28px;font-weight:bold;text-decoration:none;font-size:1em;box-shadow:0 1px 6px #0002;transition:.16s filter;\" onmouseover=\"this.style.filter='brightness(1.19)'\" onmouseout=\"this.style.filter='none'\">Subscribe</a>\n    </div>\n\n    <!-- Double Dose -->\n    <div style=\"flex: 1 1 325px; max-width: 420px; min-width: 260px; background: linear-gradient(135deg, #f7fafc 0%, #eaeaea 90%); border: 1.5px solid #ececec; border-radius:18px; padding:26px 22px 20px; margin-bottom: 28px; box-shadow: 0 4px 16px #b8bbc333; box-sizing: border-box; position: relative;\">\n      <span style=\"position:absolute;top:-22px;left:22px;font-size:2rem;opacity:0.12;\">🥤</span>\n      <div style=\"font-size:1.22em;font-weight:700;margin-bottom:4px;display:flex;align-items:center;gap:8px;\">\n        <span style=\"font-size:1.13em;\">🥤🥤</span> Double Dose\n      </div>\n      <div style=\"color:#212; font-weight:600; margin-bottom:7px;\">\\$75/mo</div>\n      <div style=\"margin-bottom:7px;\">2 Spray Decants per month</div>\n      <div style=\"margin-bottom:10px;\"><strong>Highlights:</strong> Day/Night Control ⚡</div>\n      <a href=\"#\" style=\"display:inline-block;background:#19191e;color:#fff;border-radius:6px;padding:12px 28px;font-weight:bold;text-decoration:none;font-size:1em;box-shadow:0 1px 6px #0002;transition:.16s filter;\" onmouseover=\"this.style.filter='brightness(1.19)'\" onmouseout=\"this.style.filter='none'\">Subscribe</a>\n    </div>\n\n    <!-- The Arsenal -->\n    <div style=\"flex: 1 1 325px; max-width: 420px; min-width: 260px; background: linear-gradient(135deg, #f0f4fa 0%, #fffbe6 100%); border: 1.5px solid #e6e9f0; border-radius:18px; padding:26px 22px 20px; margin-bottom: 28px; box-shadow: 0 4px 16px #e6b13325; box-sizing: border-box; position: relative;\">\n      <span style=\"position:absolute;top:-22px;left:22px;font-size:2rem;opacity:0.13;\">🧪</span>\n      <div style=\"font-size:1.22em;font-weight:700;margin-bottom:4px;display:flex;align-items:center;gap:8px;\">\n        <span style=\"font-size:1.13em;\">🧪🧪🧪</span> The Arsenal\n      </div>\n      <div style=\"color:#212; font-weight:600; margin-bottom:7px;\">\\$105/mo</div>\n      <div style=\"margin-bottom:7px;\">3 Spray Decants per month</div>\n      <div style=\"margin-bottom:10px;\"><strong>Highlights:</strong> Full Rotation – Save 29% <span style=\"font-size:1.05em;\">🔥</span></div>\n      <a href=\"#\" style=\"display:inline-block;background:#19191e;color:#fff;border-radius:6px;padding:12px 28px;font-weight:bold;text-decoration:none;font-size:1em;box-shadow:0 1px 6px #0002;transition:.16s filter;\" onmouseover=\"this.style.filter='brightness(1.19)'\" onmouseout=\"this.style.filter='none'\">Subscribe</a>\n    </div>\n\n    <!-- Black Label Access -->\n    <div style=\"flex: 1 1 325px; max-width: 420px; min-width: 260px; background: linear-gradient(135deg, #fffbea 0%, #fdf6e4 100%); border:2.5px solid #d4af37; border-radius:18px; padding:26px 22px 20px; margin-bottom: 28px; box-shadow:0 0 20px #f5e6c055; box-sizing:border-box; position:relative;\">\n      <span style=\"position:absolute;top:-22px;left:22px;font-size:2rem;color:#d4af37;opacity:0.15;\">🖤</span>\n      <div style=\"font-size:1.22em;font-weight:900;margin-bottom:4px;color:#d4af37;display:flex;align-items:center;gap:8px;\">\n        <span style=\"font-size:1.13em;\">🖤</span> Black Label Access\n      </div>\n      <div style=\"color:#d4af37; font-weight:700; margin-bottom:7px;\">\\$120/mo</div>\n      <div style=\"margin-bottom:7px;color:#222;\">2 Spray + 1 Oil-based Decant</div>\n      <div style=\"margin-bottom:10px;color:#222;\"><strong>Highlights:</strong> Exclusive Oils – VIP Tier <span style=\"font-size:1.1em;\">🔒</span></div>\n      <a href=\"#\" style=\"display:inline-block;background:#d4af37;color:#1a1515;border-radius:6px;padding:12px 28px;font-weight:800;text-decoration:none;font-size:1.07em;box-shadow:0 1px 9px #d4af3740;transition:.16s filter;\" onmouseover=\"this.style.filter='brightness(1.13)'\" onmouseout=\"this.style.filter='none'\">Upgrade to Black Label</a>\n    </div>\n  </div>\n</div>",
+        "custom_class": ""
+      }
+    },
+    "custom_liquid_9dm3RH": {
+      "type": "custom-liquid",
+      "name": "Custom liquid",
+      "settings": {
+        "custom_liquid": "<style>\n  .plan-grid {\n    display: flex;\n    flex-wrap: wrap;\n    justify-content: center;\n    gap: 30px;\n    padding: 60px 20px 20px;\n    background: #151414;\n  }\n\n  .plan-box {\n    background-size: cover;\n    background-position: center;\n    width: 300px;\n    height: 420px;\n    color: #fff;\n    display: flex;\n    align-items: flex-end;\n    border-radius: 16px;\n    overflow: hidden;\n    transition: transform 0.3s ease;\n  }\n\n  .plan-box:hover {\n    transform: scale(1.03);\n  }\n\n  .plan-content {\n    width: 100%;\n    padding: 20px;\n    text-align: center;\n    background: linear-gradient(to top, rgba(0, 0, 0, 0.4), transparent 90%);\n  }\n\n  .plan-content h3 {\n    font-size: 1.4rem;\n    margin-bottom: 5px;\n  }\n\n  .plan-content .price {\n    font-size: 1.2rem;\n    font-weight: bold;\n    margin-bottom: 5px;\n  }\n\n  .plan-content p {\n    margin: 5px 0 15px;\n    font-size: 0.95rem;\n  }\n\n  .plan-content a {\n    display: inline-block;\n    background: #C23A2A;\n    color: white;\n    padding: 12px 22px;\n    border-radius: 6px;\n    text-decoration: none;\n    font-weight: bold;\n  }\n\n  /* BLACK LABEL SECTION */\n  .black-label-wrapper {\n    width: 100%;\n    background: #000;\n    padding: 60px 20px;\n  }\n\n  .black-label {\n    display: flex;\n    flex-wrap: wrap;\n    background: #000;\n    color: white;\n    align-items: center;\n    justify-content: center;\n    max-width: 1100px;\n    margin: auto;\n  }\n\n  .black-label-image {\n    flex: 1;\n    min-width: 320px;\n    display: flex;\n    justify-content: center;\n    align-items: center;\n    padding: 20px;\n  }\n\n  .black-label-image img {\n    width: 100%;\n    max-width: 420px;\n    height: auto;\n    object-fit: contain;\n  }\n\n  .black-label-content {\n    flex: 1;\n    min-width: 300px;\n    padding: 20px 30px;\n    display: flex;\n    flex-direction: column;\n    justify-content: center;\n    background: #000;\n    color: #fff;\n  }\n\n  .black-label-content h3 {\n    font-size: 2rem;\n    margin-bottom: 15px;\n    color: #fff;\n  }\n\n  .black-label-content .price {\n    font-size: 1.3rem;\n    margin-bottom: 10px;\n    font-weight: bold;\n    color: #fff;\n  }\n\n  .black-label-content p,\n  .black-label-content ul {\n    margin-bottom: 20px;\n    font-size: 0.95rem;\n    line-height: 1.6;\n    color: #f2f2f2;\n  }\n\n  .black-label-content ul {\n    padding-left: 20px;\n    list-style-type: disc;\n  }\n\n  .black-label-content a {\n    background: #C23A2A;\n    color: white;\n    padding: 12px 22px;\n    text-decoration: none;\n    border-radius: 6px;\n    font-weight: bold;\n    width: fit-content;\n  }\n\n  @media screen and (max-width: 768px) {\n    .black-label {\n      flex-direction: column;\n    }\n\n    .black-label-image img {\n      max-width: 90%;\n    }\n\n    .black-label-content {\n      padding: 30px 20px;\n    }\n  }\n</style>\n\n<!-- TOP 3 PLANS -->\n<div class=\"plan-grid\">\n  <!-- PLAN 1 -->\n  <div class=\"plan-box\" style=\"background-image: url('https://cdn.shopify.com/s/files/1/0022/0358/2529/files/092300b9-a92a-445f-bc4a-4c51f27db098.png?v=1755226775');\">\n    <div class=\"plan-content\">\n      <h3>The Tease</h3>\n      <div class=\"price\">$39<span style=\"font-size: 0.7em;\">/month</span></div>\n      <p>Choose 1 10ml Perfume</p>\n      <a href=\"https://s1ckshop.com/apps/subscriptions/bb/B70VWUMb\">Subscribe</a>\n    </div>\n  </div>\n\n  <!-- PLAN 2 -->\n  <div class=\"plan-box\" style=\"background-image: url('https://cdn.shopify.com/s/files/1/0022/0358/2529/files/c6a86135-df40-4007-994b-29e7615f0dbd.png?v=1755226775');\">\n    <div class=\"plan-content\">\n      <h3>Double Dip</h3>\n      <div class=\"price\">$79<span style=\"font-size: 0.7em;\">/month</span></div>\n      <p>Choose 2 Perfumes</p>\n      <a href=\"https://s1ckshop.com/apps/subscriptions/bb/iCHWxCum\">Subscribe</a>\n    </div>\n  </div>\n\n  <!-- PLAN 3 -->\n  <div class=\"plan-box\" style=\"background-image: url('https://cdn.shopify.com/s/files/1/0022/0358/2529/files/7b2ab597-54be-4d48-b5e6-fd71b13dbd82.png?v=1755226775');\">\n    <div class=\"plan-content\">\n      <h3>The Arsenal</h3>\n      <div class=\"price\">$99<span style=\"font-size: 0.7em;\">/month</span></div>\n      <p>Choose 3 Perfumes</p>\n      <a href=\"https://s1ckshop.com/apps/subscriptions/bb/mk7z8c6h\">Subscribe</a>\n    </div>\n  </div>\n</div>\n\n<!-- BLACK LABEL PLAN -->\n<div class=\"black-label-wrapper\">\n  <div class=\"black-label\">\n    <div class=\"black-label-image\">\n      <img src=\"https://cdn.shopify.com/s/files/1/0022/0358/2529/files/99a5cb90-015a-45e9-98a9-a33c7ff74bf3.png?v=1755226775\" alt=\"Black Label Perfume\">\n    </div>\n    <div class=\"black-label-content\">\n      <h3>Black Label Access</h3>\n      <div class=\"price\">$125/month</div>\n      <p>This isn’t your average subscription. It’s like getting VIP bottle service... but for attraction.</p>\n      <p><strong>Here’s what you get:</strong></p>\n      <ul>\n        <li>2 Premium Pheromone Sprays of Your Choice</li>\n        <li>1 Luxury Roll-On Oil (worth $70 alone)</li>\n        <li>Access to the VIP Members-Only Group & Private Forum</li>\n        <li>Early Access to New Drops Before They Go Public</li>\n      </ul>\n      <a href=\"https://s1ckshop.com/apps/subscriptions/bb/J2MnvEQx\">Subscribe</a>\n    </div>\n  </div>\n</div>",
+        "custom_class": ""
+      }
+    },
+    "custom_liquid_9qwTKQ": {
+      "type": "custom-liquid",
+      "name": "Custom liquid",
+      "settings": {
+        "custom_liquid": "<section style=\"background-color: #151414; padding: 60px 20px; font-family: Helvetica, sans-serif;\">\n  <div style=\"max-width: 1200px; margin: 0 auto; text-align: center;\">\n\n    <h2 style=\"font-size: 36px; margin-bottom: 10px; color: #FFFFFF;\">Select Your Attraction Pack</h2>\n    <p style=\"font-size: 18px; margin-bottom: 40px; color: #CCCCCC;\">Select the perfect plan. Customize your fragrance experience.</p>\n\n    <div style=\"display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 30px;\">\n\n      <!-- Tease Plan -->\n      <div style=\"background-color: #E7E7E7; padding: 30px; border-radius: 12px;\">\n        <h3 style=\"font-size: 22px; margin-bottom: 10px; color: #151414;\">Tease</h3>\n        <p style=\"font-size: 16px; color: #151414;\">Choose 1 10ml Perfume</p>\n        <p style=\"font-size: 24px; margin: 10px 0; color: #151414;\"><strong>$39/mo</strong></p>\n        <a href=\"https://s1ckshop.com/apps/subscriptions/bb/B70VWUMb\" \n           style=\"background: #C23A2A; color: #fff; padding: 12px 24px; border-radius: 6px; text-decoration: none; display: inline-block;\">\n          Start with Tease\n        </a>\n      </div>\n\n      <!-- Double Dose Plan -->\n      <div style=\"background-color: #E7E7E7; padding: 30px; border-radius: 12px;\">\n        <h3 style=\"font-size: 22px; margin-bottom: 10px; color: #151414;\">Double Dip</h3>\n        <p style=\"font-size: 16px; color: #151414;\">Choose 2 Perfumes</p>\n        <p style=\"font-size: 24px; margin: 10px 0; color: #151414;\"><strong>$79/mo</strong></p>\n        <a href=\"https://s1ckshop.com/apps/subscriptions/bb/iCHWxCum\" \n           style=\"background: #C23A2A; color: #fff; padding: 12px 24px; border-radius: 6px; text-decoration: none; display: inline-block;\">\n          Go Double\n        </a>\n      </div>\n\n      <!-- Full Shelf Plan -->\n      <div style=\"background-color: #E7E7E7; padding: 30px; border-radius: 12px;\">\n        <h3 style=\"font-size: 22px; margin-bottom: 10px; color: #151414;\">Arsenal</h3>\n        <p style=\"font-size: 16px; color: #151414;\">Choose 3 Perfumes</p>\n        <p style=\"font-size: 24px; margin: 10px 0; color: #151414;\"><strong>$99/mo</strong></p>\n        <a href=\"https://s1ckshop.com/apps/subscriptions/bb/mk7z8c6h\" \n           style=\"background: #C23A2A; color: #fff; padding: 12px 24px; border-radius: 6px; text-decoration: none; display: inline-block;\">\n          Fill It Up\n        </a>\n      </div>\n\n      <!-- Black Label Plan -->\n      <div style=\"background-color: #E7E7E7; padding: 30px; border-radius: 12px;\">\n        <h3 style=\"font-size: 22px; margin-bottom: 10px; color: #151414;\">Black Label</h3>\n        <p style=\"font-size: 16px; color: #151414;\">3 Perfumes + 1 Oil</p>\n        <p style=\"font-size: 24px; margin: 10px 0; color: #151414;\"><strong>$125/mo</strong></p>\n        <a href=\"https://s1ckshop.com/apps/subscriptions/bb/J2MnvEQx\" \n           style=\"background: #C23A2A; color: #fff; padding: 12px 24px; border-radius: 6px; text-decoration: none; display: inline-block;\">\n          Unlock Premium\n        </a>\n      </div>\n\n    </div>\n  </div>\n</section>",
+        "custom_class": ""
+      }
+    },
+    "custom_liquid_iXGd9z": {
+      "type": "custom-liquid",
+      "disabled": true,
+      "name": "Custom liquid",
+      "settings": {
+        "custom_liquid": "<div style=\"display: flex; flex-wrap: wrap; justify-content: center; gap: 32px; max-width: 990px; margin: 0 auto;\">\n  <!-- The Tease -->\n  <div style=\"flex: 1 1 325px; max-width: 420px; min-width: 260px; background: linear-gradient(135deg, #fdfbfb 0%, #f5f7fa 80%); border: 1.5px solid #ececec; border-radius:18px; padding:26px 22px 20px; margin-bottom: 28px; box-shadow: 0 4px 16px #b8bbc333; box-sizing: border-box; position: relative;\">\n    <span style=\"position:absolute;top:-22px;left:22px;font-size:2rem;opacity:0.10;\">🥤</span>\n    <div style=\"font-size:1.22em;font-weight:700;margin-bottom:4px;display:flex;align-items:center;gap:8px;\">\n      <span style=\"font-size:1.13em;\">🥤</span> The Tease\n    </div>\n    <div style=\"color:#212; font-weight:600; margin-bottom:7px;\">\\$39/mo</div>\n    <div style=\"margin-bottom:7px;\">1 Spray Decant per month</div>\n    <div style=\"margin-bottom:10px;\"><strong>Highlights:</strong> Save up to 20% 🪙</div>\n    <a href=\"#\" style=\"display:inline-block;background:#19191e;color:#fff;border-radius:6px;padding:12px 28px;font-weight:bold;text-decoration:none;font-size:1em;box-shadow:0 1px 6px #0002;transition:.16s filter;\" onmouseover=\"this.style.filter='brightness(1.19)'\" onmouseout=\"this.style.filter='none'\">Subscribe</a>\n  </div>\n\n  <!-- Double Dose -->\n  <div style=\"flex: 1 1 325px; max-width: 420px; min-width: 260px; background: linear-gradient(135deg, #f7fafc 0%, #eaeaea 90%); border: 1.5px solid #ececec; border-radius:18px; padding:26px 22px 20px; margin-bottom: 28px; box-shadow: 0 4px 16px #b8bbc333; box-sizing: border-box; position: relative;\">\n    <span style=\"position:absolute;top:-22px;left:22px;font-size:2rem;opacity:0.12;\">🥤</span>\n    <div style=\"font-size:1.22em;font-weight:700;margin-bottom:4px;display:flex;align-items:center;gap:8px;\">\n      <span style=\"font-size:1.13em;\">🥤🥤</span> Double Dose\n    </div>\n    <div style=\"color:#212; font-weight:600; margin-bottom:7px;\">\\$75/mo</div>\n    <div style=\"margin-bottom:7px;\">2 Spray Decants per month</div>\n    <div style=\"margin-bottom:10px;\"><strong>Highlights:</strong> Day/Night Control ⚡</div>\n    <a href=\"#\" style=\"display:inline-block;background:#19191e;color:#fff;border-radius:6px;padding:12px 28px;font-weight:bold;text-decoration:none;font-size:1em;box-shadow:0 1px 6px #0002;transition:.16s filter;\" onmouseover=\"this.style.filter='brightness(1.19)'\" onmouseout=\"this.style.filter='none'\">Subscribe</a>\n  </div>\n\n  <!-- The Arsenal -->\n  <div style=\"flex: 1 1 325px; max-width: 420px; min-width: 260px; background: linear-gradient(135deg, #f0f4fa 0%, #fffbe6 100%); border: 1.5px solid #e6e9f0; border-radius:18px; padding:26px 22px 20px; margin-bottom: 28px; box-shadow: 0 4px 16px #e6b13325; box-sizing: border-box; position: relative;\">\n    <span style=\"position:absolute;top:-22px;left:22px;font-size:2rem;opacity:0.13;\">🧪</span>\n    <div style=\"font-size:1.22em;font-weight:700;margin-bottom:4px;display:flex;align-items:center;gap:8px;\">\n      <span style=\"font-size:1.13em;\">🧪🧪🧪</span> The Arsenal\n    </div>\n    <div style=\"color:#212; font-weight:600; margin-bottom:7px;\">\\$105/mo</div>\n    <div style=\"margin-bottom:7px;\">3 Spray Decants per month</div>\n    <div style=\"margin-bottom:10px;\"><strong>Highlights:</strong> Full Rotation – Save 29% <span style=\"font-size:1.05em;\">🔥</span></div>\n    <a href=\"#\" style=\"display:inline-block;background:#19191e;color:#fff;border-radius:6px;padding:12px 28px;font-weight:bold;text-decoration:none;font-size:1em;box-shadow:0 1px 6px #0002;transition:.16s filter;\" onmouseover=\"this.style.filter='brightness(1.19)'\" onmouseout=\"this.style.filter='none'\">Subscribe</a>\n  </div>\n\n  <!-- Black Label Access -->\n  <div style=\"flex: 1 1 325px; max-width: 420px; min-width: 260px; background: linear-gradient(135deg, #fffbea 0%, #fdf6e4 100%); border:2.5px solid #d4af37; border-radius:18px; padding:26px 22px 20px; margin-bottom: 28px; box-shadow:0 0 20px #f5e6c055; box-sizing:border-box; position:relative;\">\n    <span style=\"position:absolute;top:-22px;left:22px;font-size:2rem;color:#d4af37;opacity:0.15;\">🖤</span>\n    <div style=\"font-size:1.22em;font-weight:900;margin-bottom:4px;color:#d4af37;display:flex;align-items:center;gap:8px;\">\n      <span style=\"font-size:1.13em;\">🖤</span> Black Label Access\n    </div>\n    <div style=\"color:#d4af37; font-weight:700; margin-bottom:7px;\">\\$120/mo</div>\n    <div style=\"margin-bottom:7px;color:#222;\">2 Spray + 1 Oil-based Decant</div>\n    <div style=\"margin-bottom:10px;color:#222;\"><strong>Highlights:</strong> Exclusive Oils – VIP Tier <span style=\"font-size:1.1em;\">🔒</span></div>\n    <a href=\"#\" style=\"display:inline-block;background:#d4af37;color:#1a1515;border-radius:6px;padding:12px 28px;font-weight:800;text-decoration:none;font-size:1.07em;box-shadow:0 1px 9px #d4af3740;transition:.16s filter;\" onmouseover=\"this.style.filter='brightness(1.13)'\" onmouseout=\"this.style.filter='none'\">Upgrade to Black Label</a>\n  </div>\n</div>",
+        "custom_class": ""
+      }
+    },
+    "promotion_countdown_timer_fcHMWx": {
+      "type": "promotion-countdown-timer",
+      "blocks": {
+        "text_MmnRPR": {
+          "type": "text",
+          "settings": {
+            "text_alignment": "left",
+            "subheading": "",
+            "heading": "Claim this month's Ultimate Attraction Pack Before These Slots End!!!",
+            "heading_size": "h2",
+            "text": ""
+          }
+        },
+        "countdown_zCiehf": {
+          "type": "countdown",
+          "settings": {
+            "text_alignment": "center",
+            "time": "2025-08-26 23:00:50"
+          }
+        },
+        "button_WcBnJw": {
+          "type": "button",
+          "settings": {
+            "text_alignment": "right",
+            "button_label": "Subscribe Now",
+            "button_link": "https://s1ckshop.com/apps/subscriptions/bb/jqWufp20",
+            "button_style": "m-button--primary",
+            "button_size": "m-button--large"
+          }
+        }
+      },
+      "block_order": [
+        "text_MmnRPR",
+        "countdown_zCiehf",
+        "button_WcBnJw"
+      ],
+      "name": "Promotion countdown timer",
+      "settings": {
+        "container": "container-fluid",
+        "color_scheme": "badge-sale",
+        "padding_top": 64,
+        "padding_bottom": 56,
+        "custom_class": "",
+        "animations": "fade-in-right"
+      }
+    },
+    "image_with_text_bBaaTW": {
+      "type": "image-with-text",
+      "name": "Image with text",
+      "settings": {
+        "heading": "",
+        "heading_size": "h2",
+        "subheading": "",
+        "container": "container-fluid",
+        "color_scheme": "scheme-cee058e4-58e3-46aa-9af9-219dadc79066",
+        "item_gap": 100,
+        "item_gap_mobile": 30,
+        "layout": "left",
+        "image_column_size": "6",
+        "image_overlap": false,
+        "show_image_reverse": false,
+        "hover_effect": false,
+        "image_animation": "move-up-down",
+        "image": "shopify://shop_images/2_0e3b37f4-888d-4218-bdfa-57921f65d74e.png",
+        "link": "",
+        "link_2": "",
+        "second_image_offset_top": 10,
+        "title": "BLACK LABEL ACCESS",
+        "sub_title": "",
+        "text": "<p>Black Label Access – $125/Month<br/>This isn’t your average subscription.<br/>It’s like getting VIP bottle service... but for attraction.<br/><br/>You’re not just joining a tier,<br/>You’re unlocking the inner circle🔑<br/><br/>Here’s what you get:<br/>🔥 2 Premium Pheromone Sprays of Your Choice<br/>💧 1 Luxury Roll-On Oil (worth $70 alone — and yeah, it hits like a secret weapon)<br/>💬 Access to the VIP Members-Only Group & Private Forum<br/>🚨 Early Access to New Drops Before They Go Public<br/><br/>This oil isn’t something you just “add to cart.”<br/>It’s part of the Black Label secret stash — made for insiders only.</p><p>🔒 <em>Only Available with $120/month Arsenal Elite Plan</em></p>",
+        "text_size": "medium",
+        "content_alignment": "left",
+        "button_label": "Unlock Black Label Access",
+        "button_link": "https://s1ckshop.com/apps/subscriptions/bb/J2MnvEQx",
+        "button_style": "m-button--link",
+        "button_size": "",
+        "padding_top": 56,
+        "padding_bottom": 0,
+        "custom_class": "",
+        "animations": "inherit"
+      }
+    },
+    "icon_box_k9x9p7": {
+      "type": "icon-box",
+      "blocks": {
+        "iconbox_CArr8b": {
+          "type": "iconbox",
+          "settings": {
+            "image": "shopify://shop_images/imgi_111_free-shipping-icon-vector-image-can-be-used-web-store_120816-300186.png",
+            "image_by_url": "",
+            "title": "Free Shipping",
+            "description": "<p>Fast, free delivery on every monthly box<br/><br/></p>",
+            "link": "",
+            "button_label": "",
+            "button_link": "",
+            "button_style": "m-button--link",
+            "button_size": ""
+          }
+        },
+        "iconbox_zc8CBz": {
+          "type": "iconbox",
+          "settings": {
+            "image": "shopify://shop_images/imgi_13_brush-stroke-diamond_78370-2127.png",
+            "image_by_url": "",
+            "title": "Luxury Scents",
+            "description": "<p>Premium, exclusive fragrances in every drop.<br/><br/></p>",
+            "link": "",
+            "button_label": "",
+            "button_link": "",
+            "button_style": "m-button--link",
+            "button_size": ""
+          }
+        },
+        "iconbox_C9Eipb": {
+          "type": "iconbox",
+          "settings": {
+            "image": "shopify://shop_images/imgi_139_vip-card-vector-icon-can-be-used-luxury-iconset_717774-147915.png",
+            "image_by_url": "",
+            "title": "Member's Only Pricing",
+            "description": "<p>Eligibility For Black Label Perks</p>",
+            "link": "",
+            "button_label": "",
+            "button_link": "",
+            "button_style": "m-button--link",
+            "button_size": ""
+          }
+        },
+        "iconbox_UYRJHH": {
+          "type": "iconbox",
+          "settings": {
+            "image": "shopify://shop_images/imgi_180_hand-drawn-icon-website_532086-138.png",
+            "image_by_url": "",
+            "title": "Cancel Anytime",
+            "description": "<p>No contracts. Pause, skip, or stop anytime.<br/><br/></p>",
+            "link": "",
+            "button_label": "",
+            "button_link": "",
+            "button_style": "m-button--link",
+            "button_size": ""
+          }
+        }
+      },
+      "block_order": [
+        "iconbox_CArr8b",
+        "iconbox_zc8CBz",
+        "iconbox_C9Eipb",
+        "iconbox_UYRJHH"
+      ],
+      "name": "Featured promotion",
+      "settings": {
+        "heading": "What You Will Get",
+        "heading_size": "h2",
+        "subheading": "",
+        "description": "",
+        "header_alignment": "center",
+        "container": "container-fluid",
+        "color_scheme": "default",
+        "item_per_row": 4,
+        "item_gap": 30,
+        "item_gap_mobile": 10,
+        "card_color_scheme": "default",
+        "card_style": "vertical",
+        "image_max_width": "70px",
+        "content_alignment": "center",
+        "hover_effect": "scaling-up",
+        "enable_slider": false,
+        "show_pagination": false,
+        "show_navigation": false,
+        "use_scroll_mobile": true,
+        "use_grid_column_mb": false,
+        "padding_top": 54,
+        "padding_bottom": 0,
+        "custom_class": "",
+        "animations": "inherit"
+      }
+    },
+    "custom_liquid_6yYrhL": {
+      "type": "custom-liquid",
+      "name": "Custom liquid",
+      "settings": {
+        "custom_liquid": "<div style=\"width:100vw;position:relative;left:50%;right:50%;margin-left:-50vw;margin-right:-50vw;background:#181818;padding:0;\">\n  <div style=\"max-width:1200px;margin:auto;padding:56px 0 60px 0;\">\n    <h2 style=\"text-align:center;font-size:2.3rem;font-weight:800;color:#fff;margin-bottom:48px;letter-spacing:-1px;\">\n      <span style=\"font-size:1.3em;vertical-align:-.15em; margin-right:8px;\"></span>How It Works\n    </h2>\n    <div style=\"display:flex;flex-wrap:wrap;gap:40px;justify-content:center;\">\n      <!-- Card 1 -->\n      <div style=\"flex:1 1 320px;min-width:290px;max-width:340px;background:#D3D3D3;border-radius:18px;box-shadow:0 2px 18px #2222;padding:44px 28px 32px 28px;text-align:center;display:flex;flex-direction:column;align-items:center;\">\n        <div style=\"font-size:2.5em;margin-bottom:18px;\">🛒</div>\n        <div style=\"font-weight:700;font-size:1.23em;margin-bottom:9px;color:#181818;\">Choose Your Tier</div>\n        <div style=\"font-size:1.08em;color:#333;line-height:1.45;\">Pick your monthly subscription—Tease, Dose, Arsenal, or VIP Black Label!</div>\n      </div>\n      <!-- Card 2 -->\n      <div style=\"flex:1 1 320px;min-width:290px;max-width:340px;background:#D3D3D3;border-radius:18px;box-shadow:0 2px 18px #2222;padding:44px 28px 32px 28px;text-align:center;display:flex;flex-direction:column;align-items:center;\">\n        <div style=\"font-size:2.5em;margin-bottom:18px;\">📦</div>\n        <div style=\"font-weight:700;font-size:1.23em;margin-bottom:9px;color:#181818;\">We Ship, Fast &amp; Free</div>\n        <div style=\"font-size:1.08em;color:#333;line-height:1.45;\">Your curated scent (or exclusive oil) is expertly packed and shipped to your door—free delivery every month.</div>\n      </div>\n      <!-- Card 3 -->\n      <div style=\"flex:1 1 320px;min-width:290px;max-width:340px;background:#D3D3D3;border-radius:18px;box-shadow:0 2px 18px #2222;padding:44px 28px 32px 28px;text-align:center;display:flex;flex-direction:column;align-items:center;\">\n        <div style=\"font-size:2.5em;margin-bottom:18px;\">🔥</div>\n        <div style=\"font-weight:700;font-size:1.23em;margin-bottom:9px;color:#181818;\">Enjoy, Switch, or Pause</div>\n        <div style=\"font-size:1.08em;color:#333;line-height:1.45;\">Try new drops every month and reactivate, skip, or pause anytime. No contracts, just new vibes!</div>\n      </div>\n    </div>\n  </div>\n</div>",
+        "custom_class": ""
+      }
+    },
+    "custom_liquid_PnwJUw": {
+      "type": "custom-liquid",
+      "name": "Custom liquid",
+      "settings": {
+        "custom_liquid": "<style>\n  .review-section {\n    background: #151414;\n    padding: 50px 20px;\n    color: #fff;\n  }\n\n  .review-section h2 {\n    text-align: center;\n    font-size: 2rem;\n    margin-bottom: 30px;\n    font-weight: bold;\n    color: #ffffff; /* Make heading white */\n  }\n\n  .review-carousel {\n    display: flex;\n    gap: 20px;\n    overflow-x: auto;\n    scroll-snap-type: x mandatory;\n    -webkit-overflow-scrolling: touch;\n    padding-bottom: 10px;\n  }\n\n  .review-card {\n    background: #222;\n    border-radius: 14px;\n    padding: 20px;\n    min-width: 280px;\n    max-width: 300px;\n    flex: 0 0 auto;\n    scroll-snap-align: start;\n    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);\n  }\n\n  .review-card .stars {\n    color: #fcd34d;\n    margin-bottom: 10px;\n  }\n\n  .review-card p {\n    font-size: 0.95rem;\n    line-height: 1.5;\n    margin-bottom: 10px;\n  }\n\n  .reviewer {\n    display: flex;\n    align-items: center;\n    gap: 12px;\n    margin-top: 10px;\n  }\n\n  .reviewer img {\n    width: 40px;\n    height: 40px;\n    border-radius: 50%;\n    object-fit: cover;\n  }\n\n  .reviewer-name {\n    font-weight: bold;\n    font-size: 0.95rem;\n  }\n\n  /* Optional scrollbar styling */\n  .review-carousel::-webkit-scrollbar {\n    height: 8px;\n  }\n\n  .review-carousel::-webkit-scrollbar-thumb {\n    background: #888;\n    border-radius: 4px;\n  }\n\n  .review-carousel::-webkit-scrollbar-thumb:hover {\n    background: #555;\n  }\n</style>\n\n<section class=\"review-section\">\n  <h2>What Customers Are Saying</h2>\n  <div class=\"review-carousel\">\n\n    <!-- Review 1 -->\n    <div class=\"review-card\">\n      <div class=\"stars\">★★★★★</div>\n      <p>“This scent is absolutely insane! I got compliments all night. Definitely becoming my go-to.”</p>\n      <div class=\"reviewer\">\n        <img src=\"https://randomuser.me/api/portraits/women/44.jpg\" alt=\"Reviewer\">\n        <div class=\"reviewer-name\">Jade P.</div>\n      </div>\n    </div>\n\n    <!-- Review 2 -->\n    <div class=\"review-card\">\n      <div class=\"stars\">★★★★★</div>\n      <p>“I was skeptical, but wow... the roll-on oil is a game-changer. I feel confident and sexy.”</p>\n      <div class=\"reviewer\">\n        <img src=\"https://randomuser.me/api/portraits/men/32.jpg\" alt=\"Reviewer\">\n        <div class=\"reviewer-name\">Andre L.</div>\n      </div>\n    </div>\n\n    <!-- Review 3 -->\n    <div class=\"review-card\">\n      <div class=\"stars\">★★★★☆</div>\n      <p>“Loved the scent, though shipping took a few extra days. Still totally worth the wait!”</p>\n      <div class=\"reviewer\">\n        <img src=\"https://randomuser.me/api/portraits/women/68.jpg\" alt=\"Reviewer\">\n        <div class=\"reviewer-name\">Emily R.</div>\n      </div>\n    </div>\n\n    <!-- Review 4 -->\n    <div class=\"review-card\">\n      <div class=\"stars\">★★★★★</div>\n      <p>“I’ve tried a few pheromone perfumes before, but this one really hits. Subtle but powerful.”</p>\n      <div class=\"reviewer\">\n        <img src=\"https://randomuser.me/api/portraits/men/85.jpg\" alt=\"Reviewer\">\n        <div class=\"reviewer-name\">Marcus G.</div>\n      </div>\n    </div>\n\n    <!-- Review 5 -->\n    <div class=\"review-card\">\n      <div class=\"stars\">★★★★★</div>\n      <p>“Repeat customer here. These scents never miss. Even my boyfriend steals them.”</p>\n      <div class=\"reviewer\">\n        <img src=\"https://randomuser.me/api/portraits/women/22.jpg\" alt=\"Reviewer\">\n        <div class=\"reviewer-name\">Tasha B.</div>\n      </div>\n    </div>\n\n  </div>\n</section>",
+        "custom_class": ""
+      }
+    },
+    "page_faqs_a7WP4k": {
+      "type": "page-faqs",
+      "blocks": {
+        "accordion_fwR3KK": {
+          "type": "accordion",
+          "settings": {
+            "title": "How does the S1CKSHOP subscription work?",
+            "content": "<p>Each month, you'll receive a fresh, curated scent (or multiple) delivered straight to your door. Simply pick your tier—The Tease, Double Dose, The Arsenal, or Black Label Access—and enjoy exclusive formulas, early access, and club-only perks.<br/></p>",
+            "open": false
+          }
+        },
+        "accordion_4H3GV9": {
+          "type": "accordion",
+          "settings": {
+            "title": "Can I skip a month or cancel anytime?",
+            "content": "<p>Absolutely! Our subscriptions are fully flexible. You can pause, skip, change your tier, or cancel anytime through your account dashboard. No penalties, no hassle, ever.</p>",
+            "open": false
+          }
+        },
+        "accordion_3FwCdY": {
+          "type": "accordion",
+          "settings": {
+            "title": "Do I get the same scent every month?",
+            "content": "<p>No repeats for at least three months! Each shipment is curated to deliver you new and exciting formulas. With higher tiers, you get even more variety and access to exclusive blends.</p>",
+            "open": false
+          }
+        },
+        "accordion_BU64id": {
+          "type": "accordion",
+          "settings": {
+            "title": "Who are S1CKSHOP fragrances for?",
+            "content": "<p>Our formulas are crafted to be universally appealing and wearable—designed for all genders, with club-exclusive drops and special editions to suit every personality and occasion.</p>",
+            "open": false
+          }
+        }
+      },
+      "block_order": [
+        "accordion_fwR3KK",
+        "accordion_4H3GV9",
+        "accordion_3FwCdY",
+        "accordion_BU64id"
+      ],
+      "name": "FAQs",
+      "settings": {
+        "container": "container",
+        "color_scheme": "",
+        "menu": "",
+        "custom_class": ""
+      }
+    },
+    "page_faqs_kiXhfL": {
+      "type": "page-faqs",
+      "blocks": {
+        "accordion_g4ijW7": {
+          "type": "accordion",
+          "settings": {
+            "title": "What are the perks of subscribing versus a one-time purchase?",
+            "content": "<p>Subscribers receive significant savings, free shipping, early access to new releases, members-only scents, and surprise extras. You’ll also unlock first dibs on limited editions and private events.</p>",
+            "open": false
+          }
+        },
+        "accordion_cPr4Mx": {
+          "type": "accordion",
+          "settings": {
+            "title": "What if I want to upgrade or downgrade my plan?",
+            "content": "<p>You can change your tier anytime—upgrade for more scent variety, or switch down to fit your needs. Your plan is totally customizable and you only pay for what you love.</p>",
+            "open": false
+          }
+        }
+      },
+      "block_order": [
+        "accordion_g4ijW7",
+        "accordion_cPr4Mx"
+      ],
+      "name": "FAQs",
+      "settings": {
+        "container": "container",
+        "color_scheme": "",
+        "menu": "",
+        "custom_class": ""
+      }
+    },
+    "custom_liquid_HqXJcD": {
+      "type": "custom-liquid",
+      "name": "Custom liquid",
+      "settings": {
+        "custom_liquid": "",
+        "custom_class": ""
+      }
+    }
+  },
+  "order": [
+    "main",
+    "image_with_text_2_n9dHB4",
+    "custom_liquid_3NQxRD",
+    "custom_liquid_76yGzR",
+    "custom_liquid_nHRrnF",
+    "video_hero_KwD83y",
+    "custom_liquid_VTWqUW",
+    "custom_liquid_HkHtJH",
+    "rich_text_WktWVf",
+    "rich_text_aT7QKw",
+    "custom_liquid_zFMmqx",
+    "custom_liquid_9dm3RH",
+    "custom_liquid_9qwTKQ",
+    "custom_liquid_iXGd9z",
+    "promotion_countdown_timer_fcHMWx",
+    "image_with_text_bBaaTW",
+    "icon_box_k9x9p7",
+    "custom_liquid_6yYrhL",
+    "custom_liquid_PnwJUw",
+    "page_faqs_a7WP4k",
+    "page_faqs_kiXhfL",
+    "custom_liquid_HqXJcD"
+  ]
+}
