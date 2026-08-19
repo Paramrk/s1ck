@@ -8,7 +8,10 @@ const VIDEO_EXTS = /\.(mp4|webm|mov)$/i;
 const FONT_EXTS = /\.(woff|woff2|ttf|otf|eot)$/i;
 
 // https://vite.dev/config/
-export default defineConfig(({ command }) => ({
+export default defineConfig(({ command }) => {
+  const isDev = command === "serve";
+
+  return {
   base: './',
   experimental: {
     renderBuiltUrl(filename, { hostType }) {
@@ -86,12 +89,16 @@ export default defineConfig(({ command }) => ({
       }
     }
   },
-  plugins: [react(), tailwindcss(), ...(command === "serve" ? [mkcert()] : [])],
-  server: {
-    // @ts-ignore - TS2769 mismatch in Vite 7
-    https: command === "serve",
-    hmr: {
-      overlay: false,
-    },
-  },
-}))
+  plugins: [react(), tailwindcss(), ...(isDev ? [mkcert()] : [])],
+  ...(isDev
+    ? {
+        server: {
+          https: true,
+          hmr: {
+            overlay: false,
+          },
+        },
+      }
+    : {}),
+  };
+});
