@@ -163,9 +163,90 @@ const getRating = (product: ShopifyProductSummary | undefined) => {
 };
 
 const CARD_SLOT_CLASS =
-    "h-[19.5rem] w-[min(22rem,calc(100vw-5.5rem))] md:h-[21rem] md:w-[25rem]";
+    "h-[19.5rem] w-[min(22rem,calc(100vw-5.5rem))] lg:h-[21rem] lg:w-[25rem]";
 
 const INTRO_ACCENT = "#dc2626";
+
+const COMPACT_PILL_LAYER_CLASS =
+    "bestseller-card-layer absolute inset-0 flex items-end justify-end";
+
+const CompactPillButton = ({
+    accent,
+    label,
+    href,
+}: {
+    accent: string;
+    label: string;
+    href?: string;
+}) => {
+    const content = (
+        <>
+            <span
+                className="h-2 w-2 shrink-0 rounded-full shadow-[0_0_10px_currentColor]"
+                style={{ backgroundColor: accent, color: accent }}
+            />
+            <span className="max-w-[11rem] truncate text-[0.62rem] font-black uppercase tracking-[0.1em] text-charcoal sm:max-w-[13rem] sm:text-[0.68rem]">
+                {label}
+            </span>
+            <span
+                className="shrink-0 text-sm font-black leading-none"
+                style={{ color: accent }}
+                aria-hidden
+            >
+                ↑
+            </span>
+        </>
+    );
+
+    const className =
+        "pointer-events-auto inline-flex items-center gap-2.5 rounded-full border border-charcoal/10 bg-white px-3.5 py-2.5 shadow-[0_12px_32px_rgba(0,0,0,0.2)] sm:px-4 sm:py-3";
+
+    if (href) {
+        return (
+            <a
+                href={href}
+                className={className}
+                style={{ borderTop: `3px solid ${accent}` }}
+            >
+                {content}
+            </a>
+        );
+    }
+
+    return (
+        <div className={className} style={{ borderTop: `3px solid ${accent}` }}>
+            {content}
+        </div>
+    );
+};
+
+const IntroCompactPill = () => (
+    <div className={`${COMPACT_PILL_LAYER_CLASS} bestseller-card-layer-intro invisible opacity-0`}>
+        <CompactPillButton accent={INTRO_ACCENT} label="The Best of the Best" />
+    </div>
+);
+
+const ProductCompactPill = ({
+    cue,
+    index,
+    product,
+}: {
+    cue: ProductCue;
+    index: number;
+    product?: ShopifyProductSummary;
+}) => {
+    const productHandle = product?.handle || cue.handle;
+
+    return (
+        <div className={`${COMPACT_PILL_LAYER_CLASS} bestseller-card-layer-${index} invisible opacity-0`}>
+            <CompactPillButton
+                accent={cue.accent}
+                label={cue.name}
+                href={getProductUrl(productHandle)}
+            />
+        </div>
+    );
+};
 
 const CARD_LAYER_CLASS =
     "bestseller-card-layer absolute inset-0 flex h-full flex-col p-4 text-charcoal md:p-5";
@@ -830,9 +911,9 @@ const FlavorSection = () => {
                 </div>
             )}
 
-            {/* Product card — opaque shell; only inner text layers crossfade */}
+            {/* Desktop product card — full panel (lg and up) */}
             <div
-                className={`pointer-events-none absolute bottom-4 right-4 z-30 md:bottom-8 md:right-8 ${CARD_SLOT_CLASS} ${experienceStarted ? "" : "opacity-0"}`}
+                className={`pointer-events-none absolute bottom-4 right-4 z-30 md:bottom-8 md:right-8 hidden lg:block ${CARD_SLOT_CLASS} ${experienceStarted ? "" : "opacity-0"}`}
             >
                 <div
                     className={CARD_SHELL_CLASS}
@@ -849,6 +930,23 @@ const FlavorSection = () => {
                             />
                         ))}
                     </div>
+                </div>
+            </div>
+
+            {/* Mobile + tablet — compact name pill with accent arrow */}
+            <div
+                className={`pointer-events-none absolute bottom-4 right-4 z-30 sm:bottom-6 sm:right-6 lg:hidden ${experienceStarted ? "" : "opacity-0"}`}
+            >
+                <div className="relative h-12 min-w-[10rem] sm:min-w-[11rem]">
+                    <IntroCompactPill />
+                    {PRODUCT_VIDEO_CUES.map((cue, index) => (
+                        <ProductCompactPill
+                            key={cue.handle}
+                            cue={cue}
+                            index={index}
+                            product={shopifyProducts.find((product) => product.handle === cue.handle)}
+                        />
+                    ))}
                 </div>
             </div>
         </section>
